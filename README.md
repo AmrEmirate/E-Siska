@@ -42,12 +42,6 @@ npm run dev
 npm build
 \`\`\`
 
-## Environment Variables
-
-\`\`\`
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
-\`\`\`
-
 ## Integrasi Axios
 
 Semua API calls dilakukan melalui axios client yang sudah dikonfigurasi di `lib/api-client.ts`:

@@ -8,7 +8,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "E-Siska - Sistem Informasi Akademik SDN CIATER 02",
   description: "Platform manajemen akademik dan administrasi sekolah",
-    generator: 'v0.app'
 }
 
 export default function RootLayout({

@@ -109,9 +109,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem("user", JSON.stringify(userData))
       localStorage.setItem("token", token)
 
-      console.log("[v0] Login successful for user:", userData.name, "with role:", userData.role)
+      console.log("Login successful for user:", userData.name, "with role:", userData.role)
     } catch (error) {
-      console.error("[v0] Login failed:", error)
+      console.error("Login failed:", error)
       throw error
     } finally {
       setLoading(false)

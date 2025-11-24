@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
+import { apiClient } from "@/lib/api-client"
 
 export type UserRole = "admin" | "guru" | "wali_kelas" | "siswa"
 
@@ -25,52 +26,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const mockUsers: Record<string, { password: string; user: User }> = {
-  admin: {
-    password: "password123",
-    user: {
-      id: "1",
-      name: "Admin Sekolah",
-      email: "admin@sdn-ciater02.sch.id",
-      role: "admin",
-      nip: "123456789",
-      schoolName: "SDN Ciater 02 Serpong",
-    },
-  },
-  guru01: {
-    password: "password123",
-    user: {
-      id: "2",
-      name: "Guru Matematika",
-      email: "guru01@sdn-ciater02.sch.id",
-      role: "guru",
-      nip: "987654321",
-      schoolName: "SDN Ciater 02 Serpong",
-    },
-  },
-  wali01: {
-    password: "password123",
-    user: {
-      id: "3",
-      name: "Wali Kelas 5A",
-      email: "wali01@sdn-ciater02.sch.id",
-      role: "wali_kelas",
-      nip: "555666777",
-      schoolName: "SDN Ciater 02 Serpong",
-    },
-  },
-  siswa001: {
-    password: "password123",
-    user: {
-      id: "4",
-      name: "Siswa Budi",
-      email: "siswa001@sdn-ciater02.sch.id",
-      role: "siswa",
-      nis: "12345678",
-      schoolName: "SDN Ciater 02 Serpong",
-    },
-  },
-}
+
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
@@ -88,28 +44,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (credentials: { identifier: string; password: string }) => {
     setLoading(true)
     try {
-      // Simulate API call with mock authentication
-      const mockUser = mockUsers[credentials.identifier]
+      const response = await apiClient.post("/auth/signin", {
+        username: credentials.identifier,
+        password: credentials.password,
+      })
 
-      if (!mockUser) {
-        throw new Error("Username tidak ditemukan")
+      const { token, ...userData } = response.data.data
+
+      // Map backend user data to frontend User interface if necessary
+      // Assuming backend returns fields that match or we map them here
+      const userToStore: User = {
+        id: userData.id,
+        name: userData.nama || userData.username, // Fallback if name is not present
+        email: userData.email || "",
+        role: userData.role,
+        nis: userData.nis,
+        nip: userData.nip,
+        schoolName: "SDN Ciater 02 Serpong", // Hardcoded for now as it might not be in response
       }
 
-      if (mockUser.password !== credentials.password) {
-        throw new Error("Password salah")
-      }
-
-      const userData: User = mockUser.user
-      const token = `mock-token-${Date.now()}`
-
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      setUser(userData)
-      localStorage.setItem("user", JSON.stringify(userData))
+      setUser(userToStore)
+      localStorage.setItem("user", JSON.stringify(userToStore))
       localStorage.setItem("token", token)
 
-      console.log("Login successful for user:", userData.name, "with role:", userData.role)
+      console.log("Login successful for user:", userToStore.name)
     } catch (error) {
       console.error("Login failed:", error)
       throw error

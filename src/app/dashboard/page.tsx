@@ -1,9 +1,11 @@
 "use client"
 
 import { useAuth } from "@/context/auth-context"
+import { useDashboardStats } from "@/hooks/use-dashboard"
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const { totalSiswa, totalGuru, totalKelas, tahunAjaran, loading } = useDashboardStats()
 
   return (
     <div className="p-8">
@@ -20,7 +22,9 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Total Siswa</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">245</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">
+                  {loading ? "..." : totalSiswa}
+                </p>
               </div>
               <span className="text-4xl">👥</span>
             </div>
@@ -30,7 +34,9 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Total Guru</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">32</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">
+                  {loading ? "..." : totalGuru}
+                </p>
               </div>
               <span className="text-4xl">🎓</span>
             </div>
@@ -40,7 +46,9 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Total Kelas</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">18</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">
+                  {loading ? "..." : totalKelas}
+                </p>
               </div>
               <span className="text-4xl">🏫</span>
             </div>
@@ -50,7 +58,9 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Tahun Ajaran</p>
-                <p className="text-3xl font-bold text-red-600 mt-2">2024/2025</p>
+                <p className="text-3xl font-bold text-red-600 mt-2">
+                  {loading ? "..." : tahunAjaran}
+                </p>
               </div>
               <span className="text-4xl">📅</span>
             </div>

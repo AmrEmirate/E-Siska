@@ -1,0 +1,143 @@
+"use client"
+
+import { useState, useCallback } from "react"
+import { apiClient } from "@/lib/api-client"
+import { useToast } from "@/components/ui/use-toast"
+
+export interface Siswa {
+  id: string
+  nis: string
+  nisn?: string
+  nama: string
+  jenisKelamin: "L" | "P"
+  tempatLahir?: string
+  tanggalLahir?: string
+  alamat?: string
+  namaAyah?: string
+  namaIbu?: string
+  noTelpOrtu?: string
+  status: "Aktif" | "Lulus" | "Keluar" | "Pindah"
+  rombelId?: string
+  rombel?: {
+    id: string
+    nama: string
+  }
+  createdAt?: string
+  updatedAt?: string
+}
+
+interface PaginationMeta {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
+export function useSiswa() {
+  const [data, setData] = useState<Siswa[]>([])
+  const [meta, setMeta] = useState<PaginationMeta>({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  })
+  const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
+
+  const fetchSiswa = useCallback(async (page = 1, limit = 10, search = "") => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      })
+      if (search) params.append("search", search)
+
+      const response = await apiClient.get(`/siswa?${params.toString()}`)
+      
+      // Assuming backend returns { data: [], meta: { ... } } or similar
+      // Adjust based on actual response structure
+      setData(response.data.data || [])
+      setMeta(response.data.meta || { page, limit, total: 0, totalPages: 0 })
+    } catch (error) {
+      console.error("Error fetching siswa:", error)
+      toast({
+        title: "Gagal memuat data",
+        description: "Terjadi kesalahan saat mengambil data siswa.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [toast])
+
+  const createSiswa = async (siswaData: Partial<Siswa>) => {
+    try {
+      await apiClient.post("/siswa", siswaData)
+      toast({
+        title: "Berhasil",
+        description: "Data siswa berhasil ditambahkan.",
+      })
+      fetchSiswa(meta.page, meta.limit)
+      return true
+    } catch (error) {
+      console.error("Error creating siswa:", error)
+      toast({
+        title: "Gagal",
+        description: "Gagal menambahkan data siswa.",
+        variant: "destructive",
+      })
+      return false
+    }
+  }
+
+  const updateSiswa = async (id: string, siswaData: Partial<Siswa>) => {
+    try {
+      await apiClient.put(`/siswa/${id}`, siswaData)
+      toast({
+        title: "Berhasil",
+        description: "Data siswa berhasil diperbarui.",
+      })
+      fetchSiswa(meta.page, meta.limit)
+      return true
+    } catch (error) {
+      console.error("Error updating siswa:", error)
+      toast({
+        title: "Gagal",
+        description: "Gagal memperbarui data siswa.",
+        variant: "destructive",
+      })
+      return false
+    }
+  }
+
+  const deleteSiswa = async (id: string) => {
+    try {
+      await apiClient.delete(`/siswa/${id}`)
+      toast({
+        title: "Berhasil",
+        description: "Data siswa berhasil dihapus.",
+      })
+      fetchSiswa(meta.page, meta.limit)
+      return true
+    } catch (error) {
+      console.error("Error deleting siswa:", error)
+      toast({
+        title: "Gagal",
+        description: "Gagal menghapus data siswa.",
+        variant: "destructive",
+      })
+      return false
+    }
+  }
+
+  return {
+    data,
+    meta,
+    loading,
+    fetchSiswa,
+    createSiswa,
+    updateSiswa,
+    deleteSiswa,
+  }
+}

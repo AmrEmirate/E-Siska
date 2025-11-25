@@ -60,7 +60,14 @@ export default function Sidebar() {
   }
 
   const menuItems = getMenuItems(user?.role)
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/")
+  const isActive = (href: string) => {
+    // Special handling for dashboard root - exact match only
+    if (href === "/dashboard") {
+      return pathname === "/dashboard"
+    }
+    // For other paths, check exact match or sub-paths
+    return pathname === href || pathname.startsWith(href + "/")
+  }
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen">

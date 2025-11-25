@@ -2,25 +2,23 @@
 
 import { useState, useEffect } from "react"
 import { useSekolah, type Sekolah } from "@/hooks/use-sekolah"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Loader2 } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Loader2, School, MapPin, Phone, Mail, Globe, User, Building2, Save } from "lucide-react"
 
 export default function SchoolInfoPage() {
   const { data, loading, fetchSekolah, updateSekolah } = useSekolah()
 
-  const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<Partial<Sekolah>>({
     namaSekolah: "",
     npsn: "",
     alamat: "",
-    kota: "",
-    provinsi: "",
-    telepon: "",
+    noTelp: "",
     email: "",
+    website: "",
     kepalaSekolah: "",
-    tahunBerdiri: "",
   })
 
   useEffect(() => {
@@ -33,198 +31,180 @@ export default function SchoolInfoPage() {
         namaSekolah: data.namaSekolah || "",
         npsn: data.npsn || "",
         alamat: data.alamat || "",
-        kota: data.kota || "",
-        provinsi: data.provinsi || "",
-        telepon: data.telepon || "",
+        noTelp: data.noTelp || "",
         email: data.email || "",
+        website: data.website || "",
         kepalaSekolah: data.kepalaSekolah || "",
-        tahunBerdiri: data.tahunBerdiri || "",
       })
     }
   }, [data])
 
   const handleSave = async () => {
-    if (data?.id) {
-      const success = await updateSekolah(data.id, formData)
-      if (success) {
-        setIsEditing(false)
-      }
+    const success = await updateSekolah(formData)
+    if (success) {
+      // Optional: Show success message or refresh data
     }
   }
 
   if (loading && !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
         <p className="text-gray-500 font-medium">Memuat data sekolah...</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Data Profil Sekolah</h1>
-          <p className="text-gray-600 mt-1">Kelola informasi profil dan identitas sekolah</p>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Data Profil Sekolah</h1>
+          <p className="text-gray-500 mt-2">Kelola informasi identitas dan kontak sekolah.</p>
         </div>
-        {!isEditing && (
-          <Button onClick={() => setIsEditing(true)} className="bg-red-600 hover:bg-red-700">
-            Edit Profil
-          </Button>
-        )}
+        <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105" disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Menyimpan...
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Simpan Perubahan
+            </>
+          )}
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-red-600">Informasi Sekolah</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {isEditing ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nama Sekolah</label>
-                  <Input
-                    value={formData.namaSekolah}
-                    onChange={(e) => setFormData({ ...formData, namaSekolah: e.target.value })}
-                    className="border-gray-300"
-                  />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Identity */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="border-gray-200 shadow-sm">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <School className="w-5 h-5 text-blue-600" />
+                <CardTitle>Identitas Sekolah</CardTitle>
+              </div>
+              <CardDescription>Informasi dasar mengenai sekolah.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="namaSekolah">Nama Sekolah</Label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="namaSekolah"
+                      className="pl-9"
+                      placeholder="Contoh: SMA Negeri 1 Jakarta"
+                      value={formData.namaSekolah}
+                      onChange={(e) => setFormData({ ...formData, namaSekolah: e.target.value })}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">NPSN</label>
+                <div className="space-y-2">
+                  <Label htmlFor="npsn">NPSN</Label>
                   <Input
+                    id="npsn"
+                    placeholder="Nomor Pokok Sekolah Nasional"
                     value={formData.npsn}
                     onChange={(e) => setFormData({ ...formData, npsn: e.target.value })}
-                    className="border-gray-300"
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
-                <Input
-                  value={formData.alamat}
-                  onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kota</label>
+              <div className="space-y-2">
+                <Label htmlFor="kepalaSekolah">Kepala Sekolah</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                   <Input
-                    value={formData.kota}
-                    onChange={(e) => setFormData({ ...formData, kota: e.target.value })}
-                    className="border-gray-300"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
-                  <Input
-                    value={formData.provinsi}
-                    onChange={(e) => setFormData({ ...formData, provinsi: e.target.value })}
-                    className="border-gray-300"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
-                  <Input
-                    value={formData.telepon}
-                    onChange={(e) => setFormData({ ...formData, telepon: e.target.value })}
-                    className="border-gray-300"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <Input
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="border-gray-300"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kepala Sekolah</label>
-                  <Input
+                    id="kepalaSekolah"
+                    className="pl-9"
+                    placeholder="Nama Kepala Sekolah"
                     value={formData.kepalaSekolah}
                     onChange={(e) => setFormData({ ...formData, kepalaSekolah: e.target.value })}
-                    className="border-gray-300"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tahun Berdiri</label>
-                  <Input
-                    value={formData.tahunBerdiri}
-                    onChange={(e) => setFormData({ ...formData, tahunBerdiri: e.target.value })}
-                    className="border-gray-300"
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="flex gap-2">
-                <Button onClick={handleSave} className="bg-red-600 hover:bg-red-700" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="animate-spin mr-2" size={16} />
-                      Menyimpan...
-                    </>
-                  ) : (
-                    "Simpan Perubahan"
-                  )}
-                </Button>
-                <Button onClick={() => setIsEditing(false)} variant="outline" className="border-gray-300">
-                  Batal
-                </Button>
+          <Card className="border-gray-200 shadow-sm">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-blue-600" />
+                <CardTitle>Alamat & Lokasi</CardTitle>
               </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Nama Sekolah</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.namaSekolah || "-"}</p>
+              <CardDescription>Alamat lengkap sekolah.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="alamat">Alamat Lengkap</Label>
+                <Input
+                  id="alamat"
+                  placeholder="Jalan, Kelurahan, Kecamatan, Kota/Kabupaten"
+                  value={formData.alamat}
+                  onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
+                />
               </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">NPSN</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.npsn || "-"}</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column: Contact */}
+        <div className="space-y-6">
+          <Card className="border-gray-200 shadow-sm h-full">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Phone className="w-5 h-5 text-blue-600" />
+                <CardTitle>Kontak & Media</CardTitle>
               </div>
-              <div className="col-span-2">
-                <p className="text-sm text-gray-600 font-medium">Alamat</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.alamat || "-"}</p>
+              <CardDescription>Informasi kontak yang dapat dihubungi.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="noTelp">Nomor Telepon</Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="noTelp"
+                    className="pl-9"
+                    placeholder="021-xxxxxxx"
+                    value={formData.noTelp}
+                    onChange={(e) => setFormData({ ...formData, noTelp: e.target.value })}
+                  />
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Kota</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.kota || "-"}</p>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    className="pl-9"
+                    placeholder="sekolah@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Provinsi</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.provinsi || "-"}</p>
+              <div className="space-y-2">
+                <Label htmlFor="website">Website</Label>
+                <div className="relative">
+                  <Globe className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="website"
+                    className="pl-9"
+                    placeholder="www.sekolah.sch.id"
+                    value={formData.website}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                  />
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Telepon</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.telepon || "-"}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Email</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.email || "-"}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Kepala Sekolah</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.kepalaSekolah || "-"}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 font-medium">Tahun Berdiri</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">{data?.tahunBerdiri || "-"}</p>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }

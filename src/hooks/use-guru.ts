@@ -21,6 +21,8 @@ export interface Guru {
   }
   createdAt?: string
   updatedAt?: string
+  username?: string
+  passwordDefault?: string
 }
 
 interface PaginationMeta {

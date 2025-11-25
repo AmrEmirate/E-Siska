@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast"
 export interface Pengumuman {
   id: string
   judul: string
-  isi: string
+  konten: string
   target: "SEMUA" | "SISWA" | "GURU"
   tanggalPublish: string
   author?: string

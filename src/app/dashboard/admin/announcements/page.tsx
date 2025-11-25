@@ -17,7 +17,7 @@ export default function AnnouncementsManagementPage() {
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
     judul: "",
-    isi: "",
+    konten: "",
     target: "SEMUA" as "SEMUA" | "SISWA" | "GURU",
   })
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -37,7 +37,7 @@ export default function AnnouncementsManagementPage() {
   }
 
   const resetForm = () => {
-    setFormData({ judul: "", isi: "", target: "SEMUA" })
+    setFormData({ judul: "", konten: "", target: "SEMUA" })
     setEditingId(null)
     setShowForm(false)
   }
@@ -45,7 +45,7 @@ export default function AnnouncementsManagementPage() {
   const handleEdit = (announcement: Pengumuman) => {
     setFormData({
       judul: announcement.judul,
-      isi: announcement.isi,
+      konten: announcement.konten,
       target: announcement.target,
     })
     setEditingId(announcement.id)
@@ -107,8 +107,8 @@ export default function AnnouncementsManagementPage() {
                 <textarea
                   className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
                   rows={4}
-                  value={formData.isi}
-                  onChange={(e) => setFormData({ ...formData, isi: e.target.value })}
+                  value={formData.konten}
+                  onChange={(e) => setFormData({ ...formData, konten: e.target.value })}
                   placeholder="Isi pengumuman..."
                 />
               </div>
@@ -145,9 +145,9 @@ export default function AnnouncementsManagementPage() {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">{announcement.judul}</h3>
                     <p className="text-sm text-gray-600 mt-1">
-                      {announcement.isi.length > 100
-                        ? announcement.isi.substring(0, 100) + "..."
-                        : announcement.isi}
+                      {announcement.konten.length > 100
+                        ? announcement.konten.substring(0, 100) + "..."
+                        : announcement.konten}
                     </p>
                   </div>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">

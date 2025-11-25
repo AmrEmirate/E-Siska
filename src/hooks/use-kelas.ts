@@ -55,11 +55,14 @@ export function useKelas() {
       })
       fetchKelas()
       return true
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating kelas:", error)
+      const isConflict = error?.response?.status === 409
       toast({
-        title: "Gagal",
-        description: "Gagal menambahkan data kelas.",
+        title: isConflict ? "Konflik Data" : "Gagal",
+        description: isConflict 
+          ? "Wali kelas yang dipilih sudah terdaftar di kelas lain." 
+          : "Gagal menambahkan data kelas.",
         variant: "destructive",
       })
       return false

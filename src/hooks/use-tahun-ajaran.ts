@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast"
 
 export interface TahunAjaran {
   id: string
+  nama: string
   tahun: string
   semester: "Ganjil" | "Genap"
   tanggalMulai: string

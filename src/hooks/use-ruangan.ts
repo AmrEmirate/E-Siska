@@ -8,6 +8,8 @@ export interface Ruangan {
   id: string
   namaRuangan: string
   kapasitas?: number
+  lokasi?: string
+  keterangan?: string
   createdAt?: string
   updatedAt?: string
 }

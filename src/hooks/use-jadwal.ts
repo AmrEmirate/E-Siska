@@ -11,8 +11,9 @@ export interface Jadwal {
   guruId: string
   ruanganId?: string
   hari: "Senin" | "Selasa" | "Rabu" | "Kamis" | "Jumat" | "Sabtu"
-  jamMulai: string
-  jamSelesai: string
+  waktuMulai: string
+  waktuSelesai: string
+  tahunAjaranId?: string
   kelas?: {
     id: string
     namaKelas: string
@@ -68,11 +69,15 @@ export function useJadwal() {
       })
       fetchJadwal()
       return true
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating jadwal:", error)
+      
+      // Extract error message from backend response
+      const errorMessage = error?.response?.data?.message || "Gagal menambahkan data jadwal."
+      
       toast({
         title: "Gagal",
-        description: "Gagal menambahkan data jadwal.",
+        description: errorMessage,
         variant: "destructive",
       })
       return false

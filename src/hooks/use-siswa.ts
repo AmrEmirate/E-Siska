@@ -80,11 +80,14 @@ export function useSiswa() {
       })
       fetchSiswa(meta.page, meta.limit)
       return true
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating siswa:", error)
+      const isConflict = error.response?.status === 409
       toast({
-        title: "Gagal",
-        description: "Gagal menambahkan data siswa.",
+        title: isConflict ? "Gagal: Data Duplikat" : "Gagal",
+        description: isConflict 
+          ? "NIS atau Username sudah terdaftar. Mohon gunakan NIS yang berbeda." 
+          : "Gagal menambahkan data siswa.",
         variant: "destructive",
       })
       return false

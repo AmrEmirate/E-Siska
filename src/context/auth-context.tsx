@@ -36,7 +36,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Check if user is already logged in (from localStorage or session)
     const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      const parsedUser = JSON.parse(storedUser)
+      // Normalize role for existing sessions
+      if (parsedUser.role && !["admin", "guru", "siswa", "wali_kelas"].includes(parsedUser.role)) {
+        parsedUser.role = parsedUser.role.toLowerCase()
+      }
+      setUser(parsedUser)
     }
     setLoading(false)
   }, [])
@@ -57,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         id: userData.id,
         name: userData.nama || userData.username, // Fallback if name is not present
         email: userData.email || "",
-        role: userData.role,
+        role: userData.isWaliKelas ? "wali_kelas" : (userData.role.toLowerCase() as UserRole),
         nis: userData.nis,
         nip: userData.nip,
         schoolName: "SDN Ciater 02 Serpong", // Hardcoded for now as it might not be in response

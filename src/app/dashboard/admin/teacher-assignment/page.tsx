@@ -1,86 +1,83 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { usePenugasan, type Penugasan } from "@/hooks/use-penugasan"
+import { useGuru } from "@/hooks/use-guru"
+import { useKelas } from "@/hooks/use-kelas"
+import { useMapel } from "@/hooks/use-mapel"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-
-interface TeacherAssignment {
-  id: string
-  teacherId: string
-  teacherName: string
-  subjectId: string
-  subjectName: string
-  classId: string
-  className: string
-}
-
-const initialAssignments: TeacherAssignment[] = [
-  {
-    id: "1",
-    teacherId: "T001",
-    teacherName: "Ibu Siti Nurhaliza",
-    subjectId: "S001",
-    subjectName: "Matematika",
-    classId: "C1A",
-    className: "Kelas 1A",
-  },
-  {
-    id: "2",
-    teacherId: "T002",
-    teacherName: "Pak Ahmad Wijaya",
-    subjectId: "S002",
-    subjectName: "Bahasa Indonesia",
-    classId: "C1B",
-    className: "Kelas 1B",
-  },
-  {
-    id: "3",
-    teacherId: "T001",
-    teacherName: "Ibu Siti Nurhaliza",
-    subjectId: "S001",
-    subjectName: "Matematika",
-    classId: "C2A",
-    className: "Kelas 2A",
-  },
-]
+import { Loader2 } from "lucide-react"
 
 export default function TeacherAssignmentPage() {
-  const [assignments, setAssignments] = useState(initialAssignments)
+  const {
+    data: assignments,
+    loading,
+    fetchPenugasan,
+    createPenugasan,
+    updatePenugasan,
+    deletePenugasan,
+  } = usePenugasan()
+
+  const { data: teachers, fetchGuru } = useGuru()
+  const { data: classes, fetchKelas } = useKelas()
+  const { data: subjects, fetchMapel } = useMapel()
+
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
-    teacherId: "",
-    teacherName: "",
-    subjectId: "",
-    subjectName: "",
-    classId: "",
-    className: "",
+    guruId: "",
+    kelasId: "",
+    mapelId: "",
+    tahunAjaranId: "",
   })
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchPenugasan()
+    fetchGuru(1, 100) // Fetch all teachers
+    fetchKelas() // Fetch all classes
+    fetchMapel() // Fetch all subjects
+  }, [fetchPenugasan, fetchGuru, fetchKelas, fetchMapel])
+
+  const handleAdd = async () => {
     if (editingId) {
-      setAssignments(assignments.map((a) => (a.id === editingId ? { ...a, ...formData } : a)))
-      setEditingId(null)
-    } else {
-      const newAssignment: TeacherAssignment = {
-        id: String(assignments.length + 1),
-        ...formData,
+      const success = await updatePenugasan(editingId, formData)
+      if (success) {
+        setEditingId(null)
+        setFormData({ guruId: "", kelasId: "", mapelId: "", tahunAjaranId: "" })
+        setShowForm(false)
       }
-      setAssignments([...assignments, newAssignment])
+    } else {
+      const success = await createPenugasan(formData)
+      if (success) {
+        setFormData({ guruId: "", kelasId: "", mapelId: "", tahunAjaranId: "" })
+        setShowForm(false)
+      }
     }
-    setFormData({ teacherId: "", teacherName: "", subjectId: "", subjectName: "", classId: "", className: "" })
-    setShowForm(false)
   }
 
-  const handleEdit = (assignment: TeacherAssignment) => {
-    setFormData(assignment)
+  const handleEdit = (assignment: Penugasan) => {
+    setFormData({
+      guruId: assignment.guruId,
+      kelasId: assignment.kelasId,
+      mapelId: assignment.mapelId,
+      tahunAjaranId: assignment.tahunAjaranId || "",
+    })
     setEditingId(assignment.id)
     setShowForm(true)
   }
 
-  const handleDelete = (id: string) => {
-    setAssignments(assignments.filter((a) => a.id !== id))
+  const handleDelete = async (id: string) => {
+    await deletePenugasan(id)
+  }
+
+  if (loading && assignments.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat data penugasan...</p>
+      </div>
+    )
   }
 
   return (
@@ -94,7 +91,7 @@ export default function TeacherAssignmentPage() {
           onClick={() => {
             setShowForm(!showForm)
             setEditingId(null)
-            setFormData({ teacherId: "", teacherName: "", subjectId: "", subjectName: "", classId: "", className: "" })
+            setFormData({ guruId: "", kelasId: "", mapelId: "", tahunAjaranId: "" })
           }}
           className="bg-red-600 hover:bg-red-700"
         >
@@ -105,67 +102,65 @@ export default function TeacherAssignmentPage() {
       {showForm && (
         <Card className="border-red-200 bg-red-50">
           <CardHeader>
-            <CardTitle className="text-red-600">{editingId ? "Edit Penugasan" : "Tambah Penugasan Guru"}</CardTitle>
+            <CardTitle className="text-red-600">
+              {editingId ? "Edit Penugasan" : "Tambah Penugasan Guru"}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Guru</label>
-                <Input
-                  placeholder="T001"
-                  value={formData.teacherId}
-                  onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Guru</label>
-                <Input
-                  placeholder="Ibu Siti Nurhaliza"
-                  value={formData.teacherName}
-                  onChange={(e) => setFormData({ ...formData, teacherName: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Mata Pelajaran</label>
-                <Input
-                  placeholder="S001"
-                  value={formData.subjectId}
-                  onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Mata Pelajaran</label>
-                <Input
-                  placeholder="Matematika"
-                  value={formData.subjectName}
-                  onChange={(e) => setFormData({ ...formData, subjectName: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Kelas</label>
-                <Input
-                  placeholder="C1A"
-                  value={formData.classId}
-                  onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Kelas</label>
-                <Input
-                  placeholder="Kelas 1A"
-                  value={formData.className}
-                  onChange={(e) => setFormData({ ...formData, className: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Guru</label>
+              <select
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm"
+                value={formData.guruId}
+                onChange={(e) => setFormData({ ...formData, guruId: e.target.value })}
+              >
+                <option value="">Pilih Guru</option>
+                {teachers.map((teacher) => (
+                  <option key={teacher.id} value={teacher.id}>
+                    {teacher.nip} - {teacher.nama}
+                  </option>
+                ))}
+              </select>
             </div>
-            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700">
-              {editingId ? "Update Penugasan" : "Tambah Penugasan"}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
+              <select
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm"
+                value={formData.mapelId}
+                onChange={(e) => setFormData({ ...formData, mapelId: e.target.value })}
+              >
+                <option value="">Pilih Mata Pelajaran</option>
+                {subjects.map((subject) => (
+                  <option key={subject.id} value={subject.id}>
+                    {subject.namaMapel} ({subject.kategori})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+              <select
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm"
+                value={formData.kelasId}
+                onChange={(e) => setFormData({ ...formData, kelasId: e.target.value })}
+              >
+                <option value="">Pilih Kelas</option>
+                {classes.map((kelas) => (
+                  <option key={kelas.id} value={kelas.id}>
+                    {kelas.namaKelas}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  {editingId ? "Memperbarui..." : "Menambahkan..."}
+                </>
+              ) : (
+                editingId ? "Update Penugasan" : "Tambah Penugasan"
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -180,15 +175,15 @@ export default function TeacherAssignmentPage() {
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
                       <p className="text-gray-600 font-medium">Guru</p>
-                      <p className="font-semibold text-gray-900">{assignment.teacherName}</p>
+                      <p className="font-semibold text-gray-900">{assignment.guru?.nama}</p>
                     </div>
                     <div>
                       <p className="text-gray-600 font-medium">Mata Pelajaran</p>
-                      <p className="font-semibold text-gray-900">{assignment.subjectName}</p>
+                      <p className="font-semibold text-gray-900">{assignment.mapel?.namaMapel}</p>
                     </div>
                     <div>
                       <p className="text-gray-600 font-medium">Kelas</p>
-                      <p className="font-semibold text-gray-900">{assignment.className}</p>
+                      <p className="font-semibold text-gray-900">{assignment.kelas?.namaKelas}</p>
                     </div>
                   </div>
                 </div>
@@ -204,6 +199,7 @@ export default function TeacherAssignmentPage() {
                     onClick={() => handleDelete(assignment.id)}
                     variant="destructive"
                     className="bg-red-600 hover:bg-red-700"
+                    disabled={loading}
                   >
                     Hapus
                   </Button>

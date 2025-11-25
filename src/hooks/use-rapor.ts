@@ -52,8 +52,7 @@ export function useRapor() {
   const generateRapor = async (siswaId: string, tahunAjaranId: string) => {
     setLoading(true)
     try {
-      const response = await apiClient.post("/rapor/generate", {
-        siswaId,
+      const response = await apiClient.post(`/rapor/siswa/${siswaId}/generate`, {
         tahunAjaranId,
       })
       toast({

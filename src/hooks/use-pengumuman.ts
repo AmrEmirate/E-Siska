@@ -8,6 +8,7 @@ export interface Pengumuman {
   id: string
   judul: string
   isi: string
+  target: "SEMUA" | "SISWA" | "GURU"
   tanggalPublish: string
   author?: string
   createdAt?: string

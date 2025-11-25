@@ -9,6 +9,7 @@ export interface Nilai {
   siswaId: string
   mapelId: string
   skemaId: string
+  komponenId: string
   tahunAjaranId: string
   nilai: number
   keterangan?: string
@@ -119,10 +120,29 @@ export function useNilai() {
     }
   }
 
+  const fetchNilaiByClass = useCallback(async (kelasId: string) => {
+    // Fetch nilai for all students in a class
+    setLoading(true)
+    try {
+      const response = await apiClient.get(`/nilai/kelas/${kelasId}`)
+      setData(response.data.data || [])
+    } catch (error) {
+      console.error("Error fetching nilai by class:", error)
+      toast({
+        title: "Gagal memuat data",
+        description: "Terjadi kesalahan saat mengambil data nilai kelas.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [toast])
+
   return {
     data,
     loading,
     fetchNilai,
+    fetchNilaiByClass,
     createNilai,
     updateNilai,
     deleteNilai,

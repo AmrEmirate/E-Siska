@@ -7,6 +7,8 @@ import { useToast } from "@/components/ui/use-toast"
 export interface Tingkatan {
   id: string
   namaTingkat: string
+  level: number
+  keterangan?: string
   createdAt?: string
   updatedAt?: string
 }

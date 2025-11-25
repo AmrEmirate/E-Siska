@@ -1,28 +1,36 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useJadwal, type Jadwal } from "@/hooks/use-jadwal"
+import { useAuth } from "@/context/auth-context"
+import { Loader2 } from "lucide-react"
 
 export default function StudentSchedulePage() {
-  const [schedule] = useState([
-    { day: "Senin", time: "07:30", subject: "Upacara", teacher: "-", room: "Lapangan" },
-    { day: "Senin", time: "08:00", subject: "Matematika", teacher: "Bapak Aris", room: "4A" },
-    { day: "Senin", time: "09:00", subject: "Bahasa Indonesia", teacher: "Ibu Siti", room: "4A" },
-    { day: "Senin", time: "10:00", subject: "IPA", teacher: "Bapak Ahmad", room: "Lab IPA" },
-    { day: "Senin", time: "11:00", subject: "Istirahat", teacher: "-", room: "Kantin" },
-    { day: "Selasa", time: "07:30", subject: "Bahasa Indonesia", teacher: "Ibu Siti", room: "4A" },
-    { day: "Selasa", time: "08:30", subject: "Matematika", teacher: "Bapak Aris", room: "4A" },
-    { day: "Selasa", time: "09:30", subject: "IPS", teacher: "Bapak Bambang", room: "4A" },
-    { day: "Rabu", time: "07:30", subject: "IPA", teacher: "Bapak Ahmad", room: "Lab IPA" },
-    { day: "Rabu", time: "09:00", subject: "Bahasa Inggris", teacher: "Ibu Dina", room: "4A" },
-  ])
+  const { user } = useAuth()
+  const { data: schedules, loading, fetchJadwalByStudent } = useJadwal()
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchJadwalByStudent(user.id)
+    }
+  }, [user?.id, fetchJadwalByStudent])
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"]
-  const uniqueDays = Array.from(new Set(schedule.map((s) => s.day)))
+  const uniqueDays = days.filter((day) => schedules.some((s) => s.hari === day))
 
   const getSubjectColor = (subject: string) => {
     if (subject.includes("Istirahat")) return "bg-yellow-100 border-yellow-300 text-yellow-900"
     if (subject.includes("Upacara")) return "bg-red-100 border-red-300 text-red-900"
     return "bg-blue-100 border-blue-300 text-blue-900"
+  }
+
+  if (loading && schedules.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat jadwal...</p>
+      </div>
+    )
   }
 
   return (
@@ -40,13 +48,16 @@ export default function StudentSchedulePage() {
               <h3 className="font-bold text-gray-900 text-center">{day}</h3>
             </div>
             <div className="p-4 space-y-2">
-              {schedule
-                .filter((s) => s.day === day)
-                .map((item, idx) => (
-                  <div key={idx} className={`p-3 rounded border-2 ${getSubjectColor(item.subject)}`}>
-                    <p className="text-xs font-semibold">{item.time}</p>
-                    <p className="text-sm font-bold">{item.subject}</p>
-                    {item.room !== "Kantin" && item.room !== "Lapangan" && <p className="text-xs mt-1">{item.room}</p>}
+              {schedules
+                .filter((s) => s.hari === day)
+                .sort((a, b) => a.jamMulai.localeCompare(b.jamMulai))
+                .map((item) => (
+                  <div key={item.id} className={`p-3 rounded border-2 ${getSubjectColor(item.mapel?.namaMapel || "")}`}>
+                    <p className="text-xs font-semibold">
+                      {item.jamMulai} - {item.jamSelesai}
+                    </p>
+                    <p className="text-sm font-bold">{item.mapel?.namaMapel}</p>
+                    {item.ruangan?.namaRuangan && <p className="text-xs mt-1">{item.ruangan.namaRuangan}</p>}
                   </div>
                 ))}
             </div>
@@ -61,32 +72,45 @@ export default function StudentSchedulePage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Hari</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Jam</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Mata Pelajaran</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Guru</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Ruangan</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {schedule.map((item, idx) => (
-                <tr key={idx} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.day}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.time}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.subject}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.teacher}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                      {item.room}
-                    </span>
-                  </td>
+          {schedules.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">Belum ada jadwal.</div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Hari</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Jam</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Mata Pelajaran</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Guru</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Ruangan</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {schedules
+                  .sort((a, b) => {
+                    const dayOrder = { Senin: 0, Selasa: 1, Rabu: 2, Kamis: 3, Jumat: 4 }
+                    const dayDiff = dayOrder[a.hari as keyof typeof dayOrder] - dayOrder[b.hari as keyof typeof dayOrder]
+                    if (dayDiff !== 0) return dayDiff
+                    return a.jamMulai.localeCompare(b.jamMulai)
+                  })
+                  .map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.hari}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {item.jamMulai} - {item.jamSelesai}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.mapel?.namaMapel}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{item.guru?.nama || "-"}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                          {item.ruangan?.namaRuangan || "-"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

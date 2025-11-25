@@ -10,7 +10,8 @@ export interface TahunAjaran {
   semester: "Ganjil" | "Genap"
   tanggalMulai: string
   tanggalSelesai: string
-  isActive: boolean
+  status: "Aktif" | "Nonaktif"
+  isActive?: boolean
   createdAt?: string
   updatedAt?: string
 }

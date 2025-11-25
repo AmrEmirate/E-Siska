@@ -1,16 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useJadwal, type Jadwal } from "@/hooks/use-jadwal"
+import { useAuth } from "@/context/auth-context"
+import { Loader2 } from "lucide-react"
 
 export default function TeacherSchedulePage() {
-  const [schedule] = useState([
-    { id: 1, class: "4A", subject: "Matematika", day: "Senin", time: "07:30 - 08:30", room: "4A" },
-    { id: 2, class: "4A", subject: "Matematika", day: "Rabu", time: "10:00 - 11:00", room: "4A" },
-    { id: 3, class: "4B", subject: "Matematika", day: "Senin", time: "10:00 - 11:00", room: "4B" },
-    { id: 4, class: "5A", subject: "Matematika", day: "Selasa", time: "07:30 - 08:30", room: "5A" },
-  ])
+  const { user } = useAuth()
+  const { data: schedules, loading, fetchJadwal } = useJadwal()
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchJadwal(undefined, user.id) // Fetch jadwal by guruId
+    }
+  }, [user?.id, fetchJadwal])
 
   const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"]
+
+  if (loading && schedules.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat jadwal...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="p-8">
@@ -25,13 +39,16 @@ export default function TeacherSchedulePage() {
           <div key={day} className="card p-4">
             <h3 className="font-semibold text-gray-900 mb-3 text-center">{day}</h3>
             <div className="space-y-3">
-              {schedule
-                .filter((s) => s.day === day)
+              {schedules
+                .filter((s) => s.hari === day)
+                .sort((a, b) => a.jamMulai.localeCompare(b.jamMulai))
                 .map((s) => (
                   <div key={s.id} className="bg-red-50 border border-red-200 rounded p-2">
-                    <p className="text-sm font-medium text-gray-900">{s.subject}</p>
-                    <p className="text-xs text-gray-600">Kelas {s.class}</p>
-                    <p className="text-xs text-red-600 font-semibold">{s.time}</p>
+                    <p className="text-sm font-medium text-gray-900">{s.mapel?.namaMapel}</p>
+                    <p className="text-xs text-gray-600">Kelas {s.kelas?.namaKelas}</p>
+                    <p className="text-xs text-red-600 font-semibold">
+                      {s.jamMulai} - {s.jamSelesai}
+                    </p>
                   </div>
                 ))}
             </div>
@@ -46,32 +63,48 @@ export default function TeacherSchedulePage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Mata Pelajaran</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Kelas</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Hari</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Jam</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Ruangan</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {schedule.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.subject}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.class}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                      {item.day}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.time}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.room}</td>
+          {schedules.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">Belum ada jadwal mengajar.</div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
+                    Mata Pelajaran
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Kelas</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Hari</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Jam</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Ruangan</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {schedules
+                  .sort((a, b) => {
+                    const dayOrder = { Senin: 0, Selasa: 1, Rabu: 2, Kamis: 3, Jumat: 4 }
+                    const dayDiff =
+                      dayOrder[a.hari as keyof typeof dayOrder] - dayOrder[b.hari as keyof typeof dayOrder]
+                    if (dayDiff !== 0) return dayDiff
+                    return a.jamMulai.localeCompare(b.jamMulai)
+                  })
+                  .map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.mapel?.namaMapel}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{item.kelas?.namaKelas}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                          {item.hari}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {item.jamMulai} - {item.jamSelesai}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{item.ruangan?.namaRuangan || "-"}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

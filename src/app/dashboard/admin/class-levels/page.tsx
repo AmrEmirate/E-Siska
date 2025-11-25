@@ -1,63 +1,74 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useTingkatan, type Tingkatan } from "@/hooks/use-tingkatan"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-interface ClassLevel {
-  id: string
-  name: string
-  level: number
-  description: string
-}
-
-const initialLevels: ClassLevel[] = [
-  { id: "1", name: "Kelas 1", level: 1, description: "Tingkat Kelas Satu" },
-  { id: "2", name: "Kelas 2", level: 2, description: "Tingkat Kelas Dua" },
-  { id: "3", name: "Kelas 3", level: 3, description: "Tingkat Kelas Tiga" },
-  { id: "4", name: "Kelas 4", level: 4, description: "Tingkat Kelas Empat" },
-  { id: "5", name: "Kelas 5", level: 5, description: "Tingkat Kelas Lima" },
-  { id: "6", name: "Kelas 6", level: 6, description: "Tingkat Kelas Enam" },
-]
+import { Loader2 } from "lucide-react"
 
 export default function ClassLevelsPage() {
-  const [levels, setLevels] = useState(initialLevels)
+  const { 
+    data: levels, 
+    loading, 
+    fetchTingkatan, 
+    createTingkatan, 
+    updateTingkatan, 
+    deleteTingkatan 
+  } = useTingkatan()
+  
   const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({ name: "", level: "", description: "" })
+  const [formData, setFormData] = useState({ namaTingkat: "", level: "", keterangan: "" })
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchTingkatan()
+  }, [fetchTingkatan])
+
+  const handleAdd = async () => {
     if (editingId) {
-      setLevels(
-        levels.map((l) =>
-          l.id === editingId
-            ? { ...l, name: formData.name, level: Number(formData.level), description: formData.description }
-            : l,
-        ),
-      )
-      setEditingId(null)
-    } else {
-      const newLevel: ClassLevel = {
-        id: String(levels.length + 1),
-        name: formData.name,
-        level: Number(formData.level),
-        description: formData.description,
+      const success = await updateTingkatan(editingId, {
+        ...formData,
+        level: Number(formData.level)
+      })
+      if (success) {
+        setEditingId(null)
+        setFormData({ namaTingkat: "", level: "", keterangan: "" })
+        setShowForm(false)
       }
-      setLevels([...levels, newLevel])
+    } else {
+      const success = await createTingkatan({
+        ...formData,
+        level: Number(formData.level)
+      })
+      if (success) {
+        setFormData({ namaTingkat: "", level: "", keterangan: "" })
+        setShowForm(false)
+      }
     }
-    setFormData({ name: "", level: "", description: "" })
-    setShowForm(false)
   }
 
-  const handleEdit = (level: ClassLevel) => {
-    setFormData({ name: level.name, level: String(level.level), description: level.description })
+  const handleEdit = (level: Tingkatan) => {
+    setFormData({ 
+      namaTingkat: level.namaTingkat, 
+      level: String(level.level), 
+      keterangan: level.keterangan || "" 
+    })
     setEditingId(level.id)
     setShowForm(true)
   }
 
-  const handleDelete = (id: string) => {
-    setLevels(levels.filter((l) => l.id !== id))
+  const handleDelete = async (id: string) => {
+    await deleteTingkatan(id)
+  }
+
+  if (loading && levels.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat data tingkatan...</p>
+      </div>
+    )
   }
 
   return (
@@ -71,7 +82,7 @@ export default function ClassLevelsPage() {
           onClick={() => {
             setShowForm(!showForm)
             setEditingId(null)
-            setFormData({ name: "", level: "", description: "" })
+            setFormData({ namaTingkat: "", level: "", keterangan: "" })
           }}
           className="bg-red-600 hover:bg-red-700"
         >
@@ -90,8 +101,8 @@ export default function ClassLevelsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Tingkatan</label>
                 <Input
                   placeholder="Kelas 1"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.namaTingkat}
+                  onChange={(e) => setFormData({ ...formData, namaTingkat: e.target.value })}
                   className="border-gray-300"
                 />
               </div>
@@ -110,13 +121,20 @@ export default function ClassLevelsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
               <Input
                 placeholder="Tingkat Kelas Satu"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                value={formData.keterangan}
+                onChange={(e) => setFormData({ ...formData, keterangan: e.target.value })}
                 className="border-gray-300"
               />
             </div>
-            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700">
-              {editingId ? "Update Tingkatan" : "Tambah Tingkatan"}
+            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  {editingId ? "Memperbarui..." : "Menambahkan..."}
+                </>
+              ) : (
+                editingId ? "Update Tingkatan" : "Tambah Tingkatan"
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -128,8 +146,8 @@ export default function ClassLevelsPage() {
             <CardContent className="pt-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{level.name}</h3>
-                  <p className="text-sm text-gray-600">{level.description}</p>
+                  <h3 className="font-semibold text-gray-900">{level.namaTingkat}</h3>
+                  <p className="text-sm text-gray-600">{level.keterangan || "-"}</p>
                   <p className="text-sm text-red-600 font-medium mt-2">Level: {level.level}</p>
                 </div>
                 <div className="flex gap-2">
@@ -144,6 +162,7 @@ export default function ClassLevelsPage() {
                     onClick={() => handleDelete(level.id)}
                     variant="destructive"
                     className="bg-red-600 hover:bg-red-700"
+                    disabled={loading}
                   >
                     Hapus
                   </Button>

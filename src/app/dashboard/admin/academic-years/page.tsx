@@ -1,98 +1,79 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useTahunAjaran, type TahunAjaran } from "@/hooks/use-tahun-ajaran"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-interface AcademicYear {
-  id: string
-  name: string
-  startYear: number
-  endYear: number
-  isActive: boolean
-  startDate: string
-  endDate: string
-}
-
-const initialYears: AcademicYear[] = [
-  {
-    id: "1",
-    name: "Tahun Ajaran 2023/2024",
-    startYear: 2023,
-    endYear: 2024,
-    isActive: false,
-    startDate: "2023-07-01",
-    endDate: "2024-06-30",
-  },
-  {
-    id: "2",
-    name: "Tahun Ajaran 2024/2025",
-    startYear: 2024,
-    endYear: 2025,
-    isActive: true,
-    startDate: "2024-07-01",
-    endDate: "2025-06-30",
-  },
-]
+import { Loader2 } from "lucide-react"
 
 export default function AcademicYearsPage() {
-  const [years, setYears] = useState(initialYears)
+  const { 
+    data: years, 
+    loading, 
+    fetchTahunAjaran, 
+    createTahunAjaran, 
+    updateTahunAjaran, 
+    deleteTahunAjaran,
+    setActiveTahunAjaran 
+  } = useTahunAjaran()
+  
   const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({ name: "", startYear: "", endYear: "", startDate: "", endDate: "" })
+  const [formData, setFormData] = useState({ 
+    tahun: "", 
+    semester: "Ganjil" as "Ganjil" | "Genap", 
+    tanggalMulai: "", 
+    tanggalSelesai: "" 
+  })
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchTahunAjaran()
+  }, [fetchTahunAjaran])
+
+  const handleAdd = async () => {
     if (editingId) {
-      setYears(
-        years.map((y) =>
-          y.id === editingId
-            ? {
-                ...y,
-                name: formData.name,
-                startYear: Number(formData.startYear),
-                endYear: Number(formData.endYear),
-                startDate: formData.startDate,
-                endDate: formData.endDate,
-              }
-            : y,
-        ),
-      )
-      setEditingId(null)
-    } else {
-      const newYear: AcademicYear = {
-        id: String(years.length + 1),
-        name: formData.name,
-        startYear: Number(formData.startYear),
-        endYear: Number(formData.endYear),
-        isActive: false,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
+      const success = await updateTahunAjaran(editingId, formData)
+      if (success) {
+        setEditingId(null)
+        setFormData({ tahun: "", semester: "Ganjil", tanggalMulai: "", tanggalSelesai: "" })
+        setShowForm(false)
       }
-      setYears([...years, newYear])
+    } else {
+      const success = await createTahunAjaran(formData)
+      if (success) {
+        setFormData({ tahun: "", semester: "Ganjil", tanggalMulai: "", tanggalSelesai: "" })
+        setShowForm(false)
+      }
     }
-    setFormData({ name: "", startYear: "", endYear: "", startDate: "", endDate: "" })
-    setShowForm(false)
   }
 
-  const handleSetActive = (id: string) => {
-    setYears(years.map((y) => ({ ...y, isActive: y.id === id })))
+  const handleSetActive = async (id: string) => {
+    await setActiveTahunAjaran(id)
   }
 
-  const handleEdit = (year: AcademicYear) => {
+  const handleEdit = (year: TahunAjaran) => {
     setFormData({
-      name: year.name,
-      startYear: String(year.startYear),
-      endYear: String(year.endYear),
-      startDate: year.startDate,
-      endDate: year.endDate,
+      tahun: year.tahun,
+      semester: year.semester,
+      tanggalMulai: year.tanggalMulai,
+      tanggalSelesai: year.tanggalSelesai,
     })
     setEditingId(year.id)
     setShowForm(true)
   }
 
-  const handleDelete = (id: string) => {
-    setYears(years.filter((y) => y.id !== id))
+  const handleDelete = async (id: string) => {
+    await deleteTahunAjaran(id)
+  }
+
+  if (loading && years.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat data tahun ajaran...</p>
+      </div>
+    )
   }
 
   return (
@@ -106,7 +87,7 @@ export default function AcademicYearsPage() {
           onClick={() => {
             setShowForm(!showForm)
             setEditingId(null)
-            setFormData({ name: "", startYear: "", endYear: "", startDate: "", endDate: "" })
+            setFormData({ tahun: "", semester: "Ganjil", tanggalMulai: "", tanggalSelesai: "" })
           }}
           className="bg-red-600 hover:bg-red-700"
         >
@@ -123,58 +104,54 @@ export default function AcademicYearsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nama Tahun Ajaran</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tahun Ajaran</label>
               <Input
-                placeholder="Tahun Ajaran 2024/2025"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="2024/2025"
+                value={formData.tahun}
+                onChange={(e) => setFormData({ ...formData, tahun: e.target.value })}
                 className="border-gray-300"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tahun Mulai</label>
-                <Input
-                  type="number"
-                  placeholder="2024"
-                  value={formData.startYear}
-                  onChange={(e) => setFormData({ ...formData, startYear: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tahun Akhir</label>
-                <Input
-                  type="number"
-                  placeholder="2025"
-                  value={formData.endYear}
-                  onChange={(e) => setFormData({ ...formData, endYear: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+              <select
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm"
+                value={formData.semester}
+                onChange={(e) => setFormData({ ...formData, semester: e.target.value as "Ganjil" | "Genap" })}
+              >
+                <option value="Ganjil">Ganjil</option>
+                <option value="Genap">Genap</option>
+              </select>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
                 <Input
                   type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                  value={formData.tanggalMulai}
+                  onChange={(e) => setFormData({ ...formData, tanggalMulai: e.target.value })}
                   className="border-gray-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai</label>
                 <Input
                   type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  value={formData.tanggalSelesai}
+                  onChange={(e) => setFormData({ ...formData, tanggalSelesai: e.target.value })}
                   className="border-gray-300"
                 />
               </div>
             </div>
-            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700">
-              {editingId ? "Update Tahun Ajaran" : "Tambah Tahun Ajaran"}
+            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  {editingId ? "Memperbarui..." : "Menambahkan..."}
+                </>
+              ) : (
+                editingId ? "Update Tahun Ajaran" : "Tambah Tahun Ajaran"
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -190,21 +167,24 @@ export default function AcademicYearsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-gray-900">{year.name}</h3>
+                    <h3 className="font-semibold text-gray-900">
+                      Tahun Ajaran {year.tahun} - Semester {year.semester}
+                    </h3>
                     {year.isActive && (
                       <span className="px-3 py-1 bg-red-600 text-white text-xs font-semibold rounded-full">Aktif</span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {year.startYear}/{year.endYear}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {year.startDate} - {year.endDate}
+                  <p className="text-sm text-gray-500 mt-1">
+                    {new Date(year.tanggalMulai).toLocaleDateString('id-ID')} - {new Date(year.tanggalSelesai).toLocaleDateString('id-ID')}
                   </p>
                 </div>
                 <div className="flex gap-2">
                   {!year.isActive && (
-                    <Button onClick={() => handleSetActive(year.id)} className="bg-red-600 hover:bg-red-700">
+                    <Button 
+                      onClick={() => handleSetActive(year.id)} 
+                      className="bg-red-600 hover:bg-red-700"
+                      disabled={loading}
+                    >
                       Aktifkan
                     </Button>
                   )}
@@ -219,6 +199,7 @@ export default function AcademicYearsPage() {
                     onClick={() => handleDelete(year.id)}
                     variant="destructive"
                     className="bg-red-600 hover:bg-red-700"
+                    disabled={loading}
                   >
                     Hapus
                   </Button>

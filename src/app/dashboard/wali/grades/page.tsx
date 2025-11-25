@@ -1,39 +1,55 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useNilai } from "@/hooks/use-nilai"
+import { usePenempatan } from "@/hooks/use-penempatan"
+import { Loader2 } from "lucide-react"
 
 export default function WaliGradesPage() {
-  const [selectedClass] = useState("4A")
+  const { data: nilaiData, loading, fetchNilaiByClass } = useNilai()
+  const { data: penempatanData, fetchPenempatan } = usePenempatan()
+  const [kelasId, setKelasId] = useState("")
 
-  const [students] = useState([
-    {
-      id: 1,
-      nis: "123001",
-      name: "Ahmad Rizki",
-      matematika: 84.5,
-      bahasaIndonesia: 90,
-      ipa: 82,
-      rataRata: 85.5,
-    },
-    {
-      id: 2,
-      nis: "123002",
-      name: "Siti Nur Azizah",
-      matematika: 90,
-      bahasaIndonesia: 91,
-      ipa: 88,
-      rataRata: 89.7,
-    },
-    {
-      id: 3,
-      nis: "123003",
-      name: "Budi Santoso",
-      matematika: 77.5,
-      bahasaIndonesia: 80,
-      ipa: 76,
-      rataRata: 77.8,
-    },
-  ])
+  useEffect(() => {
+    // Fetch penempatan to get wali's class
+    // In real scenario, get kelasId from user context or API call for wali kelas
+    fetchPenempatan()
+  }, [fetchPenempatan])
+
+  useEffect(() => {
+    // For demo, use first kelas if available
+    // In production, filter penempatan by waliKelasId === user.id
+    if (penempatanData.length > 0 && !kelasId) {
+      const firstKelasId = penempatanData[0].kelasId
+      setKelasId(firstKelasId)
+      fetchNilaiByClass(firstKelasId)
+    }
+  }, [penempatanData, kelasId, fetchNilaiByClass])
+
+  // Group nilai by student
+  const studentGrades = nilaiData.reduce((acc: any[], nilai) => {
+    const existing = acc.find((s) => s.siswaId === nilai.siswaId)
+    if (existing) {
+      existing.grades[nilai.komponenId] = nilai.nilai
+    } else {
+      acc.push({
+        siswaId: nilai.siswaId,
+        nis: nilai.siswa?.nis || "-",
+        name: nilai.siswa?.nama || "-",
+        grades: { [nilai.komponenId]: nilai.nilai },
+      })
+    }
+    return acc
+  }, [])
+
+  if (loading && nilaiData.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat data nilai...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="p-8">
@@ -44,36 +60,38 @@ export default function WaliGradesPage() {
 
       <div className="card">
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Kelas {selectedClass}</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Rekap Nilai</h2>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">NIS</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Nama Siswa</th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Matematika</th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">B. Indonesia</th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">IPA</th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Rata-rata</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {students.map((student) => (
-                <tr key={student.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{student.nis}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{student.name}</td>
-                  <td className="px-6 py-4 text-center text-sm font-semibold text-gray-900">{student.matematika}</td>
-                  <td className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
-                    {student.bahasaIndonesia}
-                  </td>
-                  <td className="px-6 py-4 text-center text-sm font-semibold text-gray-900">{student.ipa}</td>
-                  <td className="px-6 py-4 text-center text-sm font-bold bg-red-50 text-red-600">{student.rataRata}</td>
+          {studentGrades.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">Belum ada data nilai untuk kelas ini.</div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">NIS</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Nama Siswa</th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Rata-rata</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {studentGrades.map((student: any) => {
+                  const grades = Object.values(student.grades) as number[]
+                  const average = grades.length > 0 ? grades.reduce((a, b) => a + b, 0) / grades.length : 0
+                  return (
+                    <tr key={student.siswaId} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{student.nis}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{student.name}</td>
+                      <td className="px-6 py-4 text-center text-sm font-bold bg-red-50 text-red-600">
+                        {average.toFixed(2)}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

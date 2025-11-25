@@ -9,7 +9,7 @@ export interface Absensi {
   siswaId: string
   kelasId: string
   tanggal: string
-  status: "Hadir" | "Sakit" | "Izin" | "Alpha"
+  status: "HADIR" | "SAKIT" | "IZIN" | "ALPHA"
   keterangan?: string
   siswa?: {
     id: string
@@ -27,6 +27,7 @@ export interface Absensi {
 export function useAbsensi() {
   const [data, setData] = useState<Absensi[]>([])
   const [loading, setLoading] = useState(false)
+  const [stats, setStats] = useState<{ hadir: number; sakit: number; izin: number; alpha: number; total: number } | null>(null)
   const { toast } = useToast()
 
   const fetchAbsensi = useCallback(
@@ -94,10 +95,28 @@ export function useAbsensi() {
     }
   }
 
+  const fetchAbsensiByStudent = useCallback(async (siswaId: string) => {
+    await fetchAbsensi(undefined, undefined, siswaId)
+  }, [fetchAbsensi])
+
+  const calculateStats = useCallback(() => {
+    const hadir = data.filter((d) => d.status === "HADIR").length
+    const sakit = data.filter((d) => d.status === "SAKIT").length
+    const izin = data.filter((d) => d.status === "IZIN").length
+    const alpha = data.filter((d) => d.status === "ALPHA").length
+    setStats({ hadir, sakit, izin, alpha, total: data.length })
+  }, [data])
+
+  useCallback(() => {
+    calculateStats()
+  }, [data, calculateStats])
+
   return {
     data,
     loading,
+    stats,
     fetchAbsensi,
+    fetchAbsensiByStudent,
     createAbsensi,
     updateAbsensi,
   }

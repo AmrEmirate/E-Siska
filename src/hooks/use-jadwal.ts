@@ -119,10 +119,28 @@ export function useJadwal() {
     }
   }
 
+  const fetchJadwalByStudent = useCallback(async (siswaId: string) => {
+    // Fetch student's class first, then get jadwal for that class
+    setLoading(true)
+    try {
+      const penempatanRes = await apiClient.get(`/penempatan?siswaId=${siswaId}`)
+      const kelasId = penempatanRes.data.data[0]?.kelasId
+      if (kelasId) {
+        await fetchJadwal(kelasId)
+      }
+    } catch (error) {
+      console.error("Error fetching student jadwal:", error)
+      setData([])
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchJadwal])
+
   return {
     data,
     loading,
     fetchJadwal,
+    fetchJadwalByStudent,
     createJadwal,
     updateJadwal,
     deleteJadwal,

@@ -1,73 +1,75 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRuangan, type Ruangan } from "@/hooks/use-ruangan"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-interface Room {
-  id: string
-  name: string
-  capacity: number
-  building: string
-  floor: number
-}
-
-const initialRooms: Room[] = [
-  { id: "1", name: "Ruang Kelas 1A", capacity: 35, building: "Gedung A", floor: 1 },
-  { id: "2", name: "Ruang Kelas 1B", capacity: 33, building: "Gedung A", floor: 1 },
-  { id: "3", name: "Ruang Kelas 2A", capacity: 34, building: "Gedung B", floor: 2 },
-]
+import { Loader2 } from "lucide-react"
 
 export default function RoomsManagementPage() {
-  const [rooms, setRooms] = useState(initialRooms)
+  const { 
+    data: rooms, 
+    loading, 
+    fetchRuangan, 
+    createRuangan, 
+    updateRuangan, 
+    deleteRuangan 
+  } = useRuangan()
+  
   const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState({ name: "", capacity: "", building: "", floor: "" })
+  const [formData, setFormData] = useState({ namaRuangan: "", kapasitas: "", lokasi: "", keterangan: "" })
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchRuangan()
+  }, [fetchRuangan])
+
+  const handleAdd = async () => {
     if (editingId) {
-      setRooms(
-        rooms.map((r) =>
-          r.id === editingId
-            ? {
-                ...r,
-                name: formData.name,
-                capacity: Number(formData.capacity),
-                building: formData.building,
-                floor: Number(formData.floor),
-              }
-            : r,
-        ),
-      )
-      setEditingId(null)
-    } else {
-      const newRoom: Room = {
-        id: String(rooms.length + 1),
-        name: formData.name,
-        capacity: Number(formData.capacity),
-        building: formData.building,
-        floor: Number(formData.floor),
+      const success = await updateRuangan(editingId, {
+        ...formData,
+        kapasitas: Number(formData.kapasitas)
+      })
+      if (success) {
+        setEditingId(null)
+        setFormData({ namaRuangan: "", kapasitas: "", lokasi: "", keterangan: "" })
+        setShowForm(false)
       }
-      setRooms([...rooms, newRoom])
+    } else {
+      const success = await createRuangan({
+        ...formData,
+        kapasitas: Number(formData.kapasitas)
+      })
+      if (success) {
+        setFormData({ namaRuangan: "", kapasitas: "", lokasi: "", keterangan: "" })
+        setShowForm(false)
+      }
     }
-    setFormData({ name: "", capacity: "", building: "", floor: "" })
-    setShowForm(false)
   }
 
-  const handleEdit = (room: Room) => {
+  const handleEdit = (room: Ruangan) => {
     setFormData({
-      name: room.name,
-      capacity: String(room.capacity),
-      building: room.building,
-      floor: String(room.floor),
+      namaRuangan: room.namaRuangan,
+      kapasitas: String(room.kapasitas),
+      lokasi: room.lokasi || "",
+      keterangan: room.keterangan || "",
     })
     setEditingId(room.id)
     setShowForm(true)
   }
 
-  const handleDelete = (id: string) => {
-    setRooms(rooms.filter((r) => r.id !== id))
+  const handleDelete = async (id: string) => {
+    await deleteRuangan(id)
+  }
+
+  if (loading && rooms.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat data ruangan...</p>
+      </div>
+    )
   }
 
   return (
@@ -81,7 +83,7 @@ export default function RoomsManagementPage() {
           onClick={() => {
             setShowForm(!showForm)
             setEditingId(null)
-            setFormData({ name: "", capacity: "", building: "", floor: "" })
+            setFormData({ namaRuangan: "", kapasitas: "", lokasi: "", keterangan: "" })
           }}
           className="bg-red-600 hover:bg-red-700"
         >
@@ -100,8 +102,8 @@ export default function RoomsManagementPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Ruangan</label>
                 <Input
                   placeholder="Ruang Kelas 1A"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.namaRuangan}
+                  onChange={(e) => setFormData({ ...formData, namaRuangan: e.target.value })}
                   className="border-gray-300"
                 />
               </div>
@@ -110,33 +112,39 @@ export default function RoomsManagementPage() {
                 <Input
                   type="number"
                   placeholder="35"
-                  value={formData.capacity}
-                  onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                  value={formData.kapasitas}
+                  onChange={(e) => setFormData({ ...formData, kapasitas: e.target.value })}
                   className="border-gray-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Gedung</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
                 <Input
-                  placeholder="Gedung A"
-                  value={formData.building}
-                  onChange={(e) => setFormData({ ...formData, building: e.target.value })}
+                  placeholder="Gedung A - Lantai 1"
+                  value={formData.lokasi}
+                  onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
                   className="border-gray-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Lantai</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Keterangan</label>
                 <Input
-                  type="number"
-                  placeholder="1"
-                  value={formData.floor}
-                  onChange={(e) => setFormData({ ...formData, floor: e.target.value })}
+                  placeholder="Keterangan tambahan"
+                  value={formData.keterangan}
+                  onChange={(e) => setFormData({ ...formData, keterangan: e.target.value })}
                   className="border-gray-300"
                 />
               </div>
             </div>
-            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700">
-              {editingId ? "Update Ruangan" : "Tambah Ruangan"}
+            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  {editingId ? "Memperbarui..." : "Menambahkan..."}
+                </>
+              ) : (
+                editingId ? "Update Ruangan" : "Tambah Ruangan"
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -148,11 +156,14 @@ export default function RoomsManagementPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{room.name}</h3>
+                  <h3 className="font-semibold text-gray-900">{room.namaRuangan}</h3>
                   <p className="text-sm text-gray-600">
-                    Gedung {room.building} - Lantai {room.floor}
+                    {room.lokasi || "Lokasi tidak tersedia"}
                   </p>
-                  <p className="text-sm text-red-600 font-medium mt-1">Kapasitas: {room.capacity} siswa</p>
+                  <p className="text-sm text-red-600 font-medium mt-1">Kapasitas: {room.kapasitas} siswa</p>
+                  {room.keterangan && (
+                    <p className="text-sm text-gray-500 mt-1">{room.keterangan}</p>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -166,6 +177,7 @@ export default function RoomsManagementPage() {
                     onClick={() => handleDelete(room.id)}
                     variant="destructive"
                     className="bg-red-600 hover:bg-red-700"
+                    disabled={loading}
                   >
                     Hapus
                   </Button>

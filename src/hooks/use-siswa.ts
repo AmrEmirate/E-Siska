@@ -131,11 +131,35 @@ export function useSiswa() {
     }
   }
 
+  const fetchSiswaNoPagination = useCallback(async (params?: { kelasId?: string; search?: string }) => {
+    // Fetch all students without pagination for dropdowns
+    setLoading(true)
+    try {
+      const queryParams = new URLSearchParams()
+      if (params?.kelasId) queryParams.append("kelasId", params.kelasId)
+      if (params?.search) queryParams.append("search", params.search)
+      queryParams.append("limit", "1000") // Get all
+
+      const response = await apiClient.get(`/siswa?${queryParams.toString()}`)
+      setData(response.data.data || [])
+    } catch (error) {
+      console.error("Error fetching siswa:", error)
+      toast({
+        title: "Gagal memuat data",
+        description: "Terjadi kesalahan saat mengambil data siswa.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [toast])
+
   return {
     data,
     meta,
     loading,
     fetchSiswa,
+    fetchSiswaNoPagination,
     createSiswa,
     updateSiswa,
     deleteSiswa,

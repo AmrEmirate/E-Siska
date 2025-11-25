@@ -1,105 +1,78 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { usePenempatan, type Penempatan } from "@/hooks/use-penempatan"
+import { useSiswa } from "@/hooks/use-siswa"
+import { useKelas } from "@/hooks/use-kelas"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-
-interface StudentPlacement {
-  id: string
-  nisn: string
-  studentName: string
-  classId: string
-  className: string
-  roomId: string
-  roomName: string
-  waliKelasId: string
-  waliKelasName: string
-}
-
-const initialPlacements: StudentPlacement[] = [
-  {
-    id: "1",
-    nisn: "0001",
-    studentName: "Ahmad Rizki Pratama",
-    classId: "C1A",
-    className: "Kelas 1A",
-    roomId: "R101",
-    roomName: "Ruang Kelas 1A",
-    waliKelasId: "T001",
-    waliKelasName: "Ibu Siti Nurhaliza",
-  },
-  {
-    id: "2",
-    nisn: "0002",
-    studentName: "Budi Santoso",
-    classId: "C1A",
-    className: "Kelas 1A",
-    roomId: "R101",
-    roomName: "Ruang Kelas 1A",
-    waliKelasId: "T001",
-    waliKelasName: "Ibu Siti Nurhaliza",
-  },
-  {
-    id: "3",
-    nisn: "0003",
-    studentName: "Citra Dewi",
-    classId: "C1B",
-    className: "Kelas 1B",
-    roomId: "R102",
-    roomName: "Ruang Kelas 1B",
-    waliKelasId: "T002",
-    waliKelasName: "Pak Ahmad Wijaya",
-  },
-]
+import { Loader2 } from "lucide-react"
 
 export default function StudentPlacementPage() {
-  const [placements, setPlacements] = useState(initialPlacements)
+  const {
+    data: placements,
+    loading,
+    fetchPenempatan,
+    createPenempatan,
+    updatePenempatan,
+    deletePenempatan,
+  } = usePenempatan()
+
+  const { data: students, fetchSiswa } = useSiswa()
+  const { data: classes, fetchKelas } = useKelas()
+
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
-    nisn: "",
-    studentName: "",
-    classId: "",
-    className: "",
-    roomId: "",
-    roomName: "",
-    waliKelasId: "",
-    waliKelasName: "",
+    siswaId: "",
+    kelasId: "",
+    tahunAjaranId: "",
   })
   const [editingId, setEditingId] = useState<string | null>(null)
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchPenempatan()
+    fetchSiswa(1, 100) // Fetch all students for dropdown
+    fetchKelas() // Fetch all classes for dropdown
+  }, [fetchPenempatan, fetchSiswa, fetchKelas])
+
+  const handleAdd = async () => {
     if (editingId) {
-      setPlacements(placements.map((p) => (p.id === editingId ? { ...p, ...formData } : p)))
-      setEditingId(null)
-    } else {
-      const newPlacement: StudentPlacement = {
-        id: String(placements.length + 1),
-        ...formData,
+      const success = await updatePenempatan(editingId, formData)
+      if (success) {
+        setEditingId(null)
+        setFormData({ siswaId: "", kelasId: "", tahunAjaranId: "" })
+        setShowForm(false)
       }
-      setPlacements([...placements, newPlacement])
+    } else {
+      const success = await createPenempatan(formData)
+      if (success) {
+        setFormData({ siswaId: "", kelasId: "", tahunAjaranId: "" })
+        setShowForm(false)
+      }
     }
-    setFormData({
-      nisn: "",
-      studentName: "",
-      classId: "",
-      className: "",
-      roomId: "",
-      roomName: "",
-      waliKelasId: "",
-      waliKelasName: "",
-    })
-    setShowForm(false)
   }
 
-  const handleEdit = (placement: StudentPlacement) => {
-    setFormData(placement)
+  const handleEdit = (placement: Penempatan) => {
+    setFormData({
+      siswaId: placement.siswaId,
+      kelasId: placement.kelasId,
+      tahunAjaranId: placement.tahunAjaranId || "",
+    })
     setEditingId(placement.id)
     setShowForm(true)
   }
 
-  const handleDelete = (id: string) => {
-    setPlacements(placements.filter((p) => p.id !== id))
+  const handleDelete = async (id: string) => {
+    await deletePenempatan(id)
+  }
+
+  if (loading && placements.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium">Memuat data penempatan...</p>
+      </div>
+    )
   }
 
   return (
@@ -107,22 +80,13 @@ export default function StudentPlacementPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Manajemen Penempatan Siswa</h1>
-          <p className="text-gray-600 mt-1">Tempatkan siswa ke kelas dan ruangan, tentukan wali kelas</p>
+          <p className="text-gray-600 mt-1">Tempatkan siswa ke kelas</p>
         </div>
         <Button
           onClick={() => {
             setShowForm(!showForm)
             setEditingId(null)
-            setFormData({
-              nisn: "",
-              studentName: "",
-              classId: "",
-              className: "",
-              roomId: "",
-              roomName: "",
-              waliKelasId: "",
-              waliKelasName: "",
-            })
+            setFormData({ siswaId: "", kelasId: "", tahunAjaranId: "" })
           }}
           className="bg-red-600 hover:bg-red-700"
         >
@@ -133,85 +97,50 @@ export default function StudentPlacementPage() {
       {showForm && (
         <Card className="border-red-200 bg-red-50">
           <CardHeader>
-            <CardTitle className="text-red-600">{editingId ? "Edit Penempatan" : "Tambah Penempatan Siswa"}</CardTitle>
+            <CardTitle className="text-red-600">
+              {editingId ? "Edit Penempatan" : "Tambah Penempatan Siswa"}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">NISN</label>
-                <Input
-                  placeholder="0001"
-                  value={formData.nisn}
-                  onChange={(e) => setFormData({ ...formData, nisn: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Siswa</label>
-                <Input
-                  placeholder="Ahmad Rizki Pratama"
-                  value={formData.studentName}
-                  onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Kelas</label>
-                <Input
-                  placeholder="C1A"
-                  value={formData.classId}
-                  onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Kelas</label>
-                <Input
-                  placeholder="Kelas 1A"
-                  value={formData.className}
-                  onChange={(e) => setFormData({ ...formData, className: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Ruangan</label>
-                <Input
-                  placeholder="R101"
-                  value={formData.roomId}
-                  onChange={(e) => setFormData({ ...formData, roomId: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Ruangan</label>
-                <Input
-                  placeholder="Ruang Kelas 1A"
-                  value={formData.roomName}
-                  onChange={(e) => setFormData({ ...formData, roomName: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ID Wali Kelas</label>
-                <Input
-                  placeholder="T001"
-                  value={formData.waliKelasId}
-                  onChange={(e) => setFormData({ ...formData, waliKelasId: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Wali Kelas</label>
-                <Input
-                  placeholder="Ibu Siti Nurhaliza"
-                  value={formData.waliKelasName}
-                  onChange={(e) => setFormData({ ...formData, waliKelasName: e.target.value })}
-                  className="border-gray-300"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Siswa</label>
+              <select
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm"
+                value={formData.siswaId}
+                onChange={(e) => setFormData({ ...formData, siswaId: e.target.value })}
+              >
+                <option value="">Pilih Siswa</option>
+                {students.map((student) => (
+                  <option key={student.id} value={student.id}>
+                    {student.nis} - {student.nama}
+                  </option>
+                ))}
+              </select>
             </div>
-            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700">
-              {editingId ? "Update Penempatan" : "Tambah Penempatan"}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+              <select
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-background px-3 py-2 text-sm"
+                value={formData.kelasId}
+                onChange={(e) => setFormData({ ...formData, kelasId: e.target.value })}
+              >
+                <option value="">Pilih Kelas</option>
+                {classes.map((kelas) => (
+                  <option key={kelas.id} value={kelas.id}>
+                    {kelas.namaKelas}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button onClick={handleAdd} className="w-full bg-red-600 hover:bg-red-700" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                  {editingId ? "Memperbarui..." : "Menambahkan..."}
+                </>
+              ) : (
+                editingId ? "Update Penempatan" : "Tambah Penempatan"
+              )}
             </Button>
           </CardContent>
         </Card>
@@ -227,20 +156,12 @@ export default function StudentPlacementPage() {
                     <div>
                       <p className="text-gray-600 font-medium">Siswa</p>
                       <p className="font-semibold text-gray-900">
-                        {placement.studentName} ({placement.nisn})
+                        {placement.siswa?.nama} ({placement.siswa?.nis})
                       </p>
                     </div>
                     <div>
                       <p className="text-gray-600 font-medium">Kelas</p>
-                      <p className="font-semibold text-gray-900">{placement.className}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600 font-medium">Ruangan</p>
-                      <p className="font-semibold text-gray-900">{placement.roomName}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600 font-medium">Wali Kelas</p>
-                      <p className="font-semibold text-gray-900">{placement.waliKelasName}</p>
+                      <p className="font-semibold text-gray-900">{placement.kelas?.namaKelas}</p>
                     </div>
                   </div>
                 </div>
@@ -256,6 +177,7 @@ export default function StudentPlacementPage() {
                     onClick={() => handleDelete(placement.id)}
                     variant="destructive"
                     className="bg-red-600 hover:bg-red-700"
+                    disabled={loading}
                   >
                     Hapus
                   </Button>

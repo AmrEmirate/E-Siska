@@ -11,14 +11,14 @@ export interface Kelas {
   waliKelasId?: string
   tingkatan?: {
     id: string
-    nama: string
+    namaTingkat: string
   }
   waliKelas?: {
     id: string
     nama: string
   }
   _count?: {
-    Penempatan: number
+    siswa: number
   }
   createdAt?: string
   updatedAt?: string

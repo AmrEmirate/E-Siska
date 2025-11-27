@@ -1,122 +1,126 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { apiClient } from "@/lib/api-client"
-import { useToast } from "@/components/ui/use-toast"
+import { useState, useCallback } from "react";
+import { apiClient } from "@/lib/api-client";
+import { useToast } from "@/components/ui/use-toast";
 
 export interface Penugasan {
-  id: string
-  guruId: string
-  kelasId: string
-  mapelId: string
-  tahunAjaranId: string
+  id: string;
+  guruId: string;
+  kelasId: string;
+  mapelId: string;
+  tahunAjaranId: string;
   guru?: {
-    id: string
-    nama: string
-    nip: string
-  }
+    id: string;
+    nama: string;
+    nip: string;
+  };
   kelas?: {
-    id: string
-    namaKelas: string
-  }
+    id: string;
+    namaKelas: string;
+  };
   mapel?: {
-    id: string
-    namaMapel: string
-  }
+    id: string;
+    namaMapel: string;
+  };
   tahunAjaran?: {
-    id: string
-    tahun: string
-    semester: string
-  }
-  createdAt?: string
-  updatedAt?: string
+    id: string;
+    tahun: string;
+    semester: string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export function usePenugasan() {
-  const [data, setData] = useState<Penugasan[]>([])
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+  const [data, setData] = useState<Penugasan[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const fetchPenugasan = useCallback(async (guruId?: string, kelasId?: string) => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      if (guruId) params.append("guruId", guruId)
-      if (kelasId) params.append("kelasId", kelasId)
+  const fetchPenugasan = useCallback(
+    async (guruId?: string, kelasId?: string) => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (guruId) params.append("guruId", guruId);
+        if (kelasId) params.append("kelasId", kelasId);
 
-      const response = await apiClient.get(`/penugasan-guru?${params.toString()}`)
-      setData(response.data.data || [])
-    } catch (error) {
-      console.error("Error fetching penugasan:", error)
-      toast({
-        title: "Gagal memuat data",
-        description: "Terjadi kesalahan saat mengambil data penugasan guru.",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }, [toast])
+        const response = await apiClient.get(
+          `/penugasan-guru?${params.toString()}`
+        );
+        setData(response.data.data || []);
+      } catch (error) {
+        toast({
+          title: "Gagal memuat data",
+          description: "Terjadi kesalahan saat mengambil data penugasan guru.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [toast]
+  );
 
   const createPenugasan = async (penugasanData: Partial<Penugasan>) => {
     try {
-      await apiClient.post("/penugasan-guru", penugasanData)
+      await apiClient.post("/penugasan-guru", penugasanData);
       toast({
         title: "Berhasil",
         description: "Data penugasan guru berhasil ditambahkan.",
-      })
-      fetchPenugasan()
-      return true
+      });
+      fetchPenugasan();
+      return true;
     } catch (error) {
-      console.error("Error creating penugasan:", error)
       toast({
         title: "Gagal",
         description: "Gagal menambahkan data penugasan guru.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
-  const updatePenugasan = async (id: string, penugasanData: Partial<Penugasan>) => {
+  const updatePenugasan = async (
+    id: string,
+    penugasanData: Partial<Penugasan>
+  ) => {
     try {
-      await apiClient.put(`/penugasan-guru/${id}`, penugasanData)
+      await apiClient.put(`/penugasan-guru/${id}`, penugasanData);
       toast({
         title: "Berhasil",
         description: "Data penugasan guru berhasil diperbarui.",
-      })
-      fetchPenugasan()
-      return true
+      });
+      fetchPenugasan();
+      return true;
     } catch (error) {
-      console.error("Error updating penugasan:", error)
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data penugasan guru.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
   const deletePenugasan = async (id: string) => {
     try {
-      await apiClient.delete(`/penugasan-guru/${id}`)
+      await apiClient.delete(`/penugasan-guru/${id}`);
       toast({
         title: "Berhasil",
         description: "Data penugasan guru berhasil dihapus.",
-      })
-      fetchPenugasan()
-      return true
+      });
+      fetchPenugasan();
+      return true;
     } catch (error) {
-      console.error("Error deleting penugasan:", error)
       toast({
         title: "Gagal",
         description: "Gagal menghapus data penugasan guru.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
   return {
     data,
@@ -125,5 +129,5 @@ export function usePenugasan() {
     createPenugasan,
     updatePenugasan,
     deletePenugasan,
-  }
+  };
 }

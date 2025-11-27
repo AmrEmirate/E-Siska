@@ -1,115 +1,121 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { apiClient } from "@/lib/api-client"
-import { useToast } from "@/components/ui/use-toast"
+import { useState, useCallback } from "react";
+import { apiClient } from "@/lib/api-client";
+import { useToast } from "@/components/ui/use-toast";
 
 export interface Absensi {
-  id: string
-  siswaId: string
-  kelasId: string
-  tanggal: string
-  status: "HADIR" | "SAKIT" | "IZIN" | "ALPHA"
-  keterangan?: string
+  id: string;
+  siswaId: string;
+  kelasId: string;
+  tanggal: string;
+  status: "HADIR" | "SAKIT" | "IZIN" | "ALPHA";
+  keterangan?: string;
   siswa?: {
-    id: string
-    nama: string
-    nis: string
-  }
+    id: string;
+    nama: string;
+    nis: string;
+  };
   kelas?: {
-    id: string
-    namaKelas: string
-  }
-  createdAt?: string
-  updatedAt?: string
+    id: string;
+    namaKelas: string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export function useAbsensi() {
-  const [data, setData] = useState<Absensi[]>([])
-  const [loading, setLoading] = useState(false)
-  const [stats, setStats] = useState<{ hadir: number; sakit: number; izin: number; alpha: number; total: number } | null>(null)
-  const { toast } = useToast()
+  const [data, setData] = useState<Absensi[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<{
+    hadir: number;
+    sakit: number;
+    izin: number;
+    alpha: number;
+    total: number;
+  } | null>(null);
+  const { toast } = useToast();
 
   const fetchAbsensi = useCallback(
     async (kelasId?: string, tanggal?: string, siswaId?: string) => {
-      setLoading(true)
+      setLoading(true);
       try {
-        const params = new URLSearchParams()
-        if (kelasId) params.append("kelasId", kelasId)
-        if (tanggal) params.append("tanggal", tanggal)
-        if (siswaId) params.append("siswaId", siswaId)
+        const params = new URLSearchParams();
+        if (kelasId) params.append("kelasId", kelasId);
+        if (tanggal) params.append("tanggal", tanggal);
+        if (siswaId) params.append("siswaId", siswaId);
 
-        const response = await apiClient.get(`/absensi?${params.toString()}`)
-        setData(response.data.data || [])
+        const response = await apiClient.get(`/absensi?${params.toString()}`);
+        setData(response.data.data || []);
       } catch (error) {
-        console.error("Error fetching absensi:", error)
         toast({
           title: "Gagal memuat data",
           description: "Terjadi kesalahan saat mengambil data absensi.",
           variant: "destructive",
-        })
+        });
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     },
     [toast]
-  )
+  );
 
   const createAbsensi = async (absensiData: Partial<Absensi>) => {
     try {
-      await apiClient.post("/absensi", absensiData)
+      await apiClient.post("/absensi", absensiData);
       toast({
         title: "Berhasil",
         description: "Data absensi berhasil ditambahkan.",
-      })
-      fetchAbsensi()
-      return true
+      });
+      fetchAbsensi();
+      return true;
     } catch (error) {
-      console.error("Error creating absensi:", error)
       toast({
         title: "Gagal",
         description: "Gagal menambahkan data absensi.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
   const updateAbsensi = async (id: string, absensiData: Partial<Absensi>) => {
     try {
-      await apiClient.put(`/absensi/${id}`, absensiData)
+      await apiClient.put(`/absensi/${id}`, absensiData);
       toast({
         title: "Berhasil",
         description: "Data absensi berhasil diperbarui.",
-      })
-      fetchAbsensi()
-      return true
+      });
+      fetchAbsensi();
+      return true;
     } catch (error) {
-      console.error("Error updating absensi:", error)
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data absensi.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
-  const fetchAbsensiByStudent = useCallback(async (siswaId: string) => {
-    await fetchAbsensi(undefined, undefined, siswaId)
-  }, [fetchAbsensi])
+  const fetchAbsensiByStudent = useCallback(
+    async (siswaId: string) => {
+      await fetchAbsensi(undefined, undefined, siswaId);
+    },
+    [fetchAbsensi]
+  );
 
   const calculateStats = useCallback(() => {
-    const hadir = data.filter((d) => d.status === "HADIR").length
-    const sakit = data.filter((d) => d.status === "SAKIT").length
-    const izin = data.filter((d) => d.status === "IZIN").length
-    const alpha = data.filter((d) => d.status === "ALPHA").length
-    setStats({ hadir, sakit, izin, alpha, total: data.length })
-  }, [data])
+    const hadir = data.filter((d) => d.status === "HADIR").length;
+    const sakit = data.filter((d) => d.status === "SAKIT").length;
+    const izin = data.filter((d) => d.status === "IZIN").length;
+    const alpha = data.filter((d) => d.status === "ALPHA").length;
+    setStats({ hadir, sakit, izin, alpha, total: data.length });
+  }, [data]);
 
   useCallback(() => {
-    calculateStats()
-  }, [data, calculateStats])
+    calculateStats();
+  }, [data, calculateStats]);
 
   return {
     data,
@@ -119,5 +125,5 @@ export function useAbsensi() {
     fetchAbsensiByStudent,
     createAbsensi,
     updateAbsensi,
-  }
+  };
 }

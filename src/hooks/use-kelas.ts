@@ -1,113 +1,109 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { apiClient } from "@/lib/api-client"
-import { useToast } from "@/components/ui/use-toast"
+import { useState, useCallback } from "react";
+import { apiClient } from "@/lib/api-client";
+import { useToast } from "@/components/ui/use-toast";
 
 export interface Kelas {
-  id: string
-  namaKelas: string
-  tingkatanId: string
-  waliKelasId?: string
+  id: string;
+  namaKelas: string;
+  tingkatanId: string;
+  waliKelasId?: string;
   tingkatan?: {
-    id: string
-    namaTingkat: string
-  }
+    id: string;
+    namaTingkat: string;
+  };
   waliKelas?: {
-    id: string
-    nama: string
-  }
+    id: string;
+    nama: string;
+  };
   _count?: {
-    siswa: number
-  }
-  createdAt?: string
-  updatedAt?: string
+    siswa: number;
+  };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export function useKelas() {
-  const [data, setData] = useState<Kelas[]>([])
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+  const [data, setData] = useState<Kelas[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const fetchKelas = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await apiClient.get("/kelas")
-      setData(response.data.data || [])
+      const response = await apiClient.get("/kelas");
+      setData(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching kelas:", error)
       toast({
         title: "Gagal memuat data",
         description: "Terjadi kesalahan saat mengambil data kelas.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [toast])
+  }, [toast]);
 
   const createKelas = async (kelasData: Partial<Kelas>) => {
     try {
-      await apiClient.post("/kelas", kelasData)
+      await apiClient.post("/kelas", kelasData);
       toast({
         title: "Berhasil",
         description: "Data kelas berhasil ditambahkan.",
-      })
-      fetchKelas()
-      return true
+      });
+      fetchKelas();
+      return true;
     } catch (error: any) {
-      console.error("Error creating kelas:", error)
-      const isConflict = error?.response?.status === 409
+      const isConflict = error?.response?.status === 409;
       toast({
         title: isConflict ? "Konflik Data" : "Gagal",
-        description: isConflict 
-          ? "Wali kelas yang dipilih sudah terdaftar di kelas lain." 
+        description: isConflict
+          ? "Wali kelas yang dipilih sudah terdaftar di kelas lain."
           : "Gagal menambahkan data kelas.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
   const updateKelas = async (id: string, kelasData: Partial<Kelas>) => {
     try {
-      await apiClient.put(`/kelas/${id}`, kelasData)
+      await apiClient.put(`/kelas/${id}`, kelasData);
       toast({
         title: "Berhasil",
         description: "Data kelas berhasil diperbarui.",
-      })
-      fetchKelas()
-      return true
+      });
+      fetchKelas();
+      return true;
     } catch (error) {
-      console.error("Error updating kelas:", error)
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data kelas.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
   const deleteKelas = async (id: string) => {
     try {
-      await apiClient.delete(`/kelas/${id}`)
+      await apiClient.delete(`/kelas/${id}`);
       toast({
         title: "Berhasil",
         description: "Data kelas berhasil dihapus.",
-      })
-      fetchKelas()
-      return true
+      });
+      fetchKelas();
+      return true;
     } catch (error) {
-      console.error("Error deleting kelas:", error)
       toast({
         title: "Gagal",
         description: "Gagal menghapus data kelas.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     }
-  }
+  };
 
   return {
     data,
@@ -116,5 +112,5 @@ export function useKelas() {
     createKelas,
     updateKelas,
     deleteKelas,
-  }
+  };
 }

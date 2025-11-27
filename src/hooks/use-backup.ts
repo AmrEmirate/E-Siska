@@ -1,82 +1,79 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { apiClient } from "@/lib/api-client"
-import { useToast } from "@/components/ui/use-toast"
+import { useState, useCallback } from "react";
+import { apiClient } from "@/lib/api-client";
+import { useToast } from "@/components/ui/use-toast";
 
 export interface Backup {
-  id: string
-  fileName: string
-  fileSize: number
-  createdAt: string
+  id: string;
+  fileName: string;
+  fileSize: number;
+  createdAt: string;
 }
 
 export function useBackup() {
-  const [data, setData] = useState<Backup[]>([])
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+  const [data, setData] = useState<Backup[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const fetchBackups = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await apiClient.get("/backup")
-      setData(response.data.data || [])
+      const response = await apiClient.get("/backup");
+      setData(response.data.data || []);
     } catch (error) {
-      console.error("Error fetching backups:", error)
       toast({
         title: "Gagal memuat data",
         description: "Terjadi kesalahan saat mengambil data backup.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [toast])
+  }, [toast]);
 
   const createBackup = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await apiClient.post("/backup")
+      await apiClient.post("/backup");
       toast({
         title: "Berhasil",
         description: "Backup database berhasil dibuat.",
-      })
-      fetchBackups()
-      return true
+      });
+      fetchBackups();
+      return true;
     } catch (error) {
-      console.error("Error creating backup:", error)
       toast({
         title: "Gagal",
         description: "Gagal membuat backup database.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const restoreBackup = async (id: string) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await apiClient.post(`/backup/${id}/restore`)
+      await apiClient.post(`/backup/${id}/restore`);
       toast({
         title: "Berhasil",
         description: "Database berhasil di-restore.",
-      })
-      return true
+      });
+      return true;
     } catch (error) {
-      console.error("Error restoring backup:", error)
       toast({
         title: "Gagal",
         description: "Gagal restore database.",
         variant: "destructive",
-      })
-      return false
+      });
+      return false;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return {
     data,
@@ -84,5 +81,5 @@ export function useBackup() {
     fetchBackups,
     createBackup,
     restoreBackup,
-  }
+  };
 }

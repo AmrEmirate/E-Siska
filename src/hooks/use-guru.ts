@@ -62,7 +62,6 @@ export function useGuru() {
         setData(response.data.data || []);
         setMeta(response.data.meta || { page, limit, total: 0, totalPages: 0 });
       } catch (error) {
-        console.error("Error fetching guru:", error);
         toast({
           title: "Gagal memuat data",
           description: "Terjadi kesalahan saat mengambil data guru.",
@@ -85,7 +84,6 @@ export function useGuru() {
       fetchGuru(meta.page, meta.limit);
       return true;
     } catch (error) {
-      console.error("Error creating guru:", error);
       toast({
         title: "Gagal",
         description: "Gagal menambahkan data guru.",
@@ -105,7 +103,6 @@ export function useGuru() {
       fetchGuru(meta.page, meta.limit);
       return true;
     } catch (error) {
-      console.error("Error updating guru:", error);
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data guru.",
@@ -125,7 +122,6 @@ export function useGuru() {
       fetchGuru(meta.page, meta.limit);
       return true;
     } catch (error) {
-      console.error("Error deleting guru:", error);
       toast({
         title: "Gagal",
         description: "Gagal menghapus data guru.",

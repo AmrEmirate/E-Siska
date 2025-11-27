@@ -1,54 +1,53 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { apiClient } from "@/lib/api-client"
-import { Loader2, ArrowLeft, BookOpen } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import { apiClient } from "@/lib/api-client";
+import { Loader2, ArrowLeft, BookOpen } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
 
 interface GradeComponent {
-  komponen: string
-  tipe: string
-  nilai: number
-  guru: string
+  komponen: string;
+  tipe: string;
+  nilai: number;
+  guru: string;
 }
 
 interface SubjectGrades {
-  mapel: string
-  kategori: string
-  components: GradeComponent[]
+  mapel: string;
+  kategori: string;
+  components: GradeComponent[];
 }
 
 export default function StudentGradesPage() {
-  const { toast } = useToast()
-  const [grades, setGrades] = useState<SubjectGrades[]>([])
-  const [loading, setLoading] = useState(true)
+  const { toast } = useToast();
+  const [grades, setGrades] = useState<SubjectGrades[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchGrades()
-  }, [])
+    fetchGrades();
+  }, []);
 
   const fetchGrades = async () => {
     try {
-      const res = await apiClient.get("/nilai/me")
-      setGrades(res.data.data)
+      const res = await apiClient.get("/nilai/me");
+      setGrades(res.data.data);
     } catch (error) {
-      console.error("Failed to fetch grades", error)
       toast({
         variant: "destructive",
         title: "Gagal memuat nilai",
         description: "Tidak dapat mengambil data nilai.",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -56,18 +55,23 @@ export default function StudentGradesPage() {
         <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
         <p className="text-gray-500 font-medium">Memuat data nilai...</p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-6">
       <div className="flex items-center gap-4 mb-6">
-        <Link href="/dashboard/student" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <Link
+          href="/dashboard/student"
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
           <ArrowLeft size={24} className="text-gray-600" />
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Nilai Akademik</h1>
-          <p className="text-gray-600">Daftar nilai tugas, ulangan, dan ujian per mata pelajaran.</p>
+          <p className="text-gray-600">
+            Daftar nilai tugas, ulangan, dan ujian per mata pelajaran.
+          </p>
         </div>
       </div>
 
@@ -88,8 +92,12 @@ export default function StudentGradesPage() {
                       {subject.mapel.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <div className="font-semibold text-gray-900">{subject.mapel}</div>
-                      <div className="text-xs text-gray-500">{subject.kategori}</div>
+                      <div className="font-semibold text-gray-900">
+                        {subject.mapel}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {subject.kategori}
+                      </div>
                     </div>
                   </div>
                 </AccordionTrigger>
@@ -98,25 +106,41 @@ export default function StudentGradesPage() {
                     <table className="w-full text-sm text-left">
                       <thead className="bg-gray-50 text-gray-700 border-b border-gray-200">
                         <tr>
-                          <th className="px-4 py-3 font-medium">Komponen Nilai</th>
+                          <th className="px-4 py-3 font-medium">
+                            Komponen Nilai
+                          </th>
                           <th className="px-4 py-3 font-medium">Tipe</th>
-                          <th className="px-4 py-3 font-medium">Guru Pengampu</th>
-                          <th className="px-4 py-3 font-medium text-right">Nilai</th>
+                          <th className="px-4 py-3 font-medium">
+                            Guru Pengampu
+                          </th>
+                          <th className="px-4 py-3 font-medium text-right">
+                            Nilai
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
                         {subject.components.map((comp, cIdx) => (
                           <tr key={cIdx}>
-                            <td className="px-4 py-3 font-medium text-gray-900">{comp.komponen}</td>
+                            <td className="px-4 py-3 font-medium text-gray-900">
+                              {comp.komponen}
+                            </td>
                             <td className="px-4 py-3">
-                              <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                comp.tipe === 'INPUT' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                              }`}>
+                              <span
+                                className={`px-2 py-1 rounded text-xs font-medium ${
+                                  comp.tipe === "INPUT"
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-gray-100 text-gray-600"
+                                }`}
+                              >
                                 {comp.tipe}
                               </span>
                             </td>
-                            <td className="px-4 py-3 text-gray-500">{comp.guru}</td>
-                            <td className="px-4 py-3 text-right font-bold text-gray-900">{comp.nilai}</td>
+                            <td className="px-4 py-3 text-gray-500">
+                              {comp.guru}
+                            </td>
+                            <td className="px-4 py-3 text-right font-bold text-gray-900">
+                              {comp.nilai}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -129,5 +153,5 @@ export default function StudentGradesPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

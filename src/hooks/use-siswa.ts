@@ -65,12 +65,9 @@ export function useSiswa() {
 
         const response = await apiClient.get(`/siswa?${params.toString()}`);
 
-        // Assuming backend returns { data: [], meta: { ... } } or similar
-        // Adjust based on actual response structure
         setData(response.data.data || []);
         setMeta(response.data.meta || { page, limit, total: 0, totalPages: 0 });
       } catch (error) {
-        console.error("Error fetching siswa:", error);
         toast({
           title: "Gagal memuat data",
           description: "Terjadi kesalahan saat mengambil data siswa.",
@@ -93,7 +90,6 @@ export function useSiswa() {
       fetchSiswa(meta.page, meta.limit);
       return true;
     } catch (error: any) {
-      console.error("Error creating siswa:", error);
       const isConflict = error.response?.status === 409;
       toast({
         title: isConflict ? "Gagal: Data Duplikat" : "Gagal",
@@ -116,7 +112,6 @@ export function useSiswa() {
       fetchSiswa(meta.page, meta.limit);
       return true;
     } catch (error) {
-      console.error("Error updating siswa:", error);
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data siswa.",
@@ -136,7 +131,6 @@ export function useSiswa() {
       fetchSiswa(meta.page, meta.limit);
       return true;
     } catch (error) {
-      console.error("Error deleting siswa:", error);
       toast({
         title: "Gagal",
         description: "Gagal menghapus data siswa.",
@@ -148,20 +142,18 @@ export function useSiswa() {
 
   const fetchSiswaNoPagination = useCallback(
     async (params?: { kelasId?: string; search?: string }) => {
-      // Fetch all students without pagination for dropdowns
       setLoading(true);
       try {
         const queryParams = new URLSearchParams();
         if (params?.kelasId) queryParams.append("kelasId", params.kelasId);
         if (params?.search) queryParams.append("search", params.search);
-        queryParams.append("limit", "1000"); // Get all
+        queryParams.append("limit", "1000");
 
         const response = await apiClient.get(
           `/siswa?${queryParams.toString()}`
         );
         setData(response.data.data || []);
       } catch (error) {
-        console.error("Error fetching siswa:", error);
         toast({
           title: "Gagal memuat data",
           description: "Terjadi kesalahan saat mengambil data siswa.",

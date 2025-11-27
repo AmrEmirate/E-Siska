@@ -52,7 +52,6 @@ export default function TeachersManagementPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState<Guru | null>(null);
 
-  // Form State
   const [formData, setFormData] = useState<Partial<Guru>>({
     nip: "",
     nama: "",
@@ -379,8 +378,6 @@ export default function TeachersManagementPage() {
         </Dialog>
       </div>
 
-      {/* Stats Cards could go here */}
-
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50/30">
           <div className="relative w-full sm:max-w-sm">
@@ -547,7 +544,6 @@ export default function TeachersManagementPage() {
           </Table>
         </div>
 
-        {/* Pagination */}
         <div className="p-4 border-t border-gray-200 flex justify-between items-center bg-gray-50/30">
           <div className="text-sm text-gray-500">
             Halaman {meta.page} dari {meta.totalPages || 1}
@@ -575,7 +571,6 @@ export default function TeachersManagementPage() {
         </div>
       </div>
 
-      {/* Edit Modal */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>

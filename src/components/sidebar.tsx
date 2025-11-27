@@ -155,17 +155,14 @@ export default function Sidebar() {
 
   const menuItems = getMenuItems(user?.role);
   const isActive = (href: string) => {
-    // Special handling for dashboard root - exact match only
     if (href === "/dashboard") {
       return pathname === "/dashboard";
     }
-    // For other paths, check exact match or sub-paths
     return pathname === href || pathname.startsWith(href + "/");
   };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
-      {/* Logo */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center gap-2 mb-3">
           <Image
@@ -181,7 +178,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {menuItems.map((item) => (
           <Link key={item.href} href={item.href}>
@@ -195,7 +191,6 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer Info */}
       <div className="p-4 border-t border-gray-200 text-xs text-gray-500">
         <p className="font-semibold mb-1">Sekolah</p>
         <p>SDN Ciater 02</p>

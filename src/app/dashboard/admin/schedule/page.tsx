@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useJadwal, type Jadwal } from "@/hooks/use-jadwal"
-import { useKelas } from "@/hooks/use-kelas"
-import { useGuru } from "@/hooks/use-guru"
-import { useMapel } from "@/hooks/use-mapel"
-import { useRuangan } from "@/hooks/use-ruangan"
-import { useTahunAjaran } from "@/hooks/use-tahun-ajaran"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState, useEffect } from "react";
+import { useJadwal, type Jadwal } from "@/hooks/use-jadwal";
+import { useKelas } from "@/hooks/use-kelas";
+import { useGuru } from "@/hooks/use-guru";
+import { useMapel } from "@/hooks/use-mapel";
+import { useRuangan } from "@/hooks/use-ruangan";
+import { useTahunAjaran } from "@/hooks/use-tahun-ajaran";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,9 +37,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Label } from "@/components/ui/label"
-import { Loader2, Plus, Pencil, Trash2, Calendar, Clock, MapPin, User, BookOpen } from "lucide-react"
+} from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Loader2,
+  Plus,
+  Pencil,
+  Trash2,
+  Calendar,
+  Clock,
+  MapPin,
+  User,
+  BookOpen,
+} from "lucide-react";
 
 export default function ScheduleManagementPage() {
   const {
@@ -49,16 +59,16 @@ export default function ScheduleManagementPage() {
     createJadwal,
     updateJadwal,
     deleteJadwal,
-  } = useJadwal()
+  } = useJadwal();
 
-  const { data: classes, fetchKelas } = useKelas()
-  const { data: teachers, fetchGuru } = useGuru()
-  const { data: subjects, fetchMapel } = useMapel()
-  const { data: rooms, fetchRuangan } = useRuangan()
-  const { data: academicYears, fetchTahunAjaran } = useTahunAjaran()
+  const { data: classes, fetchKelas } = useKelas();
+  const { data: teachers, fetchGuru } = useGuru();
+  const { data: subjects, fetchMapel } = useMapel();
+  const { data: rooms, fetchRuangan } = useRuangan();
+  const { data: academicYears, fetchTahunAjaran } = useTahunAjaran();
 
-  const [isAddOpen, setIsAddOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [formData, setFormData] = useState({
     kelasId: "",
     guruId: "",
@@ -68,19 +78,26 @@ export default function ScheduleManagementPage() {
     waktuMulai: "",
     waktuSelesai: "",
     tahunAjaranId: "",
-  })
-  const [selectedSchedule, setSelectedSchedule] = useState<Jadwal | null>(null)
+  });
+  const [selectedSchedule, setSelectedSchedule] = useState<Jadwal | null>(null);
 
-  const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+  const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
   useEffect(() => {
-    fetchJadwal()
-    fetchKelas()
-    fetchGuru(1, 100)
-    fetchMapel()
-    fetchRuangan()
-    fetchTahunAjaran()
-  }, [fetchJadwal, fetchKelas, fetchGuru, fetchMapel, fetchRuangan, fetchTahunAjaran])
+    fetchJadwal();
+    fetchKelas();
+    fetchGuru(1, 100);
+    fetchMapel();
+    fetchRuangan();
+    fetchTahunAjaran();
+  }, [
+    fetchJadwal,
+    fetchKelas,
+    fetchGuru,
+    fetchMapel,
+    fetchRuangan,
+    fetchTahunAjaran,
+  ]);
 
   const resetForm = () => {
     setFormData({
@@ -92,41 +109,52 @@ export default function ScheduleManagementPage() {
       waktuMulai: "",
       waktuSelesai: "",
       tahunAjaranId: "",
-    })
-    setSelectedSchedule(null)
-  }
+    });
+    setSelectedSchedule(null);
+  };
 
   const handleAdd = async () => {
-    // Validate tahunAjaranId is not empty
     if (!formData.tahunAjaranId) {
-      alert("Tahun ajaran harus dipilih")
-      return
+      alert("Tahun ajaran harus dipilih");
+      return;
     }
 
     const success = await createJadwal({
       ...formData,
-      hari: formData.hari as "Senin" | "Selasa" | "Rabu" | "Kamis" | "Jumat" | "Sabtu",
-    })
+      hari: formData.hari as
+        | "Senin"
+        | "Selasa"
+        | "Rabu"
+        | "Kamis"
+        | "Jumat"
+        | "Sabtu",
+    });
     if (success) {
-      setIsAddOpen(false)
-      resetForm()
+      setIsAddOpen(false);
+      resetForm();
     }
-  }
+  };
 
   const handleEdit = async () => {
-    if (!selectedSchedule) return
+    if (!selectedSchedule) return;
     const success = await updateJadwal(selectedSchedule.id, {
       ...formData,
-      hari: formData.hari as "Senin" | "Selasa" | "Rabu" | "Kamis" | "Jumat" | "Sabtu",
-    })
+      hari: formData.hari as
+        | "Senin"
+        | "Selasa"
+        | "Rabu"
+        | "Kamis"
+        | "Jumat"
+        | "Sabtu",
+    });
     if (success) {
-      setIsEditOpen(false)
-      resetForm()
+      setIsEditOpen(false);
+      resetForm();
     }
-  }
+  };
 
   const openEdit = (schedule: Jadwal) => {
-    setSelectedSchedule(schedule)
+    setSelectedSchedule(schedule);
     setFormData({
       kelasId: schedule.kelasId,
       guruId: schedule.guruId,
@@ -135,30 +163,36 @@ export default function ScheduleManagementPage() {
       hari: schedule.hari,
       waktuMulai: schedule.waktuMulai,
       waktuSelesai: schedule.waktuSelesai,
-      tahunAjaranId: schedule.tahunAjaranId || "", 
-    })
-    setIsEditOpen(true)
-  }
+      tahunAjaranId: schedule.tahunAjaranId || "",
+    });
+    setIsEditOpen(true);
+  };
 
-  const activeYear = academicYears.find(y => y.isActive)
+  const activeYear = academicYears.find((y) => y.isActive);
 
-  // Auto-set active academic year when opening add modal
   useEffect(() => {
     if (isAddOpen && activeYear) {
-      setFormData(prev => ({ ...prev, tahunAjaranId: activeYear.id }))
+      setFormData((prev) => ({ ...prev, tahunAjaranId: activeYear.id }));
     }
-  }, [isAddOpen, activeYear])
+  }, [isAddOpen, activeYear]);
 
   return (
     <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Manajemen Jadwal</h1>
-          <p className="text-gray-500 mt-2">Kelola jadwal pelajaran untuk setiap kelas.</p>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+            Manajemen Jadwal
+          </h1>
+          <p className="text-gray-500 mt-2">
+            Kelola jadwal pelajaran untuk setiap kelas.
+          </p>
         </div>
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105" onClick={resetForm}>
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
+              onClick={resetForm}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Tambah Jadwal
             </Button>
@@ -178,11 +212,15 @@ export default function ScheduleManagementPage() {
                     id="kelas"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={formData.kelasId}
-                    onChange={(e) => setFormData({ ...formData, kelasId: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, kelasId: e.target.value })
+                    }
                   >
                     <option value="">Pilih Kelas</option>
                     {classes.map((c) => (
-                      <option key={c.id} value={c.id}>{c.namaKelas}</option>
+                      <option key={c.id} value={c.id}>
+                        {c.namaKelas}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -192,11 +230,15 @@ export default function ScheduleManagementPage() {
                     id="hari"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={formData.hari}
-                    onChange={(e) => setFormData({ ...formData, hari: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, hari: e.target.value })
+                    }
                   >
                     <option value="">Pilih Hari</option>
                     {days.map((day) => (
-                      <option key={day} value={day}>{day}</option>
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -208,7 +250,9 @@ export default function ScheduleManagementPage() {
                   id="tahunAjaran"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={formData.tahunAjaranId}
-                  onChange={(e) => setFormData({ ...formData, tahunAjaranId: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tahunAjaranId: e.target.value })
+                  }
                 >
                   <option value="">Pilih Tahun Ajaran</option>
                   {academicYears.map((y) => (
@@ -226,7 +270,9 @@ export default function ScheduleManagementPage() {
                     id="jamMulai"
                     type="time"
                     value={formData.waktuMulai}
-                    onChange={(e) => setFormData({ ...formData, waktuMulai: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, waktuMulai: e.target.value })
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -235,7 +281,9 @@ export default function ScheduleManagementPage() {
                     id="jamSelesai"
                     type="time"
                     value={formData.waktuSelesai}
-                    onChange={(e) => setFormData({ ...formData, waktuSelesai: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, waktuSelesai: e.target.value })
+                    }
                   />
                 </div>
               </div>
@@ -246,11 +294,15 @@ export default function ScheduleManagementPage() {
                   id="mapel"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={formData.mapelId}
-                  onChange={(e) => setFormData({ ...formData, mapelId: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, mapelId: e.target.value })
+                  }
                 >
                   <option value="">Pilih Mata Pelajaran</option>
                   {subjects.map((m) => (
-                    <option key={m.id} value={m.id}>{m.namaMapel}</option>
+                    <option key={m.id} value={m.id}>
+                      {m.namaMapel}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -262,11 +314,15 @@ export default function ScheduleManagementPage() {
                     id="guru"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={formData.guruId}
-                    onChange={(e) => setFormData({ ...formData, guruId: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, guruId: e.target.value })
+                    }
                   >
                     <option value="">Pilih Guru</option>
                     {teachers.map((t) => (
-                      <option key={t.id} value={t.id}>{t.nama}</option>
+                      <option key={t.id} value={t.id}>
+                        {t.nama}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -276,18 +332,28 @@ export default function ScheduleManagementPage() {
                     id="ruangan"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={formData.ruanganId}
-                    onChange={(e) => setFormData({ ...formData, ruanganId: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, ruanganId: e.target.value })
+                    }
                   >
                     <option value="">Pilih Ruangan</option>
                     {rooms.map((r) => (
-                      <option key={r.id} value={r.id}>{r.namaRuangan}</option>
+                      <option key={r.id} value={r.id}>
+                        {r.namaRuangan}
+                      </option>
                     ))}
                   </select>
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button type="submit" onClick={handleAdd} className="w-full sm:w-auto">Simpan Jadwal</Button>
+              <Button
+                type="submit"
+                onClick={handleAdd}
+                className="w-full sm:w-auto"
+              >
+                Simpan Jadwal
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -297,10 +363,15 @@ export default function ScheduleManagementPage() {
         <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50/30">
           <div className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Daftar Jadwal Pelajaran</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Daftar Jadwal Pelajaran
+            </h2>
           </div>
           <div className="text-sm text-gray-500">
-            Total: <span className="font-semibold text-gray-900">{schedules.length} Jadwal</span>
+            Total:{" "}
+            <span className="font-semibold text-gray-900">
+              {schedules.length} Jadwal
+            </span>
           </div>
         </div>
 
@@ -320,17 +391,32 @@ export default function ScheduleManagementPage() {
               {loading ? (
                 [...Array(5)].map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><div className="h-4 w-32 bg-gray-200 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-20 bg-gray-200 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-40 bg-gray-200 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-32 bg-gray-200 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-24 bg-gray-200 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-8 w-8 bg-gray-200 rounded animate-pulse ml-auto" /></TableCell>
+                    <TableCell>
+                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-8 w-8 bg-gray-200 rounded animate-pulse ml-auto" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : schedules.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-gray-500">
+                  <TableCell
+                    colSpan={6}
+                    className="text-center py-12 text-gray-500"
+                  >
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Calendar className="w-8 h-8 text-gray-300" />
                       <p>Belum ada jadwal pelajaran</p>
@@ -339,10 +425,15 @@ export default function ScheduleManagementPage() {
                 </TableRow>
               ) : (
                 schedules.map((schedule) => (
-                  <TableRow key={schedule.id} className="hover:bg-gray-50 transition-colors">
+                  <TableRow
+                    key={schedule.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
                     <TableCell>
                       <div className="flex flex-col gap-1">
-                        <span className="font-medium text-gray-900">{schedule.hari}</span>
+                        <span className="font-medium text-gray-900">
+                          {schedule.hari}
+                        </span>
                         <div className="flex items-center text-xs text-gray-500">
                           <Clock className="w-3 h-3 mr-1" />
                           {schedule.waktuMulai} - {schedule.waktuSelesai}
@@ -357,30 +448,45 @@ export default function ScheduleManagementPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <BookOpen className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium text-gray-700">{schedule.mapel?.namaMapel}</span>
+                        <span className="font-medium text-gray-700">
+                          {schedule.mapel?.namaMapel}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{schedule.guru?.nama || "-"}</span>
+                        <span className="text-sm text-gray-600">
+                          {schedule.guru?.nama || "-"}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{schedule.ruangan?.namaRuangan || "-"}</span>
+                        <span className="text-sm text-gray-600">
+                          {schedule.ruangan?.namaRuangan || "-"}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600" onClick={() => openEdit(schedule)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 hover:bg-blue-50 hover:text-blue-600"
+                          onClick={() => openEdit(schedule)}
+                        >
                           <Pencil className="w-4 h-4" />
                         </Button>
-                        
+
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-red-50 hover:text-red-600">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-red-50 hover:text-red-600"
+                            >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </AlertDialogTrigger>
@@ -388,12 +494,16 @@ export default function ScheduleManagementPage() {
                             <AlertDialogHeader>
                               <AlertDialogTitle>Hapus Jadwal?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Tindakan ini akan menghapus jadwal pelajaran ini secara permanen.
+                                Tindakan ini akan menghapus jadwal pelajaran ini
+                                secara permanen.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Batal</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteJadwal(schedule.id)} className="bg-red-600 hover:bg-red-700">
+                              <AlertDialogAction
+                                onClick={() => deleteJadwal(schedule.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
                                 Hapus
                               </AlertDialogAction>
                             </AlertDialogFooter>
@@ -409,7 +519,6 @@ export default function ScheduleManagementPage() {
         </div>
       </div>
 
-      {/* Edit Modal */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -419,109 +528,139 @@ export default function ScheduleManagementPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-kelas">Kelas</Label>
-                  <select
-                    id="edit-kelas"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={formData.kelasId}
-                    onChange={(e) => setFormData({ ...formData, kelasId: e.target.value })}
-                  >
-                    <option value="">Pilih Kelas</option>
-                    {classes.map((c) => (
-                      <option key={c.id} value={c.id}>{c.namaKelas}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-hari">Hari</Label>
-                  <select
-                    id="edit-hari"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={formData.hari}
-                    onChange={(e) => setFormData({ ...formData, hari: e.target.value })}
-                  >
-                    <option value="">Pilih Hari</option>
-                    {days.map((day) => (
-                      <option key={day} value={day}>{day}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-waktuMulai">Jam Mulai</Label>
-                  <Input
-                    id="edit-waktuMulai"
-                    type="time"
-                    value={formData.waktuMulai}
-                    onChange={(e) => setFormData({ ...formData, waktuMulai: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-waktuSelesai">Jam Selesai</Label>
-                  <Input
-                    id="edit-waktuSelesai"
-                    type="time"
-                    value={formData.waktuSelesai}
-                    onChange={(e) => setFormData({ ...formData, waktuSelesai: e.target.value })}
-                  />
-                </div>
-              </div>
-
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-mapel">Mata Pelajaran</Label>
+                <Label htmlFor="edit-kelas">Kelas</Label>
                 <select
-                  id="edit-mapel"
+                  id="edit-kelas"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={formData.mapelId}
-                  onChange={(e) => setFormData({ ...formData, mapelId: e.target.value })}
+                  value={formData.kelasId}
+                  onChange={(e) =>
+                    setFormData({ ...formData, kelasId: e.target.value })
+                  }
                 >
-                  <option value="">Pilih Mata Pelajaran</option>
-                  {subjects.map((m) => (
-                    <option key={m.id} value={m.id}>{m.namaMapel}</option>
+                  <option value="">Pilih Kelas</option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.namaKelas}
+                    </option>
                   ))}
                 </select>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-guru">Guru Pengajar</Label>
-                  <select
-                    id="edit-guru"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={formData.guruId}
-                    onChange={(e) => setFormData({ ...formData, guruId: e.target.value })}
-                  >
-                    <option value="">Pilih Guru</option>
-                    {teachers.map((t) => (
-                      <option key={t.id} value={t.id}>{t.nama}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-ruangan">Ruangan</Label>
-                  <select
-                    id="edit-ruangan"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={formData.ruanganId}
-                    onChange={(e) => setFormData({ ...formData, ruanganId: e.target.value })}
-                  >
-                    <option value="">Pilih Ruangan</option>
-                    {rooms.map((r) => (
-                      <option key={r.id} value={r.id}>{r.namaRuangan}</option>
-                    ))}
-                  </select>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-hari">Hari</Label>
+                <select
+                  id="edit-hari"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.hari}
+                  onChange={(e) =>
+                    setFormData({ ...formData, hari: e.target.value })
+                  }
+                >
+                  <option value="">Pilih Hari</option>
+                  {days.map((day) => (
+                    <option key={day} value={day}>
+                      {day}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-waktuMulai">Jam Mulai</Label>
+                <Input
+                  id="edit-waktuMulai"
+                  type="time"
+                  value={formData.waktuMulai}
+                  onChange={(e) =>
+                    setFormData({ ...formData, waktuMulai: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-waktuSelesai">Jam Selesai</Label>
+                <Input
+                  id="edit-waktuSelesai"
+                  type="time"
+                  value={formData.waktuSelesai}
+                  onChange={(e) =>
+                    setFormData({ ...formData, waktuSelesai: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-mapel">Mata Pelajaran</Label>
+              <select
+                id="edit-mapel"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={formData.mapelId}
+                onChange={(e) =>
+                  setFormData({ ...formData, mapelId: e.target.value })
+                }
+              >
+                <option value="">Pilih Mata Pelajaran</option>
+                {subjects.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.namaMapel}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-guru">Guru Pengajar</Label>
+                <select
+                  id="edit-guru"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.guruId}
+                  onChange={(e) =>
+                    setFormData({ ...formData, guruId: e.target.value })
+                  }
+                >
+                  <option value="">Pilih Guru</option>
+                  {teachers.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.nama}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-ruangan">Ruangan</Label>
+                <select
+                  id="edit-ruangan"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.ruanganId}
+                  onChange={(e) =>
+                    setFormData({ ...formData, ruanganId: e.target.value })
+                  }
+                >
+                  <option value="">Pilih Ruangan</option>
+                  {rooms.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.namaRuangan}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
           <DialogFooter>
-            <Button type="submit" onClick={handleEdit} className="w-full sm:w-auto">Simpan Perubahan</Button>
+            <Button
+              type="submit"
+              onClick={handleEdit}
+              className="w-full sm:w-auto"
+            >
+              Simpan Perubahan
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

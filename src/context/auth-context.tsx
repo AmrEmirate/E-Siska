@@ -1,91 +1,95 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
-import { apiClient } from "@/lib/api-client"
+import type React from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { apiClient } from "@/lib/api-client";
 
-export type UserRole = "admin" | "guru" | "wali_kelas" | "siswa"
+export type UserRole = "admin" | "guru" | "wali_kelas" | "siswa";
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  role: UserRole
-  nis?: string
-  nip?: string
-  schoolName?: string
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  nis?: string;
+  nip?: string;
+  schoolName?: string;
 }
 
 interface AuthContextType {
-  user: User | null
-  loading: boolean
-  login: (credentials: { identifier: string; password: string }) => Promise<void>
-  logout: () => void
-  isAuthenticated: boolean
+  user: User | null;
+  loading: boolean;
+  login: (credentials: {
+    identifier: string;
+    password: string;
+  }) => Promise<void>;
+  logout: () => void;
+  isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is already logged in (from localStorage or session)
-    const storedUser = typeof window !== "undefined" ? localStorage.getItem("user") : null
+    const storedUser =
+      typeof window !== "undefined" ? localStorage.getItem("user") : null;
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser)
-      // Normalize role for existing sessions
-      if (parsedUser.role && !["admin", "guru", "siswa", "wali_kelas"].includes(parsedUser.role)) {
-        parsedUser.role = parsedUser.role.toLowerCase()
-      }
-      setUser(parsedUser)
-    }
-    setLoading(false)
-  }, [])
+      const parsedUser = JSON.parse(storedUser);
 
-  const login = async (credentials: { identifier: string; password: string }) => {
-    setLoading(true)
+      if (
+        parsedUser.role &&
+        !["admin", "guru", "siswa", "wali_kelas"].includes(parsedUser.role)
+      ) {
+        parsedUser.role = parsedUser.role.toLowerCase();
+      }
+      setUser(parsedUser);
+    }
+    setLoading(false);
+  }, []);
+
+  const login = async (credentials: {
+    identifier: string;
+    password: string;
+  }) => {
+    setLoading(true);
     try {
       const response = await apiClient.post("/auth/signin", {
         username: credentials.identifier,
         password: credentials.password,
-      })
+      });
 
-      const { token, ...userData } = response.data.data
+      const { token, ...userData } = response.data.data;
 
-      // Map backend user data to frontend User interface if necessary
-      // Assuming backend returns fields that match or we map them here
       const userToStore: User = {
         id: userData.id,
-        name: userData.nama || userData.username, // Fallback if name is not present
+        name: userData.nama || userData.username,
         email: userData.email || "",
-        role: userData.isWaliKelas ? "wali_kelas" : (userData.role.toLowerCase() as UserRole),
+        role: userData.isWaliKelas
+          ? "wali_kelas"
+          : (userData.role.toLowerCase() as UserRole),
         nis: userData.nis,
         nip: userData.nip,
-        schoolName: "SDN Ciater 02 Serpong", // Hardcoded for now as it might not be in response
-      }
+        schoolName: "SDN Ciater 02 Serpong",
+      };
 
-      setUser(userToStore)
-      localStorage.setItem("user", JSON.stringify(userToStore))
-      localStorage.setItem("token", token)
-
-      console.log("Login successful for user:", userToStore.name)
+      setUser(userToStore);
+      localStorage.setItem("user", JSON.stringify(userToStore));
+      localStorage.setItem("token", token);
     } catch (error) {
-      console.error("Login failed:", error)
-      throw error
+      throw error;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem("user")
-    localStorage.removeItem("token")
-  }
+    setUser(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  };
 
   return (
     <AuthContext.Provider
@@ -99,13 +103,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     >
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within AuthProvider")
+    throw new Error("useAuth must be used within AuthProvider");
   }
-  return context
-}
+  return context;
+};

@@ -34,7 +34,6 @@ export default function HomeroomStudentsPage() {
         const res = await apiClient.get("/kelas/my-class")
         setClassData(res.data.data)
       } catch (err: any) {
-        console.error("Failed to fetch class", err)
         if (err.response?.status === 404) {
           setError("Anda belum ditugaskan sebagai Wali Kelas untuk kelas manapun.")
         } else {

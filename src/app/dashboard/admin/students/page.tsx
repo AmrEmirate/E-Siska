@@ -51,7 +51,6 @@ export default function StudentsManagementPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Siswa | null>(null);
 
-  // Form State
   const [formData, setFormData] = useState<Partial<Siswa>>({
     nis: "",
     nisn: "",
@@ -584,7 +583,6 @@ export default function StudentsManagementPage() {
           </Table>
         </div>
 
-        {/* Edit Modal */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>

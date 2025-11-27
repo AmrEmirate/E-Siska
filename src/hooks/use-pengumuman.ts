@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, ReactNode } from "react"
 import { apiClient } from "@/lib/api-client"
 import { useToast } from "@/components/ui/use-toast"
 
 export interface Pengumuman {
+  isi: ReactNode
   id: string
   judul: string
   konten: string

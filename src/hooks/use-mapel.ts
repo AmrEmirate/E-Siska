@@ -5,6 +5,7 @@ import { apiClient } from "@/lib/api-client"
 import { useToast } from "@/components/ui/use-toast"
 
 export interface Mapel {
+  kategori: ReactNode
   id: string
   namaMapel: string
   kodeMapel?: string

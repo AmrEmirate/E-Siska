@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useAuth } from "@/context/auth-context"
-import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
-  const { user, logout } = useAuth()
-  const router = useRouter()
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
   const handleLogout = () => {
-    logout()
-    router.push("/login")
-  }
+    logout();
+    router.push("/login");
+  };
 
   const getRoleLabel = (role: string) => {
     const labels: Record<string, string> = {
@@ -18,16 +18,20 @@ export default function Header() {
       guru: "Guru",
       wali_kelas: "Wali Kelas",
       siswa: "Siswa",
-    }
-    return labels[role] || role
-  }
+    };
+    return labels[role] || role;
+  };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-white border-b border-gray-200 px-6 py-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{user?.name || "User"}</h1>
-          <p className="text-sm text-gray-500">{getRoleLabel(user?.role || "")}</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {user?.name || "User"}
+          </h1>
+          <p className="text-sm text-gray-500">
+            {getRoleLabel(user?.role || "")}
+          </p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -40,5 +44,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

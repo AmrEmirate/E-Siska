@@ -37,6 +37,211 @@ import { Label } from "@/components/ui/label";
 import { Pencil, Trash2, Plus, Search } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
+const TeacherForm = ({
+  formData,
+  setFormData,
+  isEdit = false,
+}: {
+  formData: Partial<Guru>;
+  setFormData: (data: Partial<Guru>) => void;
+  isEdit?: boolean;
+}) => (
+  <div className="grid gap-6 py-4">
+    <div className="space-y-2">
+      <Label htmlFor="nama">Nama Lengkap dengan Gelar</Label>
+      <Input
+        id="nama"
+        placeholder="Nama Guru"
+        value={formData.nama}
+        onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+      />
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="jk">Jenis Kelamin</Label>
+        <select
+          id="jk"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          value={formData.jenisKelamin}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              jenisKelamin: e.target.value as "L" | "P",
+            })
+          }
+        >
+          <option value="L">Laki-laki</option>
+          <option value="P">Perempuan</option>
+        </select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="agama">Agama</Label>
+        <select
+          id="agama"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          value={formData.agama}
+          onChange={(e) =>
+            setFormData({ ...formData, agama: e.target.value })
+          }
+        >
+          <option value="Islam">Islam</option>
+          <option value="Kristen">Kristen</option>
+          <option value="Katolik">Katolik</option>
+          <option value="Hindu">Hindu</option>
+          <option value="Buddha">Buddha</option>
+          <option value="Konghucu">Konghucu</option>
+        </select>
+      </div>
+    </div>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="tempatLahir">Tempat Lahir</Label>
+        <Input
+          id="tempatLahir"
+          value={formData.tempatLahir}
+          onChange={(e) =>
+            setFormData({ ...formData, tempatLahir: e.target.value })
+          }
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="tanggalLahir">Tanggal Lahir</Label>
+        <Input
+          id="tanggalLahir"
+          type="date"
+          value={formData.tanggalLahir}
+          onChange={(e) =>
+            setFormData({ ...formData, tanggalLahir: e.target.value })
+          }
+        />
+      </div>
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="noTelp">No. Telepon</Label>
+      <Input
+        id="noTelp"
+        value={formData.noTelp}
+        onChange={(e) => setFormData({ ...formData, noTelp: e.target.value })}
+      />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="email">Email</Label>
+      <Input
+        id="email"
+        type="email"
+        placeholder="guru@sekolah.sch.id"
+        value={formData.email}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+      />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="nik">NIK</Label>
+      <Input
+        id="nik"
+        value={formData.nik}
+        onChange={(e) => setFormData({ ...formData, nik: e.target.value })}
+      />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="nuptk">NUPTK</Label>
+      <Input
+        id="nuptk"
+        value={formData.nuptk}
+        onChange={(e) => setFormData({ ...formData, nuptk: e.target.value })}
+      />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="nip">NIP</Label>
+      <Input
+        id="nip"
+        placeholder="19xxxxxxxx"
+        value={formData.nip}
+        onChange={(e) => {
+          const val = e.target.value;
+          setFormData({
+            ...formData,
+            nip: val,
+            username: !isEdit ? val : formData.username,
+          });
+        }}
+      />
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="statusKepegawaian">Status Pegawai</Label>
+      <select
+        id="statusKepegawaian"
+        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        value={formData.statusKepegawaian}
+        onChange={(e) =>
+          setFormData({ ...formData, statusKepegawaian: e.target.value })
+        }
+      >
+        <option value="PNS">PNS</option>
+        <option value="Honorer">Honorer</option>
+        <option value="GTY">GTY</option>
+        <option value="GTT">GTT</option>
+      </select>
+    </div>
+
+    <div className="space-y-2">
+      <Label htmlFor="alamat">Alamat</Label>
+      <Textarea
+        id="alamat"
+        value={formData.alamat}
+        onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
+      />
+    </div>
+
+    <div className="space-y-2">
+      <Label>Status</Label>
+      <div className="flex items-center space-x-2">
+        <Switch
+          checked={formData.isAktif}
+          onCheckedChange={(checked) =>
+            setFormData({ ...formData, isAktif: checked })
+          }
+        />
+        <Label>{formData.isAktif ? "Aktif" : "Non Aktif"}</Label>
+      </div>
+    </div>
+
+    {!isEdit && (
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="username">Username Login</Label>
+          <Input
+            id="username"
+            value={formData.username}
+            onChange={(e) =>
+              setFormData({ ...formData, username: e.target.value })
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="passwordDefault">Password Default</Label>
+          <Input
+            id="passwordDefault"
+            type="password"
+            placeholder="Minimal 6 karakter"
+            value={formData.passwordDefault}
+            onChange={(e) =>
+              setFormData({ ...formData, passwordDefault: e.target.value })
+            }
+          />
+        </div>
+      </div>
+    )}
+  </div>
+);
+
 export default function TeachersManagementPage() {
   const {
     data: teachers,
@@ -139,202 +344,7 @@ export default function TeachersManagementPage() {
     setIsEditOpen(true);
   };
 
-  const TeacherForm = ({ isEdit = false }: { isEdit?: boolean }) => (
-    <div className="grid gap-6 py-4">
-      <div className="space-y-2">
-        <Label htmlFor="nama">Nama Lengkap dengan Gelar</Label>
-        <Input
-          id="nama"
-          placeholder="Nama Guru"
-          value={formData.nama}
-          onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-        />
-      </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="jk">Jenis Kelamin</Label>
-          <select
-            id="jk"
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            value={formData.jenisKelamin}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                jenisKelamin: e.target.value as "L" | "P",
-              })
-            }
-          >
-            <option value="L">Laki-laki</option>
-            <option value="P">Perempuan</option>
-          </select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="agama">Agama</Label>
-          <select
-            id="agama"
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            value={formData.agama}
-            onChange={(e) =>
-              setFormData({ ...formData, agama: e.target.value })
-            }
-          >
-            <option value="Islam">Islam</option>
-            <option value="Kristen">Kristen</option>
-            <option value="Katolik">Katolik</option>
-            <option value="Hindu">Hindu</option>
-            <option value="Buddha">Buddha</option>
-            <option value="Konghucu">Konghucu</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="tempatLahir">Tempat Lahir</Label>
-          <Input
-            id="tempatLahir"
-            value={formData.tempatLahir}
-            onChange={(e) =>
-              setFormData({ ...formData, tempatLahir: e.target.value })
-            }
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="tanggalLahir">Tanggal Lahir</Label>
-          <Input
-            id="tanggalLahir"
-            type="date"
-            value={formData.tanggalLahir}
-            onChange={(e) =>
-              setFormData({ ...formData, tanggalLahir: e.target.value })
-            }
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="noTelp">No. Telepon</Label>
-        <Input
-          id="noTelp"
-          value={formData.noTelp}
-          onChange={(e) => setFormData({ ...formData, noTelp: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="guru@sekolah.sch.id"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="nik">NIK</Label>
-        <Input
-          id="nik"
-          value={formData.nik}
-          onChange={(e) => setFormData({ ...formData, nik: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="nuptk">NUPTK</Label>
-        <Input
-          id="nuptk"
-          value={formData.nuptk}
-          onChange={(e) => setFormData({ ...formData, nuptk: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="nip">NIP</Label>
-        <Input
-          id="nip"
-          placeholder="19xxxxxxxx"
-          value={formData.nip}
-          onChange={(e) => {
-            const val = e.target.value;
-            setFormData({
-              ...formData,
-              nip: val,
-              username: !isEdit ? val : formData.username,
-            });
-          }}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="statusKepegawaian">Status Pegawai</Label>
-        <select
-          id="statusKepegawaian"
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          value={formData.statusKepegawaian}
-          onChange={(e) =>
-            setFormData({ ...formData, statusKepegawaian: e.target.value })
-          }
-        >
-          <option value="PNS">PNS</option>
-          <option value="Honorer">Honorer</option>
-          <option value="GTY">GTY</option>
-          <option value="GTT">GTT</option>
-        </select>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="alamat">Alamat</Label>
-        <Textarea
-          id="alamat"
-          value={formData.alamat}
-          onChange={(e) => setFormData({ ...formData, alamat: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label>Status</Label>
-        <div className="flex items-center space-x-2">
-          <Switch
-            checked={formData.isAktif}
-            onCheckedChange={(checked) =>
-              setFormData({ ...formData, isAktif: checked })
-            }
-          />
-          <Label>{formData.isAktif ? "Aktif" : "Non Aktif"}</Label>
-        </div>
-      </div>
-
-      {!isEdit && (
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="username">Username Login</Label>
-            <Input
-              id="username"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="passwordDefault">Password Default</Label>
-            <Input
-              id="passwordDefault"
-              type="password"
-              placeholder="Minimal 6 karakter"
-              value={formData.passwordDefault}
-              onChange={(e) =>
-                setFormData({ ...formData, passwordDefault: e.target.value })
-              }
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
@@ -364,7 +374,7 @@ export default function TeachersManagementPage() {
                 Masukkan informasi lengkap guru baru di bawah ini.
               </DialogDescription>
             </DialogHeader>
-            <TeacherForm />
+            <TeacherForm formData={formData} setFormData={setFormData} />
             <DialogFooter>
               <Button
                 type="submit"
@@ -579,7 +589,7 @@ export default function TeachersManagementPage() {
               Perbarui informasi guru di bawah ini.
             </DialogDescription>
           </DialogHeader>
-          <TeacherForm isEdit />
+          <TeacherForm formData={formData} setFormData={setFormData} isEdit />
           <DialogFooter>
             <Button
               type="submit"

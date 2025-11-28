@@ -137,10 +137,7 @@ export default function TestHooksPage() {
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Configuration</h2>
           <div className="space-y-2 text-sm font-mono">
-            <p>
-              API URL:{" "}
-              {process.env.NEXT_PUBLIC_API_URL || "http://localhost:8181"}
-            </p>
+            <p>API URL: {process.env.NEXT_PUBLIC_API_URL}</p>
             <p>Environment: {process.env.NODE_ENV}</p>
           </div>
         </div>

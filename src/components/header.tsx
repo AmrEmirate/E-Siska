@@ -3,6 +3,8 @@
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 
+import { SidebarTrigger } from "@/components/ui/sidebar";
+
 export default function Header() {
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -23,13 +25,14 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-6">
-      <div className="flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
+      <SidebarTrigger className="-ml-2" />
+      <div className="flex flex-1 items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl font-bold text-gray-900">
             {user?.name || "User"}
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs text-gray-500">
             {getRoleLabel(user?.role || "")}
           </p>
         </div>

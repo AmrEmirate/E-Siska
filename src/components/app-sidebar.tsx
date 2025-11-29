@@ -1,11 +1,24 @@
 "use client";
 
 import { useAuth } from "@/context/auth-context";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar";
 
-export default function Sidebar() {
+export function AppSidebar() {
   const { user } = useAuth();
   const pathname = usePathname();
 
@@ -162,40 +175,53 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center gap-2 mb-3">
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <div className="flex items-center gap-2 p-2">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-jfWqP0EvO9fLYgSZ0r4y1NyH1sKVaX.png"
             alt="E-Siska"
-            width={40}
-            height={40}
+            width={32}
+            height={32}
+            className="shrink-0"
           />
-          <div>
-            <h1 className="font-bold text-gray-900">E-Siska</h1>
-            <p className="text-xs text-gray-500">SDN Ciater 02</p>
+          <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
+            <span className="font-bold text-gray-900">E-Siska</span>
+            <span className="text-xs text-gray-500">SDN Ciater 02</span>
           </div>
         </div>
-      </div>
-
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-        {menuItems.map((item) => (
-          <Link key={item.href} href={item.href}>
-            <span
-              className={`sidebar-link ${isActive(item.href) ? "active" : ""}`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              <span className="font-medium">{item.label}</span>
-            </span>
-          </Link>
-        ))}
-      </nav>
-
-      <div className="p-4 border-t border-gray-200 text-xs text-gray-500">
-        <p className="font-semibold mb-1">Sekolah</p>
-        <p>SDN Ciater 02</p>
-        <p className="text-gray-400">Kota Tangerang Selatan</p>
-      </div>
-    </aside>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    tooltip={item.label}
+                  >
+                    <Link href={item.href}>
+                      <span className="text-lg">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <div className="p-4 text-xs text-gray-500 group-data-[collapsible=icon]:hidden">
+          <p className="font-semibold mb-1">Sekolah</p>
+          <p>SDN Ciater 02</p>
+          <p className="text-gray-400">Kota Tangerang Selatan</p>
+        </div>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   );
 }

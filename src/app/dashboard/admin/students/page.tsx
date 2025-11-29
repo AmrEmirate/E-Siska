@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Pencil, Trash2, Plus, Search } from "lucide-react";
+import { ImportDialog } from "@/components/import-dialog";
 
 export default function StudentsManagementPage() {
   const {
@@ -394,35 +395,43 @@ export default function StudentsManagementPage() {
             Kelola data, status, dan informasi siswa.
           </p>
         </div>
-        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogTrigger asChild>
-            <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
-              onClick={resetForm}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Tambah Siswa
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Tambah Siswa Baru</DialogTitle>
-              <DialogDescription>
-                Masukkan informasi lengkap siswa baru di bawah ini.
-              </DialogDescription>
-            </DialogHeader>
-            <StudentForm />
-            <DialogFooter>
+        <div className="flex gap-2">
+          <ImportDialog
+            title="Import Data Siswa"
+            endpoint="/siswa/import"
+            onSuccess={() => fetchSiswa(1, 10, search)}
+            triggerLabel="Import Excel"
+          />
+          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <DialogTrigger asChild>
               <Button
-                type="submit"
-                onClick={handleAdd}
-                className="w-full sm:w-auto"
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
+                onClick={resetForm}
               >
-                Simpan Data
+                <Plus className="w-4 h-4 mr-2" />
+                Tambah Siswa
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Tambah Siswa Baru</DialogTitle>
+                <DialogDescription>
+                  Masukkan informasi lengkap siswa baru di bawah ini.
+                </DialogDescription>
+              </DialogHeader>
+              <StudentForm />
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  onClick={handleAdd}
+                  className="w-full sm:w-auto"
+                >
+                  Simpan Data
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

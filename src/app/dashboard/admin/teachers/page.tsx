@@ -36,6 +36,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Pencil, Trash2, Plus, Search } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { ImportDialog } from "@/components/import-dialog";
 
 const TeacherForm = ({
   formData,
@@ -81,9 +82,7 @@ const TeacherForm = ({
           id="agama"
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           value={formData.agama}
-          onChange={(e) =>
-            setFormData({ ...formData, agama: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, agama: e.target.value })}
         >
           <option value="Islam">Islam</option>
           <option value="Kristen">Kristen</option>
@@ -344,8 +343,6 @@ export default function TeachersManagementPage() {
     setIsEditOpen(true);
   };
 
-
-
   return (
     <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -357,35 +354,43 @@ export default function TeachersManagementPage() {
             Kelola data, status, dan penugasan guru.
           </p>
         </div>
-        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogTrigger asChild>
-            <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
-              onClick={resetForm}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Tambah Guru
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Tambah Guru Baru</DialogTitle>
-              <DialogDescription>
-                Masukkan informasi lengkap guru baru di bawah ini.
-              </DialogDescription>
-            </DialogHeader>
-            <TeacherForm formData={formData} setFormData={setFormData} />
-            <DialogFooter>
+        <div className="flex gap-2">
+          <ImportDialog
+            title="Import Data Guru"
+            endpoint="/guru/import"
+            onSuccess={() => fetchGuru(1, 10, search)}
+            triggerLabel="Import Excel"
+          />
+          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <DialogTrigger asChild>
               <Button
-                type="submit"
-                onClick={handleAdd}
-                className="w-full sm:w-auto"
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
+                onClick={resetForm}
               >
-                Simpan Data
+                <Plus className="w-4 h-4 mr-2" />
+                Tambah Guru
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Tambah Guru Baru</DialogTitle>
+                <DialogDescription>
+                  Masukkan informasi lengkap guru baru di bawah ini.
+                </DialogDescription>
+              </DialogHeader>
+              <TeacherForm formData={formData} setFormData={setFormData} />
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  onClick={handleAdd}
+                  className="w-full sm:w-auto"
+                >
+                  Simpan Data
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

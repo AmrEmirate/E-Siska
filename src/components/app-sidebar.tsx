@@ -175,37 +175,38 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <div className="flex items-center gap-2 p-2">
+    <Sidebar collapsible="icon" className="bg-white border-r border-gray-200">
+      <SidebarHeader className="p-6 border-b border-gray-200 group-data-[collapsible=icon]:p-2">
+        <div className="flex items-center gap-2">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-jfWqP0EvO9fLYgSZ0r4y1NyH1sKVaX.png"
             alt="E-Siska"
-            width={32}
-            height={32}
+            width={40}
+            height={40}
             className="shrink-0"
           />
-          <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
-            <span className="font-bold text-gray-900">E-Siska</span>
-            <span className="text-xs text-gray-500">SDN Ciater 02</span>
+          <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
+            <h1 className="font-bold text-gray-900 text-base">E-Siska</h1>
+            <p className="text-xs text-gray-500">SDN Ciater 02</p>
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="p-3 group-data-[collapsible=icon]:p-0">
         <SidebarGroup>
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-2">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.href)}
                     tooltip={item.label}
+                    size="lg"
+                    className="hover:bg-gray-100 data-[active=true]:bg-red-600 data-[active=true]:text-white data-[active=true]:hover:bg-red-700 transition-all rounded-lg"
                   >
                     <Link href={item.href}>
-                      <span className="text-lg">{item.icon}</span>
-                      <span>{item.label}</span>
+                      <span className="text-xl">{item.icon}</span>
+                      <span className="font-medium">{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -214,8 +215,8 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="p-4 text-xs text-gray-500 group-data-[collapsible=icon]:hidden">
+      <SidebarFooter className="p-0">
+        <div className="p-4 border-t border-gray-200 text-xs text-gray-500 group-data-[collapsible=icon]:hidden">
           <p className="font-semibold mb-1">Sekolah</p>
           <p>SDN Ciater 02</p>
           <p className="text-gray-400">Kota Tangerang Selatan</p>

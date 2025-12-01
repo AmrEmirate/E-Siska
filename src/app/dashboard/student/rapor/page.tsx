@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { apiClient } from "@/lib/api-client";
+import { useRapor } from "@/hooks/use-rapor";
 import {
   Loader2,
   ArrowLeft,
@@ -15,7 +16,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface RaporItem {
   id: string;
+  siswaId: string;
+  tahunAjaranId: string;
   tahunAjaran: {
+    id: string;
     nama: string;
     semester: string;
   };
@@ -30,6 +34,7 @@ interface RaporItem {
 
 export default function StudentRaporPage() {
   const { toast } = useToast();
+  const { downloadRaporPDF } = useRapor();
   const [rapors, setRapors] = useState<RaporItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,11 +57,8 @@ export default function StudentRaporPage() {
     }
   };
 
-  const handlePrint = (raporId: string) => {
-    toast({
-      title: "Fitur Cetak",
-      description: "Fitur cetak PDF akan segera tersedia.",
-    });
+  const handlePrint = async (rapor: RaporItem) => {
+    await downloadRaporPDF(rapor.siswaId, rapor.tahunAjaranId);
   };
 
   if (loading) {
@@ -110,7 +112,7 @@ export default function StudentRaporPage() {
                   <FileText size={24} />
                 </div>
                 <button
-                  onClick={() => handlePrint(rapor.id)}
+                  onClick={() => handlePrint(rapor)}
                   className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                   title="Cetak Rapor"
                 >

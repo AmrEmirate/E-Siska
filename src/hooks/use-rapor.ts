@@ -78,9 +78,45 @@ export function useRapor() {
     }
   };
 
+  const downloadRaporPDF = async (siswaId: string, tahunAjaranId: string) => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get(
+        `/rapor/siswa/${siswaId}/download-pdf?tahunAjaranId=${tahunAjaranId}`,
+        {
+          responseType: "blob",
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `rapor-${siswaId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast({
+        title: "Berhasil",
+        description: "Rapor PDF berhasil didownload.",
+      });
+      return true;
+    } catch (error) {
+      toast({
+        title: "Gagal",
+        description: "Gagal mendownload rapor PDF.",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Legacy function - kept for backward compatibility
   const downloadRapor = async (id: string) => {
     try {
-      const response = await apiClient.get(`/rapor/${id}/download`, {
+      const response = await apiClient.get(` /rapor/${id}/download`, {
         responseType: "blob",
       });
 
@@ -113,5 +149,6 @@ export function useRapor() {
     fetchRapor,
     generateRapor,
     downloadRapor,
+    downloadRaporPDF,
   };
 }

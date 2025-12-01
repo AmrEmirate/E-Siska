@@ -8,7 +8,7 @@ import { usePenempatan } from "@/hooks/use-penempatan";
 import { Loader2 } from "lucide-react";
 
 export default function GenerateReportPage() {
-  const { generateRapor, downloadRapor, loading } = useRapor();
+  const { downloadRaporPDF, loading } = useRapor();
   const { data: students, fetchSiswaNoPagination } = useSiswa();
   const { data: tahunAjaran, fetchTahunAjaran } = useTahunAjaran();
   const { data: penempatanData, fetchPenempatan } = usePenempatan();
@@ -44,10 +44,9 @@ export default function GenerateReportPage() {
       alert("Pilih siswa dan tahun ajaran aktif harus tersedia");
       return;
     }
-    const rapor = await generateRapor(selectedStudent, activeTahunAjaran.id);
-    if (rapor?.id) {
-      await downloadRapor(rapor.id);
-    }
+
+    // Use new PDF download function
+    await downloadRaporPDF(selectedStudent, activeTahunAjaran.id);
   };
 
   return (

@@ -53,8 +53,8 @@ export default function StudentsManagementPage() {
   const [selectedStudent, setSelectedStudent] = useState<Siswa | null>(null);
 
   const [formData, setFormData] = useState<Partial<Siswa>>({
-    nis: "",
     nisn: "",
+
     nama: "",
     jenisKelamin: "L",
     agama: "Islam",
@@ -71,7 +71,6 @@ export default function StudentsManagementPage() {
     pekerjaanWali: "",
     alamatWali: "",
     status: "Aktif",
-    nik: "",
   });
 
   useEffect(() => {
@@ -84,8 +83,8 @@ export default function StudentsManagementPage() {
 
   const resetForm = () => {
     setFormData({
-      nis: "",
       nisn: "",
+
       nama: "",
       jenisKelamin: "L",
       agama: "Islam",
@@ -102,7 +101,6 @@ export default function StudentsManagementPage() {
       pekerjaanWali: "",
       alamatWali: "",
       status: "Aktif",
-      nik: "",
     });
     setSelectedStudent(null);
   };
@@ -127,8 +125,8 @@ export default function StudentsManagementPage() {
   const openEdit = (student: Siswa) => {
     setSelectedStudent(student);
     setFormData({
-      nis: student.nis,
       nisn: student.nisn,
+
       nama: student.nama,
       jenisKelamin: student.jenisKelamin,
       agama: student.agama,
@@ -147,7 +145,6 @@ export default function StudentsManagementPage() {
       pekerjaanWali: student.pekerjaanWali,
       alamatWali: student.alamatWali,
       status: student.status,
-      nik: student.nik,
     });
     setIsEditOpen(true);
   };
@@ -155,30 +152,12 @@ export default function StudentsManagementPage() {
   const StudentForm = () => (
     <div className="grid gap-6 py-4">
       <div className="space-y-2">
-        <Label htmlFor="nik">NIK Peserta Didik</Label>
-        <Input
-          id="nik"
-          value={formData.nik}
-          onChange={(e) => setFormData({ ...formData, nik: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="nisn">NISN Peserta Didik</Label>
+        <Label htmlFor="nisn">NISN</Label>
         <Input
           id="nisn"
           value={formData.nisn}
           onChange={(e) => setFormData({ ...formData, nisn: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="nis">NIS (Nomor Induk Siswa)</Label>
-        <Input
-          id="nis"
-          value={formData.nis}
-          onChange={(e) => setFormData({ ...formData, nis: e.target.value })}
-          placeholder="Digunakan untuk login"
+          placeholder="Masukkan NISN"
         />
       </div>
 
@@ -439,7 +418,7 @@ export default function StudentsManagementPage() {
           <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="Cari berdasarkan NIS atau Nama..."
+              placeholder="Cari berdasarkan NISN atau Nama..."
               className="pl-10 bg-white"
               value={search}
               onChange={handleSearch}
@@ -457,7 +436,7 @@ export default function StudentsManagementPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
-                <TableHead className="w-[150px]">NIS</TableHead>
+                <TableHead className="w-[150px]">NISN</TableHead>
                 <TableHead>Nama Siswa</TableHead>
                 <TableHead>L/P</TableHead>
                 <TableHead>Status</TableHead>
@@ -504,7 +483,7 @@ export default function StudentsManagementPage() {
                     className="hover:bg-gray-50 transition-colors"
                   >
                     <TableCell className="font-medium font-mono text-gray-600">
-                      {student.nis}
+                      {student.nisn}
                     </TableCell>
                     <TableCell>
                       <div className="font-medium text-gray-900">

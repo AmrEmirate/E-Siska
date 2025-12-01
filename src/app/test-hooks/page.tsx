@@ -179,7 +179,7 @@ export default function TestHooksPage() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                      NIS
+                      NISN
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Nama
@@ -193,7 +193,7 @@ export default function TestHooksPage() {
                   {siswa.data.slice(0, 5).map((s) => (
                     <tr key={s.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {s.nis}
+                        {s.nisn}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         {s.nama}

@@ -20,7 +20,7 @@ import { id as idLocale } from "date-fns/locale";
 interface StudentAttendance {
   siswaId: string;
   nama: string;
-  nis: string;
+  nisn: string;
   status: "HADIR" | "SAKIT" | "IZIN" | "ALPHA" | null;
   keterangan?: string;
 }
@@ -218,7 +218,7 @@ export default function AttendanceDetailPage() {
                   <div className="font-medium text-gray-900">
                     {student.nama}
                   </div>
-                  <div className="text-xs text-gray-500">{student.nis}</div>
+                  <div className="text-xs text-gray-500">{student.nisn}</div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex justify-center gap-2">

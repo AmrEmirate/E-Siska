@@ -4,14 +4,14 @@ import { useState } from "react";
 
 export default function FinalizeGradesPage() {
   const [students] = useState([
-    { id: 1, nis: "123001", name: "Ahmad Rizki", status: "Siap Finalisasi" },
+    { id: 1, nisn: "123001", name: "Ahmad Rizki", status: "Siap Finalisasi" },
     {
       id: 2,
-      nis: "123002",
+      nisn: "123002",
       name: "Siti Nur Azizah",
       status: "Siap Finalisasi",
     },
-    { id: 3, nis: "123003", name: "Budi Santoso", status: "Belum Lengkap" },
+    { id: 3, nisn: "123003", name: "Budi Santoso", status: "Belum Lengkap" },
   ]);
 
   const [classNotes, setClassNotes] = useState("");
@@ -80,7 +80,7 @@ export default function FinalizeGradesPage() {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
-                  NIS
+                  NISN
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                   Nama Siswa
@@ -97,7 +97,7 @@ export default function FinalizeGradesPage() {
               {students.map((student) => (
                 <tr key={student.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {student.nis}
+                    {student.nisn}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">
                     {student.name}

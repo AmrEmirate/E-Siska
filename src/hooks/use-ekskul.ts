@@ -14,7 +14,7 @@ export interface NilaiEkskul {
   siswa?: {
     id: string;
     nama: string;
-    nis: string;
+    nisn: string;
   };
   tahunAjaran?: {
     id: string;

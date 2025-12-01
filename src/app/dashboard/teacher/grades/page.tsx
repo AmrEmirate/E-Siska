@@ -9,7 +9,7 @@ import { useAuth } from "@/context/auth-context";
 
 interface StudentGrade {
   siswaId: string;
-  nis: string;
+  nisn: string;
   nama: string;
   grades: Record<string, number>;
 }
@@ -281,7 +281,7 @@ export default function GradesPage() {
                 <thead className="bg-gray-50 text-gray-700 border-b border-gray-200 font-semibold uppercase tracking-wider">
                   <tr>
                     <th className="px-6 py-4 sticky left-0 bg-gray-50 z-10 w-24">
-                      NIS
+                      NISN
                     </th>
                     <th className="px-6 py-4 sticky left-[96px] bg-gray-50 z-10 min-w-[200px]">
                       Nama Siswa
@@ -336,7 +336,7 @@ export default function GradesPage() {
                         className="hover:bg-gray-50 transition-colors"
                       >
                         <td className="px-6 py-4 font-medium text-gray-900 sticky left-0 bg-white">
-                          {student.nis}
+                          {student.nisn}
                         </td>
                         <td className="px-6 py-4 text-gray-700 sticky left-[96px] bg-white">
                           {student.nama}

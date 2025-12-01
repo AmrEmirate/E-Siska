@@ -29,7 +29,7 @@ export default function WaliGradesPage() {
     } else {
       acc.push({
         siswaId: nilai.siswaId,
-        nis: nilai.siswa?.nis || "-",
+        nisn: nilai.siswa?.nisn || "-",
         name: nilai.siswa?.nama || "-",
         grades: { [nilai.komponenId]: nilai.nilai },
       });
@@ -72,7 +72,7 @@ export default function WaliGradesPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
-                    NIS
+                    NISN
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                     Nama Siswa
@@ -92,7 +92,7 @@ export default function WaliGradesPage() {
                   return (
                     <tr key={student.siswaId} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {student.nis}
+                        {student.nisn}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {student.name}

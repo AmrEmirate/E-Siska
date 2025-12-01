@@ -6,8 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 export interface Siswa {
   id: string;
-  nis: string;
-  nisn?: string;
+  nisn: string;
   nama: string;
   jenisKelamin: "L" | "P";
   tempatLahir?: string;
@@ -94,7 +93,7 @@ export function useSiswa() {
       toast({
         title: isConflict ? "Gagal: Data Duplikat" : "Gagal",
         description: isConflict
-          ? "NIS atau Username sudah terdaftar. Mohon gunakan NIS yang berbeda."
+          ? "NISN atau Username sudah terdaftar. Mohon gunakan NISN yang berbeda."
           : "Gagal menambahkan data siswa.",
         variant: "destructive",
       });

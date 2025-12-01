@@ -12,7 +12,7 @@ export interface Penempatan {
   siswa?: {
     id: string;
     nama: string;
-    nis: string;
+    nisn: string;
   };
   kelas?: {
     id: string;

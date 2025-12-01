@@ -11,7 +11,7 @@ import { useAuth } from "@/context/auth-context";
 interface RaporData {
   infoSiswa: {
     nama: string;
-    nis: string;
+    nisn: string;
     kelas: string;
     tahunAjaran: string;
   };
@@ -214,17 +214,6 @@ export default function RaporDetailPage() {
             >
               <ArrowLeft size={20} className="text-gray-600" />
             </Link>
-            <div>
-              <h1 className="text-lg font-bold text-gray-900">
-                {rapor.infoSiswa.nama}
-              </h1>
-              <p className="text-xs text-gray-500">
-                {rapor.infoSiswa.nis} • {rapor.infoSiswa.kelas}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
             {!isFinal ? (
               <>
                 <button
@@ -296,17 +285,6 @@ export default function RaporDetailPage() {
               Kelas / Semester
             </span>
             <span className="mr-2">:</span>
-            <span>{rapor.infoSiswa.kelas} / 1 (Ganjil)</span>
-          </div>
-          <div className="flex">
-            <span className="w-32 font-medium text-gray-600">NIS / NISN</span>
-            <span className="mr-2">:</span>
-            <span>{rapor.infoSiswa.nis}</span>
-          </div>
-          <div className="flex">
-            <span className="w-32 font-medium text-gray-600">Tahun Ajaran</span>
-            <span className="mr-2">:</span>
-            <span>{rapor.infoSiswa.tahunAjaran}</span>
           </div>
         </div>
 

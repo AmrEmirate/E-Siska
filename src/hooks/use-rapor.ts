@@ -12,7 +12,7 @@ export interface Rapor {
   siswa?: {
     id: string;
     nama: string;
-    nis: string;
+    nisn: string;
   };
   tahunAjaran?: {
     id: string;

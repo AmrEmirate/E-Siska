@@ -33,7 +33,7 @@ export default function WaliAttendancePage() {
     } else {
       const record = {
         siswaId: absen.siswaId,
-        nis: absen.siswa?.nis || "-",
+        nisn: absen.siswa?.nisn || "-",
         name: absen.siswa?.nama || "-",
         hadir: absen.status === "HADIR" ? 1 : 0,
         sakit: absen.status === "SAKIT" ? 1 : 0,
@@ -79,7 +79,7 @@ export default function WaliAttendancePage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
-                    NIS
+                    NISN
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">
                     Nama Siswa
@@ -112,7 +112,7 @@ export default function WaliAttendancePage() {
                   return (
                     <tr key={student.siswaId} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {student.nis}
+                        {student.nisn}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {student.name}

@@ -11,7 +11,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  nis?: string;
+  nisn?: string;
   nip?: string;
   schoolName?: string;
 }
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         role: userData.isWaliKelas
           ? "wali_kelas"
           : (userData.role.toLowerCase() as UserRole),
-        nis: userData.nis,
+        nisn: userData.nisn,
         nip: userData.nip,
         schoolName: "SDN Ciater 02 Serpong",
       };

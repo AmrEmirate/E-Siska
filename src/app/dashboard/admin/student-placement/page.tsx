@@ -170,7 +170,7 @@ export default function StudentPlacementPage() {
                   <option value="">Pilih Siswa</option>
                   {students.map((student) => (
                     <option key={student.id} value={student.id}>
-                      {student.nama} ({student.nis})
+                      {student.nama} ({student.nisn})
                     </option>
                   ))}
                 </select>
@@ -286,7 +286,7 @@ export default function StudentPlacementPage() {
                             {placement.siswa?.nama}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {placement.siswa?.nis}
+                            {placement.siswa?.nisn}
                           </p>
                         </div>
                       </div>
@@ -380,7 +380,7 @@ export default function StudentPlacementPage() {
                 <option value="">Pilih Siswa</option>
                 {students.map((student) => (
                   <option key={student.id} value={student.id}>
-                    {student.nama} ({student.nis})
+                    {student.nama} ({student.nisn})
                   </option>
                 ))}
               </select>

@@ -5,7 +5,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  nis?: string;
+  nisn?: string;
   nip?: string;
   schoolName?: string;
 }
@@ -17,7 +17,7 @@ export interface AuthResponse {
 
 export interface Student {
   id: string;
-  nis: string;
+  nisn: string;
   name: string;
   classId: string;
   guardianEmail?: string;

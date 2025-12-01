@@ -14,7 +14,7 @@ export interface Absensi {
   siswa?: {
     id: string;
     nama: string;
-    nis: string;
+    nisn: string;
   };
   kelas?: {
     id: string;

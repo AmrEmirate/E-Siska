@@ -68,14 +68,14 @@ export default function LoginPage() {
                 htmlFor="identifier"
                 className="block text-sm font-medium text-gray-200 mb-2"
               >
-                Username / Email / NIS
+                Username / Email / NISN
               </label>
               <input
                 id="identifier"
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="Masukkan username atau NIS"
+                placeholder="Masukkan username atau NISN"
                 className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
                 disabled={loading}
                 required
@@ -109,28 +109,6 @@ export default function LoginPage() {
               {loading ? "Sedang masuk..." : "Masuk"}
             </button>
           </form>
-
-          <div className="mt-6 pt-6 border-t border-white/10">
-            <p className="text-xs text-gray-400 mb-3">Demo Credentials:</p>
-            <div className="space-y-1 text-xs text-gray-300">
-              <p>
-                <span className="font-semibold">Admin:</span> admin /
-                password123
-              </p>
-              <p>
-                <span className="font-semibold">Guru:</span> guru01 /
-                password123
-              </p>
-              <p>
-                <span className="font-semibold">Wali Kelas:</span> wali01 /
-                password123
-              </p>
-              <p>
-                <span className="font-semibold">Siswa:</span> siswa001 /
-                password123
-              </p>
-            </div>
-          </div>
         </div>
 
         <p className="text-center text-gray-400 text-xs mt-6">

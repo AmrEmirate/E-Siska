@@ -13,7 +13,7 @@ export interface Capaian {
   siswa?: {
     id: string;
     nama: string;
-    nis: string;
+    nisn: string;
   };
   mapel?: {
     id: string;

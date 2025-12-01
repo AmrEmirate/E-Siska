@@ -16,7 +16,7 @@ export interface Nilai {
   siswa?: {
     id: string;
     nama: string;
-    nis: string;
+    nisn: string;
   };
   mapel?: {
     id: string;

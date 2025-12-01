@@ -117,9 +117,9 @@ export default function GenerateReportPage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">NIS</p>
+                <p className="text-sm text-gray-600">NISN</p>
                 <p className="font-semibold text-gray-900">
-                  {selectedStudentData.nis}
+                  {selectedStudentData.nisn}
                 </p>
               </div>
               <div>

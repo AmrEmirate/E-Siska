@@ -6,6 +6,7 @@ import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +24,18 @@ export default function LoginPage() {
 
     try {
       await login({ identifier, password });
+      toast({
+        title: "Login Berhasil",
+        description: "Selamat datang kembali!",
+      });
       router.push("/dashboard");
     } catch (err) {
       setError("Username atau password salah");
+      toast({
+        title: "Login Gagal",
+        description: "Username atau password salah. Silakan coba lagi.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

@@ -167,7 +167,6 @@ const TeacherForm = ({
           setFormData({
             ...formData,
             nip: val,
-            username: !isEdit ? val : formData.username,
           });
         }}
       />
@@ -211,33 +210,6 @@ const TeacherForm = ({
         <Label>{formData.isAktif ? "Aktif" : "Non Aktif"}</Label>
       </div>
     </div>
-
-    {!isEdit && (
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="username">Username Login</Label>
-          <Input
-            id="username"
-            value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="passwordDefault">Password Default</Label>
-          <Input
-            id="passwordDefault"
-            type="password"
-            placeholder="Minimal 6 karakter"
-            value={formData.passwordDefault}
-            onChange={(e) =>
-              setFormData({ ...formData, passwordDefault: e.target.value })
-            }
-          />
-        </div>
-      </div>
-    )}
   </div>
 );
 
@@ -254,15 +226,15 @@ export default function TeachersManagementPage() {
   const [search, setSearch] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+
   const [selectedTeacher, setSelectedTeacher] = useState<Guru | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<Partial<Guru>>({
     nip: "",
     nama: "",
     email: "",
     jenisKelamin: "L",
-    username: "",
-    passwordDefault: "",
     agama: "Islam",
     tempatLahir: "",
     tanggalLahir: "",
@@ -288,8 +260,6 @@ export default function TeachersManagementPage() {
       nama: "",
       email: "",
       jenisKelamin: "L",
-      username: "",
-      passwordDefault: "",
       agama: "Islam",
       tempatLahir: "",
       tanggalLahir: "",
@@ -304,7 +274,9 @@ export default function TeachersManagementPage() {
   };
 
   const handleAdd = async () => {
+    setIsSubmitting(true);
     const success = await createGuru(formData);
+    setIsSubmitting(false);
     if (success) {
       setIsAddOpen(false);
       resetForm();
@@ -313,7 +285,9 @@ export default function TeachersManagementPage() {
 
   const handleEdit = async () => {
     if (!selectedTeacher) return;
+    setIsSubmitting(true);
     const success = await updateGuru(selectedTeacher.id, formData);
+    setIsSubmitting(false);
     if (success) {
       setIsEditOpen(false);
       resetForm();
@@ -327,7 +301,6 @@ export default function TeachersManagementPage() {
       nama: teacher.nama,
       email: teacher.email,
       jenisKelamin: teacher.jenisKelamin,
-      username: teacher.username,
       agama: teacher.agama,
       tempatLahir: teacher.tempatLahir,
       tanggalLahir: teacher.tanggalLahir
@@ -384,8 +357,9 @@ export default function TeachersManagementPage() {
                   type="submit"
                   onClick={handleAdd}
                   className="w-full sm:w-auto"
+                  disabled={isSubmitting}
                 >
-                  Simpan Data
+                  {isSubmitting ? "Menyimpan..." : "Simpan Data"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -600,8 +574,9 @@ export default function TeachersManagementPage() {
               type="submit"
               onClick={handleEdit}
               className="w-full sm:w-auto"
+              disabled={isSubmitting}
             >
-              Simpan Perubahan
+              {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
             </Button>
           </DialogFooter>
         </DialogContent>

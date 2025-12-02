@@ -267,7 +267,9 @@ export default function StudentsManagementPage() {
   const [search, setSearch] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+
   const [selectedStudent, setSelectedStudent] = useState<Siswa | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<Partial<Siswa>>({
     nisn: "",
@@ -323,7 +325,9 @@ export default function StudentsManagementPage() {
   };
 
   const handleAdd = async () => {
+    setIsSubmitting(true);
     const success = await createSiswa(formData);
+    setIsSubmitting(false);
     if (success) {
       setIsAddOpen(false);
       resetForm();
@@ -332,7 +336,9 @@ export default function StudentsManagementPage() {
 
   const handleEdit = async () => {
     if (!selectedStudent) return;
+    setIsSubmitting(true);
     const success = await updateSiswa(selectedStudent.id, formData);
+    setIsSubmitting(false);
     if (success) {
       setIsEditOpen(false);
       resetForm();
@@ -407,8 +413,9 @@ export default function StudentsManagementPage() {
                   type="submit"
                   onClick={handleAdd}
                   className="w-full sm:w-auto"
+                  disabled={isSubmitting}
                 >
-                  Simpan Data
+                  {isSubmitting ? "Menyimpan..." : "Simpan Data"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -588,8 +595,9 @@ export default function StudentsManagementPage() {
                 type="submit"
                 onClick={handleEdit}
                 className="w-full sm:w-auto"
+                disabled={isSubmitting}
               >
-                Simpan Perubahan
+                {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
               </Button>
             </DialogFooter>
           </DialogContent>

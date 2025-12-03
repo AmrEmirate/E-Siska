@@ -27,7 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
-import { Pencil, Trash2, Plus, Users } from "lucide-react";
+import { Pencil, Trash2, Plus, Users, Search } from "lucide-react";
 
 export default function ClassesManagementPage() {
   const {
@@ -50,12 +50,13 @@ export default function ClassesManagementPage() {
     tingkatanId: "",
     waliKelasId: "",
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetchKelas();
+    fetchKelas(searchTerm);
     fetchGuru(1, 100); // Fetch all teachers for dropdown
     fetchTingkatan();
-  }, [fetchKelas, fetchGuru, fetchTingkatan]);
+  }, [fetchKelas, fetchGuru, fetchTingkatan, searchTerm]);
 
   const resetForm = () => {
     setFormData({
@@ -195,6 +196,20 @@ export default function ClassesManagementPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-4 flex items-center gap-4 bg-gray-50/30">
+          <div className="relative w-full sm:max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Cari kelas..."
+              className="pl-10 bg-white"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       {loading ? (

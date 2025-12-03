@@ -30,10 +30,12 @@ export function useKelas() {
   const { toast } = useToast();
 
   const fetchKelas = useCallback(
-    async (showLoading = true) => {
+    async (search: string = "", showLoading: boolean = true) => {
       if (showLoading) setLoading(true);
       try {
-        const response = await apiClient.get("/kelas");
+        const params = new URLSearchParams();
+        if (search) params.append("search", search);
+        const response = await apiClient.get(`/kelas?${params.toString()}`);
         setData(response.data.data || []);
       } catch (error) {
         toast({
@@ -70,7 +72,7 @@ export function useKelas() {
         title: "Berhasil",
         description: "Data kelas berhasil ditambahkan.",
       });
-      fetchKelas(false);
+      fetchKelas("", false);
       return true;
     } catch (error: any) {
       // Revert on failure
@@ -100,7 +102,7 @@ export function useKelas() {
         title: "Berhasil",
         description: "Data kelas berhasil diperbarui.",
       });
-      fetchKelas(false);
+      fetchKelas("", false);
       return true;
     } catch (error) {
       // Revert on failure
@@ -125,7 +127,7 @@ export function useKelas() {
         title: "Berhasil",
         description: "Data kelas berhasil dihapus.",
       });
-      fetchKelas(false);
+      fetchKelas("", false);
       return true;
     } catch (error) {
       // Revert on failure

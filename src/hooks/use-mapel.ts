@@ -18,21 +18,26 @@ export function useMapel() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const fetchMapel = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient.get("/mapel");
-      setData(response.data.data || []);
-    } catch (error) {
-      toast({
-        title: "Gagal memuat data",
-        description: "Terjadi kesalahan saat mengambil data mata pelajaran.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  const fetchMapel = useCallback(
+    async (search: string = "") => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (search) params.append("search", search);
+        const response = await apiClient.get(`/mapel?${params.toString()}`);
+        setData(response.data.data || []);
+      } catch (error) {
+        toast({
+          title: "Gagal memuat data",
+          description: "Terjadi kesalahan saat mengambil data mata pelajaran.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [toast]
+  );
 
   const createMapel = async (mapelData: Partial<Mapel>) => {
     try {

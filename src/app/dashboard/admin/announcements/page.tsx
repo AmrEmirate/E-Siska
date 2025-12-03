@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { usePengumuman, type Pengumuman } from "@/hooks/use-pengumuman"
-import { Loader2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import { usePengumuman, type Pengumuman } from "@/hooks/use-pengumuman";
+import { Loader2, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export default function AnnouncementsManagementPage() {
   const {
@@ -12,49 +13,50 @@ export default function AnnouncementsManagementPage() {
     createPengumuman,
     updatePengumuman,
     deletePengumuman,
-  } = usePengumuman()
+  } = usePengumuman();
 
-  const [showForm, setShowForm] = useState(false)
+  const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     judul: "",
     konten: "",
     target: "SEMUA" as "SEMUA" | "SISWA" | "GURU",
-  })
-  const [editingId, setEditingId] = useState<string | null>(null)
+  });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetchPengumuman()
-  }, [fetchPengumuman])
+    fetchPengumuman(searchTerm);
+  }, [fetchPengumuman, searchTerm]);
 
   const handleSubmit = async () => {
     if (editingId) {
-      const success = await updatePengumuman(editingId, formData)
-      if (success) resetForm()
+      const success = await updatePengumuman(editingId, formData);
+      if (success) resetForm();
     } else {
-      const success = await createPengumuman(formData)
-      if (success) resetForm()
+      const success = await createPengumuman(formData);
+      if (success) resetForm();
     }
-  }
+  };
 
   const resetForm = () => {
-    setFormData({ judul: "", konten: "", target: "SEMUA" })
-    setEditingId(null)
-    setShowForm(false)
-  }
+    setFormData({ judul: "", konten: "", target: "SEMUA" });
+    setEditingId(null);
+    setShowForm(false);
+  };
 
   const handleEdit = (announcement: Pengumuman) => {
     setFormData({
       judul: announcement.judul,
       konten: announcement.konten,
       target: announcement.target,
-    })
-    setEditingId(announcement.id)
-    setShowForm(true)
-  }
+    });
+    setEditingId(announcement.id);
+    setShowForm(true);
+  };
 
   const handleDelete = async (id: string) => {
-    await deletePengumuman(id)
-  }
+    await deletePengumuman(id);
+  };
 
   if (loading && announcements.length === 0) {
     return (
@@ -62,28 +64,43 @@ export default function AnnouncementsManagementPage() {
         <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
         <p className="text-gray-500 font-medium">Memuat pengumuman...</p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Manajemen Pengumuman</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Manajemen Pengumuman
+        </h1>
         <p className="text-gray-600">Kelola pengumuman untuk guru dan siswa</p>
       </div>
 
       <div className="card">
-        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">Daftar Pengumuman</h2>
-          <button
-            className="btn-primary"
-            onClick={() => {
-              setShowForm(!showForm)
-              if (showForm) resetForm()
-            }}
-          >
-            {showForm ? "Batal" : "+ Buat Pengumuman"}
-          </button>
+        <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Daftar Pengumuman
+          </h2>
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Cari pengumuman..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <button
+              className="btn-primary whitespace-nowrap"
+              onClick={() => {
+                setShowForm(!showForm);
+                if (showForm) resetForm();
+              }}
+            >
+              {showForm ? "Batal" : "+ Buat Pengumuman"}
+            </button>
+          </div>
         </div>
 
         {showForm && (
@@ -93,31 +110,43 @@ export default function AnnouncementsManagementPage() {
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Judul</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Judul
+                </label>
                 <input
                   type="text"
                   className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
                   value={formData.judul}
-                  onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, judul: e.target.value })
+                  }
                   placeholder="Judul pengumuman"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Isi Pengumuman</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Isi Pengumuman
+                </label>
                 <textarea
                   className="flex w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
                   rows={4}
                   value={formData.konten}
-                  onChange={(e) => setFormData({ ...formData, konten: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, konten: e.target.value })
+                  }
                   placeholder="Isi pengumuman..."
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Target</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Target
+                </label>
                 <select
                   className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
                   value={formData.target}
-                  onChange={(e) => setFormData({ ...formData, target: e.target.value as any })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, target: e.target.value as any })
+                  }
                 >
                   <option value="SEMUA">Semua</option>
                   <option value="SISWA">Siswa</option>
@@ -129,7 +158,11 @@ export default function AnnouncementsManagementPage() {
                 onClick={handleSubmit}
                 disabled={loading}
               >
-                {loading ? "Menyimpan..." : editingId ? "Update Pengumuman" : "Buat Pengumuman"}
+                {loading
+                  ? "Menyimpan..."
+                  : editingId
+                  ? "Update Pengumuman"
+                  : "Buat Pengumuman"}
               </button>
             </div>
           </div>
@@ -137,13 +170,20 @@ export default function AnnouncementsManagementPage() {
 
         <div className="divide-y divide-gray-200">
           {announcements.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">Belum ada pengumuman.</div>
+            <div className="p-6 text-center text-gray-500">
+              Belum ada pengumuman.
+            </div>
           ) : (
             announcements.map((announcement) => (
-              <div key={announcement.id} className="p-6 hover:bg-gray-50 transition">
+              <div
+                key={announcement.id}
+                className="p-6 hover:bg-gray-50 transition"
+              >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{announcement.judul}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {announcement.judul}
+                    </h3>
                     <p className="text-sm text-gray-600 mt-1">
                       {announcement.konten.length > 100
                         ? announcement.konten.substring(0, 100) + "..."
@@ -156,7 +196,11 @@ export default function AnnouncementsManagementPage() {
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <p className="text-xs text-gray-500">
-                    {announcement.createdAt ? new Date(announcement.createdAt).toLocaleDateString("id-ID") : "-"}
+                    {announcement.createdAt
+                      ? new Date(announcement.createdAt).toLocaleDateString(
+                          "id-ID"
+                        )
+                      : "-"}
                   </p>
                   <div className="space-x-2">
                     <button
@@ -179,5 +223,5 @@ export default function AnnouncementsManagementPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

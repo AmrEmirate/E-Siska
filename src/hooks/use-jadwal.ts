@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, ReactNode } from "react";
+import { useState, useCallback, ReactNode, useRef } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -38,10 +38,21 @@ export function useJadwal() {
   const [data, setData] = useState<Jadwal[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const lastFetchArgs = useRef<{ kelasId?: string; guruId?: string }>({});
 
   const fetchJadwal = useCallback(
-    async (kelasId?: string, guruId?: string) => {
-      setLoading(true);
+    async (kelasId?: string, guruId?: string, showLoading: boolean = true) => {
+      if (showLoading) setLoading(true);
+
+      // Update last fetch args if provided, otherwise use current
+      if (kelasId !== undefined || guruId !== undefined) {
+        lastFetchArgs.current = { kelasId, guruId };
+      } else {
+        // If not provided, use the stored args
+        kelasId = lastFetchArgs.current.kelasId;
+        guruId = lastFetchArgs.current.guruId;
+      }
+
       try {
         const params = new URLSearchParams();
         if (kelasId) params.append("kelasId", kelasId);
@@ -56,22 +67,36 @@ export function useJadwal() {
           variant: "destructive",
         });
       } finally {
-        setLoading(false);
+        if (showLoading) setLoading(false);
       }
     },
     [toast]
   );
 
   const createJadwal = async (jadwalData: Partial<Jadwal>) => {
+    // Optimistic update
+    const tempId = `temp-${Date.now()}`;
+    const optimisticJadwal = {
+      id: tempId,
+      ...jadwalData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    } as Jadwal;
+
+    const previousData = [...data];
+    setData((prev) => [...prev, optimisticJadwal]);
+
     try {
       await apiClient.post("/jadwal", jadwalData);
       toast({
         title: "Berhasil",
         description: "Data jadwal berhasil ditambahkan.",
       });
-      fetchJadwal();
+      fetchJadwal(undefined, undefined, false);
       return true;
     } catch (error: any) {
+      // Revert
+      setData(previousData);
       const errorMessage =
         error?.response?.data?.message || "Gagal menambahkan data jadwal.";
 
@@ -85,15 +110,23 @@ export function useJadwal() {
   };
 
   const updateJadwal = async (id: string, jadwalData: Partial<Jadwal>) => {
+    // Optimistic update
+    const previousData = [...data];
+    setData((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...jadwalData } : item))
+    );
+
     try {
       await apiClient.put(`/jadwal/${id}`, jadwalData);
       toast({
         title: "Berhasil",
         description: "Data jadwal berhasil diperbarui.",
       });
-      fetchJadwal();
+      fetchJadwal(undefined, undefined, false);
       return true;
     } catch (error) {
+      // Revert
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data jadwal.",
@@ -104,15 +137,21 @@ export function useJadwal() {
   };
 
   const deleteJadwal = async (id: string) => {
+    // Optimistic update
+    const previousData = [...data];
+    setData((prev) => prev.filter((item) => item.id !== id));
+
     try {
       await apiClient.delete(`/jadwal/${id}`);
       toast({
         title: "Berhasil",
         description: "Data jadwal berhasil dihapus.",
       });
-      fetchJadwal();
+      fetchJadwal(undefined, undefined, false);
       return true;
     } catch (error) {
+      // Revert
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal menghapus data jadwal.",

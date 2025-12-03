@@ -79,12 +79,10 @@ export default function SubjectsManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetchMapel();
-  }, [fetchMapel]);
+    fetchMapel(searchTerm);
+  }, [fetchMapel, searchTerm]);
 
-  const filteredSubjects = subjects.filter((subject) =>
-    subject.namaMapel.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredSubjects = subjects;
 
   const resetForm = () => {
     setFormData({ namaMapel: "", kategori: "WAJIB" });

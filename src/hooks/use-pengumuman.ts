@@ -21,10 +21,14 @@ export function usePengumuman() {
   const { toast } = useToast();
 
   const fetchPengumuman = useCallback(
-    async (showLoading = true) => {
+    async (search: string = "", showLoading: boolean = true) => {
       if (showLoading) setLoading(true);
       try {
-        const response = await apiClient.get("/pengumuman");
+        const params = new URLSearchParams();
+        if (search) params.append("search", search);
+        const response = await apiClient.get(
+          `/pengumuman?${params.toString()}`
+        );
         setData(response.data.data || []);
       } catch (error) {
         toast({
@@ -63,7 +67,7 @@ export function usePengumuman() {
         description: "Pengumuman berhasil ditambahkan.",
       });
       // Silent refetch to get real ID and server data
-      fetchPengumuman(false);
+      fetchPengumuman("", false);
       return true;
     } catch (error) {
       // Revert on failure
@@ -95,7 +99,7 @@ export function usePengumuman() {
         title: "Berhasil",
         description: "Pengumuman berhasil diperbarui.",
       });
-      fetchPengumuman(false);
+      fetchPengumuman("", false);
       return true;
     } catch (error) {
       // Revert on failure
@@ -120,7 +124,7 @@ export function usePengumuman() {
         title: "Berhasil",
         description: "Pengumuman berhasil dihapus.",
       });
-      fetchPengumuman(false);
+      fetchPengumuman("", false);
       return true;
     } catch (error) {
       // Revert on failure

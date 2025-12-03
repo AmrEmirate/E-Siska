@@ -5,8 +5,6 @@ import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
 
 export interface Jadwal {
-  jamMulai: any;
-  jamSelesai: ReactNode;
   id: string;
   kelasId: string;
   mapelId: string;

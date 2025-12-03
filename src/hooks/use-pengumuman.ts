@@ -5,7 +5,6 @@ import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
 
 export interface Pengumuman {
-  isi: ReactNode;
   id: string;
   judul: string;
   konten: string;
@@ -21,32 +20,54 @@ export function usePengumuman() {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const fetchPengumuman = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient.get("/pengumuman");
-      setData(response.data.data || []);
-    } catch (error) {
-      toast({
-        title: "Gagal memuat data",
-        description: "Terjadi kesalahan saat mengambil data pengumuman.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  const fetchPengumuman = useCallback(
+    async (showLoading = true) => {
+      if (showLoading) setLoading(true);
+      try {
+        const response = await apiClient.get("/pengumuman");
+        setData(response.data.data || []);
+      } catch (error) {
+        toast({
+          title: "Gagal memuat data",
+          description: "Terjadi kesalahan saat mengambil data pengumuman.",
+          variant: "destructive",
+        });
+      } finally {
+        if (showLoading) setLoading(false);
+      }
+    },
+    [toast]
+  );
 
   const createPengumuman = async (pengumumanData: Partial<Pengumuman>) => {
+    // Optimistic Update
+    const tempId = `temp-${Date.now()}`;
+    const newItem: Pengumuman = {
+      id: tempId,
+      judul: pengumumanData.judul || "",
+      konten: pengumumanData.konten || "",
+      target: pengumumanData.target || "SEMUA",
+      tanggalPublish: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...pengumumanData,
+    } as Pengumuman;
+
+    const previousData = [...data];
+    setData((prev) => [newItem, ...prev]);
+
     try {
       await apiClient.post("/pengumuman", pengumumanData);
       toast({
         title: "Berhasil",
         description: "Pengumuman berhasil ditambahkan.",
       });
-      fetchPengumuman();
+      // Silent refetch to get real ID and server data
+      fetchPengumuman(false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal menambahkan pengumuman.",
@@ -60,15 +81,25 @@ export function usePengumuman() {
     id: string,
     pengumumanData: Partial<Pengumuman>
   ) => {
+    // Optimistic Update
+    const previousData = [...data];
+    setData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, ...pengumumanData } : item
+      )
+    );
+
     try {
       await apiClient.put(`/pengumuman/${id}`, pengumumanData);
       toast({
         title: "Berhasil",
         description: "Pengumuman berhasil diperbarui.",
       });
-      fetchPengumuman();
+      fetchPengumuman(false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal memperbarui pengumuman.",
@@ -79,15 +110,21 @@ export function usePengumuman() {
   };
 
   const deletePengumuman = async (id: string) => {
+    // Optimistic Update
+    const previousData = [...data];
+    setData((prev) => prev.filter((item) => item.id !== id));
+
     try {
       await apiClient.delete(`/pengumuman/${id}`);
       toast({
         title: "Berhasil",
         description: "Pengumuman berhasil dihapus.",
       });
-      fetchPengumuman();
+      fetchPengumuman(false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal menghapus pengumuman.",

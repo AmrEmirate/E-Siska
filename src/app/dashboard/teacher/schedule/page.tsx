@@ -44,7 +44,7 @@ export default function TeacherSchedulePage() {
             <div className="space-y-3">
               {schedules
                 .filter((s) => s.hari === day)
-                .sort((a, b) => a.jamMulai.localeCompare(b.jamMulai))
+                .sort((a, b) => a.waktuMulai.localeCompare(b.waktuMulai))
                 .map((s) => (
                   <div
                     key={s.id}
@@ -57,7 +57,7 @@ export default function TeacherSchedulePage() {
                       Kelas {s.kelas?.namaKelas}
                     </p>
                     <p className="text-xs text-red-600 font-semibold">
-                      {s.jamMulai} - {s.jamSelesai}
+                      {s.waktuMulai} - {s.waktuSelesai}
                     </p>
                   </div>
                 ))}
@@ -113,7 +113,7 @@ export default function TeacherSchedulePage() {
                       dayOrder[a.hari as keyof typeof dayOrder] -
                       dayOrder[b.hari as keyof typeof dayOrder];
                     if (dayDiff !== 0) return dayDiff;
-                    return a.jamMulai.localeCompare(b.jamMulai);
+                    return a.waktuMulai.localeCompare(b.waktuMulai);
                   })
                   .map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50">
@@ -129,7 +129,7 @@ export default function TeacherSchedulePage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {item.jamMulai} - {item.jamSelesai}
+                        {item.waktuMulai} - {item.waktuSelesai}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {item.ruangan?.namaRuangan || "-"}

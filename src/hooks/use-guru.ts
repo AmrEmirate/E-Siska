@@ -48,8 +48,8 @@ export function useGuru() {
   const { toast } = useToast();
 
   const fetchGuru = useCallback(
-    async (page = 1, limit = 10, search = "") => {
-      setLoading(true);
+    async (page = 1, limit = 10, search = "", showLoading = true) => {
+      if (showLoading) setLoading(true);
       try {
         const params = new URLSearchParams({
           page: page.toString(),
@@ -68,22 +68,40 @@ export function useGuru() {
           variant: "destructive",
         });
       } finally {
-        setLoading(false);
+        if (showLoading) setLoading(false);
       }
     },
     [toast]
   );
 
   const createGuru = async (guruData: Partial<Guru>) => {
+    // Optimistic Update
+    const tempId = `temp-${Date.now()}`;
+    const newItem: Guru = {
+      id: tempId,
+      nip: guruData.nip || "",
+      nama: guruData.nama || "",
+      email: guruData.email || "",
+      jenisKelamin: guruData.jenisKelamin || "L",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...guruData,
+    } as Guru;
+
+    const previousData = [...data];
+    setData((prev) => [newItem, ...prev]);
+
     try {
       await apiClient.post("/guru", guruData);
       toast({
         title: "Berhasil",
         description: "Data guru berhasil ditambahkan.",
       });
-      fetchGuru(meta.page, meta.limit);
+      fetchGuru(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal menambahkan data guru.",
@@ -94,15 +112,23 @@ export function useGuru() {
   };
 
   const updateGuru = async (id: string, guruData: Partial<Guru>) => {
+    // Optimistic Update
+    const previousData = [...data];
+    setData((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...guruData } : item))
+    );
+
     try {
       await apiClient.put(`/guru/${id}`, guruData);
       toast({
         title: "Berhasil",
         description: "Data guru berhasil diperbarui.",
       });
-      fetchGuru(meta.page, meta.limit);
+      fetchGuru(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data guru.",
@@ -113,15 +139,21 @@ export function useGuru() {
   };
 
   const deleteGuru = async (id: string) => {
+    // Optimistic Update
+    const previousData = [...data];
+    setData((prev) => prev.filter((item) => item.id !== id));
+
     try {
       await apiClient.delete(`/guru/${id}`);
       toast({
         title: "Berhasil",
         description: "Data guru berhasil dihapus.",
       });
-      fetchGuru(meta.page, meta.limit);
+      fetchGuru(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal menghapus data guru.",

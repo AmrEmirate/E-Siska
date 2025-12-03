@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { useAbsensi } from "@/hooks/use-absensi";
 
 interface StudentAttendance {
   siswaId: string;
@@ -39,6 +40,8 @@ export default function AttendanceDetailPage() {
   const { sesiId } = useParams();
   const router = useRouter();
   const { toast } = useToast();
+  const { fetchSessionDetail: fetchSessionDetailHook, updateSessionDetail } =
+    useAbsensi();
 
   const [session, setSession] = useState<SessionDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,23 +54,22 @@ export default function AttendanceDetailPage() {
   }, [sesiId]);
 
   const fetchSessionDetail = async () => {
+    if (!sesiId) return;
     setLoading(true);
     try {
-      const res = await apiClient.get(`/absensi/sesi/${sesiId}`);
-      const data = res.data.data;
-      setSession(data);
-
-      const initializedStudents = data.students.map((s: StudentAttendance) => ({
-        ...s,
-        status: s.status || "HADIR",
-      }));
-      setAttendanceData(initializedStudents);
+      const data = await fetchSessionDetailHook(sesiId as string);
+      if (data) {
+        setSession(data);
+        const initializedStudents = data.students.map(
+          (s: StudentAttendance) => ({
+            ...s,
+            status: s.status || "HADIR",
+          })
+        );
+        setAttendanceData(initializedStudents);
+      }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Gagal memuat sesi",
-        description: "Tidak dapat mengambil data sesi absensi.",
-      });
+      // Error handled in hook
     } finally {
       setLoading(false);
     }
@@ -83,32 +85,20 @@ export default function AttendanceDetailPage() {
   };
 
   const handleSave = async () => {
+    if (!sesiId) return;
     setSaving(true);
-    try {
-      const payload = {
-        data: attendanceData.map((s) => ({
-          siswaId: s.siswaId,
-          status: s.status,
-        })),
-      };
+    const payload = {
+      data: attendanceData.map((s) => ({
+        siswaId: s.siswaId,
+        status: s.status,
+      })),
+    };
 
-      await apiClient.post(`/absensi/sesi/${sesiId}/detail`, payload);
-
-      toast({
-        title: "Berhasil disimpan",
-        description: "Data absensi berhasil diperbarui.",
-      });
-
+    const success = await updateSessionDetail(sesiId as string, payload);
+    if (success) {
       fetchSessionDetail();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Gagal menyimpan",
-        description: "Terjadi kesalahan saat menyimpan data absensi.",
-      });
-    } finally {
-      setSaving(false);
     }
+    setSaving(false);
   };
 
   const getStatusColor = (status: string | null) => {

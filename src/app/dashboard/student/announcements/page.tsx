@@ -1,27 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { usePengumuman, type Pengumuman } from "@/hooks/use-pengumuman"
-import { Loader2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import { usePengumuman, type Pengumuman } from "@/hooks/use-pengumuman";
+import { Loader2 } from "lucide-react";
 
 export default function StudentAnnouncementsPage() {
-  const { data: announcements, loading, fetchPengumuman } = usePengumuman()
-  const [filter, setFilter] = useState<"ALL" | "SISWA" | "SEMUA">("ALL")
+  const { data: announcements, loading, fetchPengumuman } = usePengumuman();
+  const [filter, setFilter] = useState<"ALL" | "SISWA" | "SEMUA">("ALL");
 
   useEffect(() => {
-    fetchPengumuman()
-  }, [fetchPengumuman])
+    fetchPengumuman();
+  }, [fetchPengumuman]);
 
   const filteredAnnouncements = announcements.filter((ann) => {
-    if (filter === "ALL") return ann.target === "SISWA" || ann.target === "SEMUA"
-    return ann.target === filter
-  })
+    if (filter === "ALL")
+      return ann.target === "SISWA" || ann.target === "SEMUA";
+    return ann.target === filter;
+  });
 
   const getPriorityColor = (targetLevel: string) => {
     return targetLevel === "SEMUA"
       ? "bg-red-100 text-red-800 border-l-4 border-red-500"
-      : "bg-blue-100 text-blue-800 border-l-4 border-blue-500"
-  }
+      : "bg-blue-100 text-blue-800 border-l-4 border-blue-500";
+  };
 
   if (loading && announcements.length === 0) {
     return (
@@ -29,13 +30,15 @@ export default function StudentAnnouncementsPage() {
         <Loader2 className="animate-spin text-red-600 mb-4" size={40} />
         <p className="text-gray-500 font-medium">Memuat pengumuman...</p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Pengumuman Sekolah</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Pengumuman Sekolah
+        </h1>
         <p className="text-gray-600">Lihat semua pengumuman dari sekolah</p>
       </div>
 
@@ -44,7 +47,9 @@ export default function StudentAnnouncementsPage() {
           <button
             onClick={() => setFilter("ALL")}
             className={`px-4 py-2 rounded-lg font-medium transition ${
-              filter === "ALL" ? "bg-red-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              filter === "ALL"
+                ? "bg-red-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             Semua
@@ -52,7 +57,9 @@ export default function StudentAnnouncementsPage() {
           <button
             onClick={() => setFilter("SISWA")}
             className={`px-4 py-2 rounded-lg font-medium transition ${
-              filter === "SISWA" ? "bg-red-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              filter === "SISWA"
+                ? "bg-red-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
             Untuk Siswa
@@ -67,7 +74,10 @@ export default function StudentAnnouncementsPage() {
           </div>
         ) : (
           filteredAnnouncements.map((announcement) => (
-            <div key={announcement.id} className={`card p-6 ${getPriorityColor(announcement.target)}`}>
+            <div
+              key={announcement.id}
+              className={`card p-6 ${getPriorityColor(announcement.target)}`}
+            >
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h3 className="text-lg font-bold">{announcement.judul}</h3>
@@ -77,16 +87,20 @@ export default function StudentAnnouncementsPage() {
                 </div>
                 <p className="text-xs text-gray-600">
                   {announcement.createdAt
-                    ? new Date(announcement.createdAt).toLocaleDateString("id-ID")
+                    ? new Date(announcement.createdAt).toLocaleDateString(
+                        "id-ID"
+                      )
                     : "-"}
                 </p>
               </div>
-              <p className="text-sm leading-relaxed mt-3">{announcement.isi}</p>
+              <p className="text-sm leading-relaxed mt-3">
+                {announcement.konten}
+              </p>
             </div>
           ))
         )}
       </div>
     </div>
-  )
+  );
 }
 //

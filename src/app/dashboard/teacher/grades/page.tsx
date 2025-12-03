@@ -6,6 +6,7 @@ import { Loader2, Save, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "@/context/auth-context";
+import { useKelas } from "@/hooks/use-kelas";
 
 interface StudentGrade {
   siswaId: string;
@@ -40,6 +41,7 @@ interface SubjectItem {
 export default function GradesPage() {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { fetchTeachingClasses } = useKelas();
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
 
@@ -55,10 +57,10 @@ export default function GradesPage() {
   useEffect(() => {
     const fetchInitData = async () => {
       try {
-        setClasses([
-          { id: "cls-1", name: "10 IPA 1" },
-          { id: "cls-2", name: "10 IPA 2" },
-        ]);
+        const teachingClasses = await fetchTeachingClasses();
+        setClasses(
+          teachingClasses.map((c: any) => ({ id: c.id, name: c.namaKelas }))
+        );
 
         const subjectsRes = await apiClient.get("/mapel");
         setSubjects(subjectsRes.data.data);

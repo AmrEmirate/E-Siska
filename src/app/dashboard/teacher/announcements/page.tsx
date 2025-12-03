@@ -76,7 +76,7 @@ export default function TeacherAnnouncementsPage() {
                     {announcement.judul}
                   </h3>
                   <p className="text-sm text-gray-600 mt-2">
-                    {announcement.isi}
+                    {announcement.konten}
                   </p>
                 </div>
               </div>

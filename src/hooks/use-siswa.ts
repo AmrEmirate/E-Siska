@@ -53,8 +53,8 @@ export function useSiswa() {
   const { toast } = useToast();
 
   const fetchSiswa = useCallback(
-    async (page = 1, limit = 10, search = "") => {
-      setLoading(true);
+    async (page = 1, limit = 10, search = "", showLoading = true) => {
+      if (showLoading) setLoading(true);
       try {
         const params = new URLSearchParams({
           page: page.toString(),
@@ -73,22 +73,40 @@ export function useSiswa() {
           variant: "destructive",
         });
       } finally {
-        setLoading(false);
+        if (showLoading) setLoading(false);
       }
     },
     [toast]
   );
 
   const createSiswa = async (siswaData: Partial<Siswa>) => {
+    // Optimistic Update
+    const tempId = `temp-${Date.now()}`;
+    const newItem: Siswa = {
+      id: tempId,
+      nisn: siswaData.nisn || "",
+      nama: siswaData.nama || "",
+      jenisKelamin: siswaData.jenisKelamin || "L",
+      status: siswaData.status || "Aktif",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      ...siswaData,
+    } as Siswa;
+
+    const previousData = [...data];
+    setData((prev) => [newItem, ...prev]);
+
     try {
       await apiClient.post("/siswa", siswaData);
       toast({
         title: "Berhasil",
         description: "Data siswa berhasil ditambahkan.",
       });
-      fetchSiswa(meta.page, meta.limit);
+      fetchSiswa(meta.page, meta.limit, "", false);
       return true;
     } catch (error: any) {
+      // Revert on failure
+      setData(previousData);
       const isConflict = error.response?.status === 409;
       toast({
         title: isConflict ? "Gagal: Data Duplikat" : "Gagal",
@@ -102,15 +120,23 @@ export function useSiswa() {
   };
 
   const updateSiswa = async (id: string, siswaData: Partial<Siswa>) => {
+    // Optimistic Update
+    const previousData = [...data];
+    setData((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...siswaData } : item))
+    );
+
     try {
       await apiClient.put(`/siswa/${id}`, siswaData);
       toast({
         title: "Berhasil",
         description: "Data siswa berhasil diperbarui.",
       });
-      fetchSiswa(meta.page, meta.limit);
+      fetchSiswa(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal memperbarui data siswa.",
@@ -121,15 +147,21 @@ export function useSiswa() {
   };
 
   const deleteSiswa = async (id: string) => {
+    // Optimistic Update
+    const previousData = [...data];
+    setData((prev) => prev.filter((item) => item.id !== id));
+
     try {
       await apiClient.delete(`/siswa/${id}`);
       toast({
         title: "Berhasil",
         description: "Data siswa berhasil dihapus.",
       });
-      fetchSiswa(meta.page, meta.limit);
+      fetchSiswa(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
+      // Revert on failure
+      setData(previousData);
       toast({
         title: "Gagal",
         description: "Gagal menghapus data siswa.",

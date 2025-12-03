@@ -8,6 +8,8 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { useAuth } from "@/context/auth-context";
+import { useKelas } from "@/hooks/use-kelas";
+import { useAbsensi } from "@/hooks/use-absensi";
 
 interface ClassItem {
   id: string;
@@ -25,6 +27,9 @@ interface SesiAbsensi {
 
 export default function AttendancePage() {
   const { toast } = useToast();
+  const { fetchTeachingClasses } = useKelas();
+  const { fetchSessionsByClass, createSession } = useAbsensi();
+
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [sessions, setSessions] = useState<SesiAbsensi[]>([]);
@@ -53,14 +58,10 @@ export default function AttendancePage() {
 
   const fetchClasses = async () => {
     try {
-      const res = await apiClient.get("/kelas/teaching");
-      setClasses(res.data.data);
+      const teachingClasses = await fetchTeachingClasses();
+      setClasses(teachingClasses);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Gagal memuat kelas",
-        description: "Tidak dapat mengambil daftar kelas ajar.",
-      });
+      // Error handled in hook
     } finally {
       setLoadingClasses(false);
     }
@@ -69,20 +70,16 @@ export default function AttendancePage() {
   const fetchSessions = async (kelasId: string) => {
     setLoadingSessions(true);
     try {
-      const res = await apiClient.get(`/absensi/kelas/${kelasId}`);
-      setSessions(res.data.data);
+      const sessionsData = await fetchSessionsByClass(kelasId);
+      setSessions(sessionsData);
 
-      if (res.data.data.length > 0) {
-        setNewSessionPertemuan(res.data.data[0].pertemuanKe + 1);
+      if (sessionsData.length > 0) {
+        setNewSessionPertemuan(sessionsData[0].pertemuanKe + 1);
       } else {
         setNewSessionPertemuan(1);
       }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Gagal memuat sesi",
-        description: "Tidak dapat mengambil riwayat absensi.",
-      });
+      // Error handled in hook
     } finally {
       setLoadingSessions(false);
     }
@@ -237,8 +234,7 @@ function CreateSessionForm({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const { toast } = useToast();
-
+  const { createSession } = useAbsensi();
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [pertemuan, setPertemuan] = useState(defaultPertemuan);
   const [loading, setLoading] = useState(false);
@@ -250,28 +246,17 @@ function CreateSessionForm({
     if (!user?.id) return;
 
     setLoading(true);
-    try {
-      await apiClient.post("/absensi/sesi", {
-        guruId: user.id,
-        kelasId,
-        tanggal: date,
-        pertemuanKe: pertemuan,
-      });
+    const success = await createSession({
+      guruId: user.id,
+      kelasId,
+      tanggal: date,
+      pertemuanKe: pertemuan,
+    });
 
-      toast({
-        title: "Berhasil",
-        description: "Sesi absensi berhasil dibuat.",
-      });
+    if (success) {
       onSuccess();
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Gagal",
-        description: error.response?.data?.message || "Gagal membuat sesi.",
-      });
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   return (

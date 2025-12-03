@@ -27,10 +27,17 @@ export function useDashboardStats() {
       try {
         const siswaRes = await apiClient.get("/siswa?limit=1");
         const totalSiswa =
-          siswaRes.data.meta?.total || siswaRes.data.total || 0;
+          siswaRes.data.pagination?.total ||
+          siswaRes.data.meta?.total ||
+          siswaRes.data.total ||
+          0;
 
         const guruRes = await apiClient.get("/guru?limit=1");
-        const totalGuru = guruRes.data.meta?.total || guruRes.data.total || 0;
+        const totalGuru =
+          guruRes.data.pagination?.total ||
+          guruRes.data.meta?.total ||
+          guruRes.data.total ||
+          0;
 
         const taRes = await apiClient.get("/tahun-ajaran");
         const activeTa =
@@ -39,7 +46,13 @@ export function useDashboardStats() {
 
         let totalKelas = 0;
         try {
-        } catch (e) {}
+          const kelasRes = await apiClient.get("/kelas");
+          if (Array.isArray(kelasRes.data.data)) {
+            totalKelas = kelasRes.data.data.length;
+          }
+        } catch (e) {
+          console.error("Error fetching kelas stats:", e);
+        }
 
         setStats({
           totalSiswa,

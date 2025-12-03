@@ -229,7 +229,7 @@ export default function ClassesManagementPage() {
               key={cls.id}
               className="group bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-blue-200 transition-all duration-200 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+              <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -290,7 +290,7 @@ export default function ClassesManagementPage() {
                     <span className="text-sm font-medium">Total Siswa</span>
                   </div>
                   <span className="text-lg font-bold text-blue-700">
-                    {cls._count?.siswa || 0}
+                    {cls._count?.Penempatan || 0}
                   </span>
                 </div>
 

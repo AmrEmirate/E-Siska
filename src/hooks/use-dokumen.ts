@@ -40,8 +40,7 @@ export function useDokumen() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      if (metadata.namaDokumen)
-        formData.append("namaDokumen", metadata.namaDokumen);
+      if (metadata.namaDokumen) formData.append("judul", metadata.namaDokumen);
       if (metadata.jenisDokumen)
         formData.append("jenisDokumen", metadata.jenisDokumen);
 

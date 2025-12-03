@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -46,7 +46,15 @@ export function useAbsensi() {
         if (siswaId) params.append("siswaId", siswaId);
 
         const response = await apiClient.get(`/absensi?${params.toString()}`);
-        setData(response.data.data || []);
+        const responseData = response.data.data;
+
+        if (Array.isArray(responseData)) {
+          setData(responseData);
+        } else if (responseData && Array.isArray(responseData.details)) {
+          setData(responseData.details);
+        } else {
+          setData([]);
+        }
       } catch (error) {
         toast({
           title: "Gagal memuat data",
@@ -113,7 +121,7 @@ export function useAbsensi() {
     setStats({ hadir, sakit, izin, alpha, total: data.length });
   }, [data]);
 
-  useCallback(() => {
+  useEffect(() => {
     calculateStats();
   }, [data, calculateStats]);
 
@@ -125,5 +133,77 @@ export function useAbsensi() {
     fetchAbsensiByStudent,
     createAbsensi,
     updateAbsensi,
+    fetchSessionsByClass: useCallback(
+      async (kelasId: string) => {
+        setLoading(true);
+        try {
+          const response = await apiClient.get(`/absensi/kelas/${kelasId}`);
+          return response.data.data || [];
+        } catch (error) {
+          toast({
+            title: "Gagal memuat sesi",
+            description: "Tidak dapat mengambil riwayat absensi.",
+            variant: "destructive",
+          });
+          return [];
+        } finally {
+          setLoading(false);
+        }
+      },
+      [toast]
+    ),
+    createSession: async (data: any) => {
+      try {
+        await apiClient.post("/absensi/sesi", data);
+        toast({
+          title: "Berhasil",
+          description: "Sesi absensi berhasil dibuat.",
+        });
+        return true;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Gagal",
+          description: error.response?.data?.message || "Gagal membuat sesi.",
+        });
+        return false;
+      }
+    },
+    fetchSessionDetail: useCallback(
+      async (sesiId: string) => {
+        setLoading(true);
+        try {
+          const response = await apiClient.get(`/absensi/sesi/${sesiId}`);
+          return response.data.data;
+        } catch (error) {
+          toast({
+            title: "Gagal memuat sesi",
+            description: "Tidak dapat mengambil data sesi absensi.",
+            variant: "destructive",
+          });
+          return null;
+        } finally {
+          setLoading(false);
+        }
+      },
+      [toast]
+    ),
+    updateSessionDetail: async (sesiId: string, data: any) => {
+      try {
+        await apiClient.post(`/absensi/sesi/${sesiId}/detail`, data);
+        toast({
+          title: "Berhasil disimpan",
+          description: "Data absensi berhasil diperbarui.",
+        });
+        return true;
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Gagal menyimpan",
+          description: "Terjadi kesalahan saat menyimpan data absensi.",
+        });
+        return false;
+      }
+    },
   };
 }

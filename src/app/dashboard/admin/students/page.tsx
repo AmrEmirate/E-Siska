@@ -324,7 +324,21 @@ export default function StudentsManagementPage() {
     setSelectedStudent(null);
   };
 
+  const validateForm = () => {
+    if (
+      !formData.nisn ||
+      !formData.nama ||
+      !formData.jenisKelamin ||
+      !formData.agama
+    ) {
+      alert("Mohon lengkapi data wajib (NISN, Nama, Jenis Kelamin, Agama)");
+      return false;
+    }
+    return true;
+  };
+
   const handleAdd = async () => {
+    if (!validateForm()) return;
     setIsSubmitting(true);
     const success = await createSiswa(formData);
     setIsSubmitting(false);
@@ -336,6 +350,7 @@ export default function StudentsManagementPage() {
 
   const handleEdit = async () => {
     if (!selectedStudent) return;
+    if (!validateForm()) return;
     setIsSubmitting(true);
     const success = await updateSiswa(selectedStudent.id, formData);
     setIsSubmitting(false);

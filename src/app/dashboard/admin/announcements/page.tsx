@@ -29,6 +29,10 @@ export default function AnnouncementsManagementPage() {
   }, [fetchPengumuman, searchTerm]);
 
   const handleSubmit = async () => {
+    if (!formData.judul || !formData.konten || !formData.target) {
+      alert("Mohon lengkapi data wajib (Judul, Konten, Target)");
+      return;
+    }
     if (editingId) {
       const success = await updatePengumuman(editingId, formData);
       if (success) resetForm();

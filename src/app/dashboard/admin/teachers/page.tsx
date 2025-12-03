@@ -273,7 +273,21 @@ export default function TeachersManagementPage() {
     setSelectedTeacher(null);
   };
 
+  const validateForm = () => {
+    if (
+      !formData.nip ||
+      !formData.nama ||
+      !formData.jenisKelamin ||
+      !formData.agama
+    ) {
+      alert("Mohon lengkapi data wajib (NIP, Nama, Jenis Kelamin, Agama)");
+      return false;
+    }
+    return true;
+  };
+
   const handleAdd = async () => {
+    if (!validateForm()) return;
     setIsSubmitting(true);
     const success = await createGuru(formData);
     setIsSubmitting(false);
@@ -285,6 +299,7 @@ export default function TeachersManagementPage() {
 
   const handleEdit = async () => {
     if (!selectedTeacher) return;
+    if (!validateForm()) return;
     setIsSubmitting(true);
     const success = await updateGuru(selectedTeacher.id, formData);
     setIsSubmitting(false);

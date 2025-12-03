@@ -67,7 +67,16 @@ export default function ClassesManagementPage() {
     setSelectedClass(null);
   };
 
+  const validateForm = () => {
+    if (!formData.namaKelas || !formData.tingkatanId) {
+      alert("Mohon lengkapi data wajib (Nama Kelas, Tingkatan)");
+      return false;
+    }
+    return true;
+  };
+
   const handleAdd = async () => {
+    if (!validateForm()) return;
     const success = await createKelas(formData);
     if (success) {
       setIsAddOpen(false);
@@ -77,6 +86,7 @@ export default function ClassesManagementPage() {
 
   const handleEdit = async () => {
     if (!selectedClass) return;
+    if (!validateForm()) return;
     const success = await updateKelas(selectedClass.id, formData);
     if (success) {
       setIsEditOpen(false);

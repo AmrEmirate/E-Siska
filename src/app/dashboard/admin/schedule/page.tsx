@@ -113,11 +113,24 @@ export default function ScheduleManagementPage() {
     setSelectedSchedule(null);
   };
 
-  const handleAdd = async () => {
-    if (!formData.tahunAjaranId) {
-      alert("Tahun ajaran harus dipilih");
-      return;
+  const validateForm = () => {
+    if (
+      !formData.kelasId ||
+      !formData.guruId ||
+      !formData.mapelId ||
+      !formData.hari ||
+      !formData.waktuMulai ||
+      !formData.waktuSelesai ||
+      !formData.tahunAjaranId
+    ) {
+      alert("Mohon lengkapi semua data wajib!");
+      return false;
     }
+    return true;
+  };
+
+  const handleAdd = async () => {
+    if (!validateForm()) return;
 
     const success = await createJadwal({
       ...formData,
@@ -137,6 +150,8 @@ export default function ScheduleManagementPage() {
 
   const handleEdit = async () => {
     if (!selectedSchedule) return;
+    if (!validateForm()) return;
+
     const success = await updateJadwal(selectedSchedule.id, {
       ...formData,
       hari: formData.hari as

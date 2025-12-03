@@ -89,7 +89,16 @@ export default function SubjectsManagementPage() {
     setEditingId(null);
   };
 
+  const validateForm = () => {
+    if (!formData.namaMapel || !formData.kategori) {
+      alert("Mohon lengkapi data wajib (Nama Mapel, Kategori)");
+      return false;
+    }
+    return true;
+  };
+
   const handleAdd = async () => {
+    if (!validateForm()) return;
     const success = await createMapel(formData);
     if (success) {
       setIsAddOpen(false);
@@ -99,6 +108,7 @@ export default function SubjectsManagementPage() {
 
   const handleEdit = async () => {
     if (!editingId) return;
+    if (!validateForm()) return;
     const success = await updateMapel(editingId, formData);
     if (success) {
       setIsEditOpen(false);

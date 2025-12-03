@@ -67,6 +67,8 @@ export default function ClassesManagementPage() {
     setSelectedClass(null);
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const validateForm = () => {
     if (!formData.namaKelas || !formData.tingkatanId) {
       alert("Mohon lengkapi data wajib (Nama Kelas, Tingkatan)");
@@ -77,7 +79,9 @@ export default function ClassesManagementPage() {
 
   const handleAdd = async () => {
     if (!validateForm()) return;
+    setIsSubmitting(true);
     const success = await createKelas(formData);
+    setIsSubmitting(false);
     if (success) {
       setIsAddOpen(false);
       resetForm();
@@ -87,7 +91,9 @@ export default function ClassesManagementPage() {
   const handleEdit = async () => {
     if (!selectedClass) return;
     if (!validateForm()) return;
+    setIsSubmitting(true);
     const success = await updateKelas(selectedClass.id, formData);
+    setIsSubmitting(false);
     if (success) {
       setIsEditOpen(false);
       resetForm();
@@ -200,8 +206,9 @@ export default function ClassesManagementPage() {
                 type="submit"
                 onClick={handleAdd}
                 className="w-full sm:w-auto"
+                disabled={isSubmitting}
               >
-                Simpan Data
+                {isSubmitting ? "Menyimpan..." : "Simpan Data"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -404,8 +411,9 @@ export default function ClassesManagementPage() {
               type="submit"
               onClick={handleEdit}
               className="w-full sm:w-auto"
+              disabled={isSubmitting}
             >
-              Simpan Perubahan
+              {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
             </Button>
           </DialogFooter>
         </DialogContent>

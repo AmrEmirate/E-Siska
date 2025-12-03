@@ -28,11 +28,14 @@ export default function AnnouncementsManagementPage() {
     fetchPengumuman(searchTerm);
   }, [fetchPengumuman, searchTerm]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async () => {
     if (!formData.judul || !formData.konten || !formData.target) {
       alert("Mohon lengkapi data wajib (Judul, Konten, Target)");
       return;
     }
+    setIsSubmitting(true);
     if (editingId) {
       const success = await updatePengumuman(editingId, formData);
       if (success) resetForm();
@@ -40,6 +43,7 @@ export default function AnnouncementsManagementPage() {
       const success = await createPengumuman(formData);
       if (success) resetForm();
     }
+    setIsSubmitting(false);
   };
 
   const resetForm = () => {
@@ -160,9 +164,9 @@ export default function AnnouncementsManagementPage() {
               <button
                 className="w-full bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 disabled:opacity-50"
                 onClick={handleSubmit}
-                disabled={loading}
+                disabled={loading || isSubmitting}
               >
-                {loading
+                {loading || isSubmitting
                   ? "Menyimpan..."
                   : editingId
                   ? "Update Pengumuman"

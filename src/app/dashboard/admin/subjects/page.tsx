@@ -89,6 +89,8 @@ export default function SubjectsManagementPage() {
     setEditingId(null);
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const validateForm = () => {
     if (!formData.namaMapel || !formData.kategori) {
       alert("Mohon lengkapi data wajib (Nama Mapel, Kategori)");
@@ -99,7 +101,9 @@ export default function SubjectsManagementPage() {
 
   const handleAdd = async () => {
     if (!validateForm()) return;
+    setIsSubmitting(true);
     const success = await createMapel(formData);
+    setIsSubmitting(false);
     if (success) {
       setIsAddOpen(false);
       resetForm();
@@ -109,7 +113,9 @@ export default function SubjectsManagementPage() {
   const handleEdit = async () => {
     if (!editingId) return;
     if (!validateForm()) return;
+    setIsSubmitting(true);
     const success = await updateMapel(editingId, formData);
+    setIsSubmitting(false);
     if (success) {
       setIsEditOpen(false);
       resetForm();
@@ -199,9 +205,9 @@ export default function SubjectsManagementPage() {
               <Button
                 type="submit"
                 onClick={handleAdd}
-                disabled={loading || !formData.namaMapel}
+                disabled={loading || isSubmitting || !formData.namaMapel}
               >
-                {loading ? (
+                {loading || isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Menyimpan...
@@ -428,9 +434,9 @@ export default function SubjectsManagementPage() {
             <Button
               type="submit"
               onClick={handleEdit}
-              disabled={loading || !formData.namaMapel}
+              disabled={loading || isSubmitting || !formData.namaMapel}
             >
-              {loading ? (
+              {loading || isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Menyimpan...

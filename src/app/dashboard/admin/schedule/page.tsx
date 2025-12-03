@@ -113,6 +113,8 @@ export default function ScheduleManagementPage() {
     setSelectedSchedule(null);
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const validateForm = () => {
     if (
       !formData.kelasId ||
@@ -132,6 +134,7 @@ export default function ScheduleManagementPage() {
   const handleAdd = async () => {
     if (!validateForm()) return;
 
+    setIsSubmitting(true);
     const success = await createJadwal({
       ...formData,
       hari: formData.hari as
@@ -142,6 +145,7 @@ export default function ScheduleManagementPage() {
         | "Jumat"
         | "Sabtu",
     });
+    setIsSubmitting(false);
     if (success) {
       setIsAddOpen(false);
       resetForm();
@@ -152,6 +156,7 @@ export default function ScheduleManagementPage() {
     if (!selectedSchedule) return;
     if (!validateForm()) return;
 
+    setIsSubmitting(true);
     const success = await updateJadwal(selectedSchedule.id, {
       ...formData,
       hari: formData.hari as
@@ -162,6 +167,7 @@ export default function ScheduleManagementPage() {
         | "Jumat"
         | "Sabtu",
     });
+    setIsSubmitting(false);
     if (success) {
       setIsEditOpen(false);
       resetForm();
@@ -366,8 +372,9 @@ export default function ScheduleManagementPage() {
                 type="submit"
                 onClick={handleAdd}
                 className="w-full sm:w-auto"
+                disabled={isSubmitting}
               >
-                Simpan Jadwal
+                {isSubmitting ? "Menyimpan..." : "Simpan Jadwal"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -670,8 +677,9 @@ export default function ScheduleManagementPage() {
               type="submit"
               onClick={handleEdit}
               className="w-full sm:w-auto"
+              disabled={isSubmitting}
             >
-              Simpan Perubahan
+              {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
             </Button>
           </DialogFooter>
         </DialogContent>

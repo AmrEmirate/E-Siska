@@ -1,27 +1,22 @@
-"use client";
-
+﻿"use client";
 import { useState, useEffect } from "react";
 import { useRapor } from "@/hooks/use-rapor";
 import { useSiswa } from "@/hooks/use-siswa";
 import { useTahunAjaran } from "@/hooks/use-tahun-ajaran";
 import { usePenempatan } from "@/hooks/use-penempatan";
 import { Loader2 } from "lucide-react";
-
 export default function GenerateReportPage() {
   const { downloadRaporPDF, loading } = useRapor();
   const { data: students, fetchSiswaNoPagination } = useSiswa();
   const { data: tahunAjaran, fetchTahunAjaran } = useTahunAjaran();
   const { data: penempatanData, fetchPenempatan } = usePenempatan();
-
   const [selectedStudent, setSelectedStudent] = useState("");
   const [kelasId, setKelasId] = useState("");
   const [format, setFormat] = useState<"PDF" | "EXCEL">("PDF");
-
   useEffect(() => {
     fetchPenempatan();
     fetchTahunAjaran();
   }, [fetchPenempatan, fetchTahunAjaran]);
-
   useEffect(() => {
     if (penempatanData.length > 0 && !kelasId) {
       const firstKelasId = penempatanData[0].kelasId;
@@ -29,26 +24,20 @@ export default function GenerateReportPage() {
       fetchSiswaNoPagination({ kelasId: firstKelasId });
     }
   }, [penempatanData, kelasId, fetchSiswaNoPagination]);
-
   useEffect(() => {
     if (students.length > 0 && !selectedStudent) {
       setSelectedStudent(students[0].id);
     }
   }, [students, selectedStudent]);
-
   const selectedStudentData = students.find((s) => s.id === selectedStudent);
   const activeTahunAjaran = tahunAjaran.find((ta) => ta.status === "Aktif");
-
   const handleGenerate = async () => {
     if (!selectedStudent || !activeTahunAjaran) {
       alert("Pilih siswa dan tahun ajaran aktif harus tersedia");
       return;
     }
-
-    // Use new PDF download function
     await downloadRaporPDF(selectedStudent, activeTahunAjaran.id);
   };
-
   return (
     <div className="p-8">
       <div className="mb-6">
@@ -59,7 +48,6 @@ export default function GenerateReportPage() {
           Cetak rapor siswa yang sudah difinalisasi
         </p>
       </div>
-
       <div className="card p-6 mb-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
           Pilih Siswa
@@ -100,14 +88,12 @@ export default function GenerateReportPage() {
           </div>
         </div>
       </div>
-
       {selectedStudentData && (
         <div className="card p-8 mb-6">
           <div className="text-center mb-6 pb-6 border-b-2 border-gray-200">
             <h2 className="text-2xl font-bold text-gray-900">RAPOR SISWA</h2>
             <p className="text-sm text-gray-600">SDN Ciater 02 Serpong</p>
           </div>
-
           <div className="space-y-4 mb-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -136,7 +122,6 @@ export default function GenerateReportPage() {
               </div>
             </div>
           </div>
-
           <div className="mb-6">
             <h3 className="font-semibold text-gray-900 mb-3">Preview Rapor</h3>
             <p className="text-sm text-gray-500 italic">
@@ -145,7 +130,6 @@ export default function GenerateReportPage() {
           </div>
         </div>
       )}
-
       <div className="flex gap-3 justify-end">
         <button
           onClick={handleGenerate}

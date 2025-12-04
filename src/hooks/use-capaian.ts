@@ -1,120 +1,70 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
 
-export interface Capaian {
+export interface CapaianItem {
   id: string;
   siswaId: string;
   mapelId: string;
-  capaian: string;
-  tahunAjaranId: string;
-  siswa?: {
-    id: string;
-    nama: string;
-    nisn: string;
-  };
-  mapel?: {
-    id: string;
-    namaMapel: string;
-  };
-  createdAt?: string;
-  updatedAt?: string;
+  deskripsi: string;
 }
 
 export function useCapaian() {
-  const [data, setData] = useState<Capaian[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const fetchCapaian = useCallback(
-    async (siswaId?: string, mapelId?: string) => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams();
-        if (siswaId) params.append("siswaId", siswaId);
-        if (mapelId) params.append("mapelId", mapelId);
-
-        const response = await apiClient.get(`/capaian?${params.toString()}`);
-        setData(response.data.data || []);
-      } catch (error) {
-        toast({
-          title: "Gagal memuat data",
-          description:
-            "Terjadi kesalahan saat mengambil data capaian kompetensi.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    },
-    [toast]
-  );
-
-  const createCapaian = async (capaianData: Partial<Capaian>) => {
+  const saveCapaian = async (
+    guruId: string,
+    mapelId: string,
+    data: { siswaId: string; deskripsi: string }[]
+  ) => {
+    setLoading(true);
     try {
-      await apiClient.post("/capaian", capaianData);
+      await apiClient.post("/capaian", {
+        guruId,
+        mapelId,
+        data,
+      });
+
       toast({
         title: "Berhasil",
-        description: "Data capaian kompetensi berhasil ditambahkan.",
+        description: "Capaian kompetensi berhasil disimpan.",
       });
-      fetchCapaian();
       return true;
     } catch (error) {
       toast({
         title: "Gagal",
-        description: "Gagal menambahkan data capaian kompetensi.",
+        description: "Gagal menyimpan capaian kompetensi.",
         variant: "destructive",
       });
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const updateCapaian = async (id: string, capaianData: Partial<Capaian>) => {
+  const fetchCapaianBySiswaId = async (siswaId: string) => {
+    setLoading(true);
     try {
-      await apiClient.put(`/capaian/${id}`, capaianData);
-      toast({
-        title: "Berhasil",
-        description: "Data capaian kompetensi berhasil diperbarui.",
-      });
-      fetchCapaian();
-      return true;
+      const response = await apiClient.get(`/capaian/siswa/${siswaId}`);
+      return response.data.data;
     } catch (error) {
       toast({
         title: "Gagal",
-        description: "Gagal memperbarui data capaian kompetensi.",
+        description: "Gagal mengambil data capaian kompetensi.",
         variant: "destructive",
       });
-      return false;
-    }
-  };
-
-  const deleteCapaian = async (id: string) => {
-    try {
-      await apiClient.delete(`/capaian/${id}`);
-      toast({
-        title: "Berhasil",
-        description: "Data capaian kompetensi berhasil dihapus.",
-      });
-      fetchCapaian();
-      return true;
-    } catch (error) {
-      toast({
-        title: "Gagal",
-        description: "Gagal menghapus data capaian kompetensi.",
-        variant: "destructive",
-      });
-      return false;
+      return [];
+    } finally {
+      setLoading(false);
     }
   };
 
   return {
-    data,
     loading,
-    fetchCapaian,
-    createCapaian,
-    updateCapaian,
-    deleteCapaian,
+    saveCapaian,
+    fetchCapaianBySiswaId,
   };
 }

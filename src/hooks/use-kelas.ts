@@ -1,9 +1,7 @@
-"use client";
-
+﻿"use client";
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
-
 export interface Kelas {
   id: string;
   namaKelas: string;
@@ -23,12 +21,10 @@ export interface Kelas {
   createdAt?: string;
   updatedAt?: string;
 }
-
 export function useKelas() {
   const [data, setData] = useState<Kelas[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-
   const fetchKelas = useCallback(
     async (search: string = "", showLoading: boolean = true) => {
       if (showLoading) setLoading(true);
@@ -49,9 +45,7 @@ export function useKelas() {
     },
     [toast]
   );
-
   const createKelas = async (kelasData: Partial<Kelas>) => {
-    // Optimistic Update
     const tempId = `temp-${Date.now()}`;
     const newItem: Kelas = {
       id: tempId,
@@ -62,10 +56,8 @@ export function useKelas() {
       updatedAt: new Date().toISOString(),
       ...kelasData,
     } as Kelas;
-
     const previousData = [...data];
     setData((prev) => [newItem, ...prev]);
-
     try {
       await apiClient.post("/kelas", kelasData);
       toast({
@@ -75,7 +67,6 @@ export function useKelas() {
       fetchKelas("", false);
       return true;
     } catch (error: any) {
-      // Revert on failure
       setData(previousData);
       const isConflict = error?.response?.status === 409;
       toast({
@@ -88,14 +79,11 @@ export function useKelas() {
       return false;
     }
   };
-
   const updateKelas = async (id: string, kelasData: Partial<Kelas>) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) =>
       prev.map((item) => (item.id === id ? { ...item, ...kelasData } : item))
     );
-
     try {
       await apiClient.put(`/kelas/${id}`, kelasData);
       toast({
@@ -105,7 +93,6 @@ export function useKelas() {
       fetchKelas("", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -115,12 +102,9 @@ export function useKelas() {
       return false;
     }
   };
-
   const deleteKelas = async (id: string) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) => prev.filter((item) => item.id !== id));
-
     try {
       await apiClient.delete(`/kelas/${id}`);
       toast({
@@ -130,7 +114,6 @@ export function useKelas() {
       fetchKelas("", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -140,7 +123,6 @@ export function useKelas() {
       return false;
     }
   };
-
   return {
     data,
     loading,

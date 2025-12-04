@@ -1,5 +1,4 @@
-"use client";
-
+﻿"use client";
 import { useAuth } from "@/context/auth-context";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -52,6 +51,11 @@ export function AppSidebar() {
         },
         { href: "/dashboard/admin/schedule", label: "Jadwal", icon: "📅" },
         {
+          href: "/dashboard/admin/grades/override",
+          label: "Override Nilai",
+          icon: "📝",
+        },
+        {
           href: "/dashboard/admin/announcements",
           label: "Pengumuman",
           icon: "📢",
@@ -86,6 +90,11 @@ export function AppSidebar() {
           href: "/dashboard/admin/school-info",
           label: "Data Sekolah",
           icon: "🏢",
+        },
+        {
+          href: "/dashboard/admin/backup",
+          label: "Backup & Restore",
+          icon: "💾",
         },
       ],
       guru: [
@@ -124,6 +133,11 @@ export function AppSidebar() {
           href: "/dashboard/teacher/announcements",
           label: "Pengumuman",
           icon: "📢",
+        },
+        {
+          href: "/dashboard/wali/students",
+          label: "Data Siswa",
+          icon: "👥",
         },
         { href: "/dashboard/wali/grades", label: "Rekap Nilai", icon: "📊" },
         {
@@ -167,6 +181,7 @@ export function AppSidebar() {
   };
 
   const menuItems = getMenuItems(user?.role);
+
   const isActive = (href: string) => {
     if (href === "/dashboard") {
       return pathname === "/dashboard";
@@ -191,6 +206,7 @@ export function AppSidebar() {
           </div>
         </div>
       </SidebarHeader>
+
       <SidebarContent className="p-3 group-data-[collapsible=icon]:p-0">
         <SidebarGroup>
           <SidebarGroupContent>
@@ -215,6 +231,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter className="p-0">
         <div className="p-4 border-t border-gray-200 text-xs text-gray-500 group-data-[collapsible=icon]:hidden">
           <p className="font-semibold mb-1">Sekolah</p>
@@ -222,6 +239,7 @@ export function AppSidebar() {
           <p className="text-gray-400">Kota Tangerang Selatan</p>
         </div>
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   );

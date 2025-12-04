@@ -1,9 +1,7 @@
-"use client";
-
+﻿"use client";
 import { useState, useCallback, ReactNode, useRef } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
-
 export interface Jadwal {
   id: string;
   kelasId: string;
@@ -33,31 +31,24 @@ export interface Jadwal {
   createdAt?: string;
   updatedAt?: string;
 }
-
 export function useJadwal() {
   const [data, setData] = useState<Jadwal[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const lastFetchArgs = useRef<{ kelasId?: string; guruId?: string }>({});
-
   const fetchJadwal = useCallback(
     async (kelasId?: string, guruId?: string, showLoading: boolean = true) => {
       if (showLoading) setLoading(true);
-
-      // Update last fetch args if provided, otherwise use current
       if (kelasId !== undefined || guruId !== undefined) {
         lastFetchArgs.current = { kelasId, guruId };
       } else {
-        // If not provided, use the stored args
         kelasId = lastFetchArgs.current.kelasId;
         guruId = lastFetchArgs.current.guruId;
       }
-
       try {
         const params = new URLSearchParams();
         if (kelasId) params.append("kelasId", kelasId);
         if (guruId) params.append("guruId", guruId);
-
         const response = await apiClient.get(`/jadwal?${params.toString()}`);
         setData(response.data.data || []);
       } catch (error) {
@@ -72,9 +63,7 @@ export function useJadwal() {
     },
     [toast]
   );
-
   const createJadwal = async (jadwalData: Partial<Jadwal>) => {
-    // Optimistic update
     const tempId = `temp-${Date.now()}`;
     const optimisticJadwal = {
       id: tempId,
@@ -82,10 +71,8 @@ export function useJadwal() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     } as Jadwal;
-
     const previousData = [...data];
     setData((prev) => [...prev, optimisticJadwal]);
-
     try {
       await apiClient.post("/jadwal", jadwalData);
       toast({
@@ -95,11 +82,9 @@ export function useJadwal() {
       fetchJadwal(undefined, undefined, false);
       return true;
     } catch (error: any) {
-      // Revert
       setData(previousData);
       const errorMessage =
         error?.response?.data?.message || "Gagal menambahkan data jadwal.";
-
       toast({
         title: "Gagal",
         description: errorMessage,
@@ -108,14 +93,11 @@ export function useJadwal() {
       return false;
     }
   };
-
   const updateJadwal = async (id: string, jadwalData: Partial<Jadwal>) => {
-    // Optimistic update
     const previousData = [...data];
     setData((prev) =>
       prev.map((item) => (item.id === id ? { ...item, ...jadwalData } : item))
     );
-
     try {
       await apiClient.put(`/jadwal/${id}`, jadwalData);
       toast({
@@ -125,7 +107,6 @@ export function useJadwal() {
       fetchJadwal(undefined, undefined, false);
       return true;
     } catch (error) {
-      // Revert
       setData(previousData);
       toast({
         title: "Gagal",
@@ -135,12 +116,9 @@ export function useJadwal() {
       return false;
     }
   };
-
   const deleteJadwal = async (id: string) => {
-    // Optimistic update
     const previousData = [...data];
     setData((prev) => prev.filter((item) => item.id !== id));
-
     try {
       await apiClient.delete(`/jadwal/${id}`);
       toast({
@@ -150,7 +128,6 @@ export function useJadwal() {
       fetchJadwal(undefined, undefined, false);
       return true;
     } catch (error) {
-      // Revert
       setData(previousData);
       toast({
         title: "Gagal",
@@ -160,7 +137,6 @@ export function useJadwal() {
       return false;
     }
   };
-
   const fetchJadwalByStudent = useCallback(
     async (siswaId: string) => {
       setLoading(true);
@@ -180,7 +156,6 @@ export function useJadwal() {
     },
     [fetchJadwal]
   );
-
   return {
     data,
     loading,

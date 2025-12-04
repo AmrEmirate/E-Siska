@@ -1,0 +1,62 @@
+"use client";
+
+import { ClassItem, SubjectItem } from "@/types/grading";
+
+interface FilterSectionProps {
+  classes: ClassItem[];
+  subjects: SubjectItem[];
+  selectedClass: string;
+  selectedSubject: string;
+  onClassChange: (value: string) => void;
+  onSubjectChange: (value: string) => void;
+}
+
+export function FilterSection({
+  classes,
+  subjects,
+  selectedClass,
+  selectedSubject,
+  onClassChange,
+  onSubjectChange,
+}: FilterSectionProps) {
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Pilih Kelas
+          </label>
+          <select
+            value={selectedClass}
+            onChange={(e) => onClassChange(e.target.value)}
+            className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          >
+            <option value="">-- Pilih Kelas --</option>
+            {classes.map((cls) => (
+              <option key={cls.id} value={cls.id}>
+                {cls.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">
+            Pilih Mata Pelajaran
+          </label>
+          <select
+            value={selectedSubject}
+            onChange={(e) => onSubjectChange(e.target.value)}
+            className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          >
+            <option value="">-- Pilih Mapel --</option>
+            {subjects.map((subj) => (
+              <option key={subj.id} value={subj.id}>
+                {subj.namaMapel}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}

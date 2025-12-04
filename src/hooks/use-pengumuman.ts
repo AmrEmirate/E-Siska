@@ -1,9 +1,7 @@
-"use client";
-
+﻿"use client";
 import { useState, useCallback, ReactNode } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
-
 export interface Pengumuman {
   id: string;
   judul: string;
@@ -14,12 +12,10 @@ export interface Pengumuman {
   createdAt?: string;
   updatedAt?: string;
 }
-
 export function usePengumuman() {
   const [data, setData] = useState<Pengumuman[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-
   const fetchPengumuman = useCallback(
     async (search: string = "", showLoading: boolean = true) => {
       if (showLoading) setLoading(true);
@@ -42,9 +38,7 @@ export function usePengumuman() {
     },
     [toast]
   );
-
   const createPengumuman = async (pengumumanData: Partial<Pengumuman>) => {
-    // Optimistic Update
     const tempId = `temp-${Date.now()}`;
     const newItem: Pengumuman = {
       id: tempId,
@@ -56,21 +50,17 @@ export function usePengumuman() {
       updatedAt: new Date().toISOString(),
       ...pengumumanData,
     } as Pengumuman;
-
     const previousData = [...data];
     setData((prev) => [newItem, ...prev]);
-
     try {
       await apiClient.post("/pengumuman", pengumumanData);
       toast({
         title: "Berhasil",
         description: "Pengumuman berhasil ditambahkan.",
       });
-      // Silent refetch to get real ID and server data
       fetchPengumuman("", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -80,19 +70,16 @@ export function usePengumuman() {
       return false;
     }
   };
-
   const updatePengumuman = async (
     id: string,
     pengumumanData: Partial<Pengumuman>
   ) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, ...pengumumanData } : item
       )
     );
-
     try {
       await apiClient.put(`/pengumuman/${id}`, pengumumanData);
       toast({
@@ -102,7 +89,6 @@ export function usePengumuman() {
       fetchPengumuman("", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -112,12 +98,9 @@ export function usePengumuman() {
       return false;
     }
   };
-
   const deletePengumuman = async (id: string) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) => prev.filter((item) => item.id !== id));
-
     try {
       await apiClient.delete(`/pengumuman/${id}`);
       toast({
@@ -127,7 +110,6 @@ export function usePengumuman() {
       fetchPengumuman("", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -137,7 +119,6 @@ export function usePengumuman() {
       return false;
     }
   };
-
   return {
     data,
     loading,

@@ -13,6 +13,7 @@ export interface Penempatan {
     id: string;
     nama: string;
     nisn: string;
+    jenisKelamin?: string;
   };
   kelas?: {
     id: string;

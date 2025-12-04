@@ -1,29 +1,23 @@
-"use client";
-
+﻿"use client";
 import { useState, useEffect } from "react";
 import { usePengumuman, type Pengumuman } from "@/hooks/use-pengumuman";
 import { Loader2 } from "lucide-react";
-
 export default function StudentAnnouncementsPage() {
   const { data: announcements, loading, fetchPengumuman } = usePengumuman();
   const [filter, setFilter] = useState<"ALL" | "SISWA" | "SEMUA">("ALL");
-
   useEffect(() => {
     fetchPengumuman();
   }, [fetchPengumuman]);
-
   const filteredAnnouncements = announcements.filter((ann) => {
     if (filter === "ALL")
       return ann.target === "SISWA" || ann.target === "SEMUA";
     return ann.target === filter;
   });
-
   const getPriorityColor = (targetLevel: string) => {
     return targetLevel === "SEMUA"
       ? "bg-red-100 text-red-800 border-l-4 border-red-500"
       : "bg-blue-100 text-blue-800 border-l-4 border-blue-500";
   };
-
   if (loading && announcements.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
@@ -32,7 +26,6 @@ export default function StudentAnnouncementsPage() {
       </div>
     );
   }
-
   return (
     <div className="p-8">
       <div className="mb-6">
@@ -41,7 +34,6 @@ export default function StudentAnnouncementsPage() {
         </h1>
         <p className="text-gray-600">Lihat semua pengumuman dari sekolah</p>
       </div>
-
       <div className="mb-6">
         <div className="flex gap-2">
           <button
@@ -66,7 +58,6 @@ export default function StudentAnnouncementsPage() {
           </button>
         </div>
       </div>
-
       <div className="space-y-4">
         {filteredAnnouncements.length === 0 ? (
           <div className="card p-12 text-center text-gray-500">
@@ -103,4 +94,3 @@ export default function StudentAnnouncementsPage() {
     </div>
   );
 }
-//

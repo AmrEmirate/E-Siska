@@ -1,51 +1,36 @@
-"use client";
-
-import { useState, useCallback } from "react";
+﻿"use client";
+import { useState } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
-
-export interface Backup {
-  id: string;
-  fileName: string;
-  fileSize: number;
-  createdAt: string;
-}
-
 export function useBackup() {
-  const [data, setData] = useState<Backup[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-
-  const fetchBackups = useCallback(async () => {
+  const downloadBackup = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get("/backup");
-      setData(response.data.data || []);
-    } catch (error) {
-      toast({
-        title: "Gagal memuat data",
-        description: "Terjadi kesalahan saat mengambil data backup.",
-        variant: "destructive",
+      const response = await apiClient.get("/backup/download", {
+        responseType: "blob",
       });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
-
-  const createBackup = async () => {
-    setLoading(true);
-    try {
-      await apiClient.post("/backup");
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      const fileName = `backup-e-siska-${new Date()
+        .toISOString()
+        .replace(/[:.]/g, "-")}.json`;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
       toast({
         title: "Berhasil",
-        description: "Backup database berhasil dibuat.",
+        description: "Backup database berhasil diunduh.",
       });
-      fetchBackups();
       return true;
     } catch (error) {
       toast({
         title: "Gagal",
-        description: "Gagal membuat backup database.",
+        description: "Gagal mengunduh backup database.",
         variant: "destructive",
       });
       return false;
@@ -53,11 +38,16 @@ export function useBackup() {
       setLoading(false);
     }
   };
-
-  const restoreBackup = async (id: string) => {
+  const restoreBackup = async (file: File) => {
     setLoading(true);
     try {
-      await apiClient.post(`/backup/${id}/restore`);
+      const formData = new FormData();
+      formData.append("file", file);
+      await apiClient.post("/backup/restore", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast({
         title: "Berhasil",
         description: "Database berhasil di-restore.",
@@ -66,7 +56,7 @@ export function useBackup() {
     } catch (error) {
       toast({
         title: "Gagal",
-        description: "Gagal restore database.",
+        description: "Gagal restore database. Pastikan file valid.",
         variant: "destructive",
       });
       return false;
@@ -74,12 +64,9 @@ export function useBackup() {
       setLoading(false);
     }
   };
-
   return {
-    data,
     loading,
-    fetchBackups,
-    createBackup,
+    downloadBackup,
     restoreBackup,
   };
 }

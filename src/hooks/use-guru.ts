@@ -1,9 +1,7 @@
-"use client";
-
+﻿"use client";
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
-
 export interface Guru {
   id: string;
   nip: string;
@@ -28,14 +26,12 @@ export interface Guru {
   username?: string;
   passwordDefault?: string;
 }
-
 interface PaginationMeta {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
 }
-
 export function useGuru() {
   const [data, setData] = useState<Guru[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>({
@@ -46,7 +42,6 @@ export function useGuru() {
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-
   const fetchGuru = useCallback(
     async (page = 1, limit = 10, search = "", showLoading = true) => {
       if (showLoading) setLoading(true);
@@ -56,9 +51,7 @@ export function useGuru() {
           limit: limit.toString(),
         });
         if (search) params.append("search", search);
-
         const response = await apiClient.get(`/guru?${params.toString()}`);
-
         setData(response.data.data || []);
         setMeta(response.data.meta || { page, limit, total: 0, totalPages: 0 });
       } catch (error) {
@@ -73,9 +66,7 @@ export function useGuru() {
     },
     [toast]
   );
-
   const createGuru = async (guruData: Partial<Guru>) => {
-    // Optimistic Update
     const tempId = `temp-${Date.now()}`;
     const newItem: Guru = {
       id: tempId,
@@ -87,10 +78,8 @@ export function useGuru() {
       updatedAt: new Date().toISOString(),
       ...guruData,
     } as Guru;
-
     const previousData = [...data];
     setData((prev) => [newItem, ...prev]);
-
     try {
       await apiClient.post("/guru", guruData);
       toast({
@@ -100,7 +89,6 @@ export function useGuru() {
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -110,14 +98,11 @@ export function useGuru() {
       return false;
     }
   };
-
   const updateGuru = async (id: string, guruData: Partial<Guru>) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) =>
       prev.map((item) => (item.id === id ? { ...item, ...guruData } : item))
     );
-
     try {
       await apiClient.put(`/guru/${id}`, guruData);
       toast({
@@ -127,7 +112,6 @@ export function useGuru() {
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -137,12 +121,9 @@ export function useGuru() {
       return false;
     }
   };
-
   const deleteGuru = async (id: string) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) => prev.filter((item) => item.id !== id));
-
     try {
       await apiClient.delete(`/guru/${id}`);
       toast({
@@ -152,7 +133,6 @@ export function useGuru() {
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -162,7 +142,6 @@ export function useGuru() {
       return false;
     }
   };
-
   return {
     data,
     meta,

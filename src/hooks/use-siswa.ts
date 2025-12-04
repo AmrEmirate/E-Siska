@@ -1,9 +1,7 @@
-"use client";
-
+﻿"use client";
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
-
 export interface Siswa {
   id: string;
   nisn: string;
@@ -33,14 +31,12 @@ export interface Siswa {
   createdAt?: string;
   updatedAt?: string;
 }
-
 interface PaginationMeta {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
 }
-
 export function useSiswa() {
   const [data, setData] = useState<Siswa[]>([]);
   const [meta, setMeta] = useState<PaginationMeta>({
@@ -51,7 +47,6 @@ export function useSiswa() {
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-
   const fetchSiswa = useCallback(
     async (page = 1, limit = 10, search = "", showLoading = true) => {
       if (showLoading) setLoading(true);
@@ -61,9 +56,7 @@ export function useSiswa() {
           limit: limit.toString(),
         });
         if (search) params.append("search", search);
-
         const response = await apiClient.get(`/siswa?${params.toString()}`);
-
         setData(response.data.data || []);
         setMeta(response.data.meta || { page, limit, total: 0, totalPages: 0 });
       } catch (error) {
@@ -78,9 +71,7 @@ export function useSiswa() {
     },
     [toast]
   );
-
   const createSiswa = async (siswaData: Partial<Siswa>) => {
-    // Optimistic Update
     const tempId = `temp-${Date.now()}`;
     const newItem: Siswa = {
       id: tempId,
@@ -92,10 +83,8 @@ export function useSiswa() {
       updatedAt: new Date().toISOString(),
       ...siswaData,
     } as Siswa;
-
     const previousData = [...data];
     setData((prev) => [newItem, ...prev]);
-
     try {
       await apiClient.post("/siswa", siswaData);
       toast({
@@ -105,7 +94,6 @@ export function useSiswa() {
       fetchSiswa(meta.page, meta.limit, "", false);
       return true;
     } catch (error: any) {
-      // Revert on failure
       setData(previousData);
       const isConflict = error.response?.status === 409;
       toast({
@@ -118,14 +106,11 @@ export function useSiswa() {
       return false;
     }
   };
-
   const updateSiswa = async (id: string, siswaData: Partial<Siswa>) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) =>
       prev.map((item) => (item.id === id ? { ...item, ...siswaData } : item))
     );
-
     try {
       await apiClient.put(`/siswa/${id}`, siswaData);
       toast({
@@ -135,7 +120,6 @@ export function useSiswa() {
       fetchSiswa(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -145,12 +129,9 @@ export function useSiswa() {
       return false;
     }
   };
-
   const deleteSiswa = async (id: string) => {
-    // Optimistic Update
     const previousData = [...data];
     setData((prev) => prev.filter((item) => item.id !== id));
-
     try {
       await apiClient.delete(`/siswa/${id}`);
       toast({
@@ -160,7 +141,6 @@ export function useSiswa() {
       fetchSiswa(meta.page, meta.limit, "", false);
       return true;
     } catch (error) {
-      // Revert on failure
       setData(previousData);
       toast({
         title: "Gagal",
@@ -170,7 +150,6 @@ export function useSiswa() {
       return false;
     }
   };
-
   const fetchSiswaNoPagination = useCallback(
     async (params?: { kelasId?: string; search?: string }) => {
       setLoading(true);
@@ -179,7 +158,6 @@ export function useSiswa() {
         if (params?.kelasId) queryParams.append("kelasId", params.kelasId);
         if (params?.search) queryParams.append("search", params.search);
         queryParams.append("limit", "1000");
-
         const response = await apiClient.get(
           `/siswa?${queryParams.toString()}`
         );
@@ -196,7 +174,6 @@ export function useSiswa() {
     },
     [toast]
   );
-
   return {
     data,
     meta,

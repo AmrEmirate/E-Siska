@@ -8,9 +8,8 @@ import { Button } from "@/components/ui/button";
 
 interface Document {
   id: string;
-  nama: string;
-  deskripsi: string;
-  fileUrl: string;
+  judul: string;
+  urlFile: string;
   createdAt: string;
 }
 
@@ -39,7 +38,7 @@ export default function TeacherDocumentsPage() {
   };
 
   const handleDownload = (doc: Document) => {
-    window.open(doc.fileUrl, "_blank");
+    window.open(doc.urlFile, "_blank");
   };
 
   if (loading) {
@@ -85,11 +84,8 @@ export default function TeacherDocumentsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 truncate">
-                    {doc.nama}
+                    {doc.judul}
                   </h3>
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                    {doc.deskripsi || "Tidak ada deskripsi"}
-                  </p>
                   <p className="text-xs text-gray-400 mt-2">
                     {new Date(doc.createdAt).toLocaleDateString("id-ID")}
                   </p>

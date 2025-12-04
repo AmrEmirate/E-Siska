@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage, getErrorTitle } from "@/lib/error-utils";
 export interface Kelas {
   id: string;
   namaKelas: string;
@@ -68,12 +69,9 @@ export function useKelas() {
       return true;
     } catch (error: any) {
       setData(previousData);
-      const isConflict = error?.response?.status === 409;
       toast({
-        title: isConflict ? "Konflik Data" : "Gagal",
-        description: isConflict
-          ? "Wali kelas yang dipilih sudah terdaftar di kelas lain."
-          : "Gagal menambahkan data kelas.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal menambahkan data kelas."),
         variant: "destructive",
       });
       return false;
@@ -92,11 +90,11 @@ export function useKelas() {
       });
       fetchKelas("", false);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       setData(previousData);
       toast({
-        title: "Gagal",
-        description: "Gagal memperbarui data kelas.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal memperbarui data kelas."),
         variant: "destructive",
       });
       return false;
@@ -113,11 +111,11 @@ export function useKelas() {
       });
       fetchKelas("", false);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       setData(previousData);
       toast({
-        title: "Gagal",
-        description: "Gagal menghapus data kelas.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal menghapus data kelas."),
         variant: "destructive",
       });
       return false;

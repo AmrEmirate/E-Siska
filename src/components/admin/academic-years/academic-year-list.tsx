@@ -11,14 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  CheckCircle2,
-  BookOpen,
-  Calendar,
-  Pencil,
-  Trash2,
-  Loader2,
-} from "lucide-react";
+import { CheckCircle2, Calendar, Pencil, Trash2, Loader2 } from "lucide-react";
 import { TahunAjaran } from "@/hooks/use-tahun-ajaran";
 
 interface AcademicYearListProps {
@@ -63,13 +56,15 @@ export const AcademicYearList = ({
     );
   }
 
+  const isActive = (year: TahunAjaran) => year.isAktif || year.isActive;
+
   return (
     <div className="grid gap-4">
       {years.map((year) => (
         <Card
           key={year.id}
           className={`group transition-all duration-200 ${
-            year.isActive
+            isActive(year)
               ? "border-blue-200 bg-blue-50/30 shadow-md"
               : "hover:border-blue-200 hover:shadow-md bg-white"
           }`}
@@ -79,9 +74,9 @@ export const AcademicYearList = ({
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-3">
                   <h3 className="text-lg font-bold text-gray-900">
-                    Tahun Ajaran {year.tahun}
+                    {year.nama}
                   </h3>
-                  {year.isActive ? (
+                  {isActive(year) ? (
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                       <CheckCircle2 className="w-3 h-3 mr-1" />
                       Aktif
@@ -92,30 +87,10 @@ export const AcademicYearList = ({
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <BookOpen className="w-4 h-4" />
-                    Semester {year.semester}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {new Date(year.tanggalMulai).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}{" "}
-                    -{" "}
-                    {new Date(year.tanggalSelesai).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-gray-100 mt-4 sm:mt-0">
-                {!year.isActive && (
+                {!isActive(year) && (
                   <Button
                     onClick={() => onSetActive(year.id)}
                     variant="outline"
@@ -143,6 +118,7 @@ export const AcademicYearList = ({
                         variant="ghost"
                         size="icon"
                         className="h-9 w-9 hover:bg-red-50 hover:text-red-600"
+                        disabled={isActive(year)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -152,10 +128,8 @@ export const AcademicYearList = ({
                         <AlertDialogTitle>Hapus Tahun Ajaran?</AlertDialogTitle>
                         <AlertDialogDescription>
                           Tindakan ini akan menghapus tahun ajaran{" "}
-                          <strong>
-                            {year.tahun} {year.semester}
-                          </strong>
-                          . Data terkait mungkin akan terpengaruh.
+                          <strong>{year.nama}</strong>. Data terkait mungkin
+                          akan terpengaruh.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

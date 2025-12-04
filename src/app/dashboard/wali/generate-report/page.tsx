@@ -30,7 +30,7 @@ export default function GenerateReportPage() {
     }
   }, [students, selectedStudent]);
   const selectedStudentData = students.find((s) => s.id === selectedStudent);
-  const activeTahunAjaran = tahunAjaran.find((ta) => ta.status === "Aktif");
+  const activeTahunAjaran = tahunAjaran.find((ta) => ta.isAktif || ta.isActive);
   const handleGenerate = async () => {
     if (!selectedStudent || !activeTahunAjaran) {
       alert("Pilih siswa dan tahun ajaran aktif harus tersedia");
@@ -111,13 +111,7 @@ export default function GenerateReportPage() {
               <div>
                 <p className="text-sm text-gray-600">Tahun Ajaran</p>
                 <p className="font-semibold text-gray-900">
-                  {activeTahunAjaran?.tahun || "-"}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Semester</p>
-                <p className="font-semibold text-gray-900">
-                  {activeTahunAjaran?.semester || "-"}
+                  {activeTahunAjaran?.nama || "-"}
                 </p>
               </div>
             </div>

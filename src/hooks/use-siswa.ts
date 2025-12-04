@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage, getErrorTitle } from "@/lib/error-utils";
 export interface Siswa {
   id: string;
   nisn: string;
@@ -58,7 +59,10 @@ export function useSiswa() {
         if (search) params.append("search", search);
         const response = await apiClient.get(`/siswa?${params.toString()}`);
         setData(response.data.data || []);
-        setMeta(response.data.meta || { page, limit, total: 0, totalPages: 0 });
+        setMeta(
+          response.data.pagination ||
+            response.data.meta || { page, limit, total: 0, totalPages: 0 }
+        );
       } catch (error) {
         toast({
           title: "Gagal memuat data",
@@ -95,12 +99,9 @@ export function useSiswa() {
       return true;
     } catch (error: any) {
       setData(previousData);
-      const isConflict = error.response?.status === 409;
       toast({
-        title: isConflict ? "Gagal: Data Duplikat" : "Gagal",
-        description: isConflict
-          ? "NISN atau Username sudah terdaftar. Mohon gunakan NISN yang berbeda."
-          : "Gagal menambahkan data siswa.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal menambahkan data siswa."),
         variant: "destructive",
       });
       return false;
@@ -119,11 +120,11 @@ export function useSiswa() {
       });
       fetchSiswa(meta.page, meta.limit, "", false);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       setData(previousData);
       toast({
-        title: "Gagal",
-        description: "Gagal memperbarui data siswa.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal memperbarui data siswa."),
         variant: "destructive",
       });
       return false;

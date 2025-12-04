@@ -23,9 +23,6 @@ export default function AcademicYearsPage() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     tahun: "",
-    semester: "Ganjil" as "Ganjil" | "Genap",
-    tanggalMulai: "",
-    tanggalSelesai: "",
   });
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -45,31 +42,19 @@ export default function AcademicYearsPage() {
 
     if (editingId) {
       const success = await updateTahunAjaran(editingId, {
-        ...formData,
-        nama: `${formData.tahun} ${formData.semester}`,
+        nama: formData.tahun,
       });
       if (success) {
         setEditingId(null);
-        setFormData({
-          tahun: "",
-          semester: "Ganjil",
-          tanggalMulai: "",
-          tanggalSelesai: "",
-        });
+        setFormData({ tahun: "" });
         setShowForm(false);
       }
     } else {
       const success = await createTahunAjaran({
-        ...formData,
-        nama: `${formData.tahun} ${formData.semester}`,
+        nama: formData.tahun,
       });
       if (success) {
-        setFormData({
-          tahun: "",
-          semester: "Ganjil",
-          tanggalMulai: "",
-          tanggalSelesai: "",
-        });
+        setFormData({ tahun: "" });
         setShowForm(false);
       }
     }
@@ -81,10 +66,7 @@ export default function AcademicYearsPage() {
 
   const handleEdit = (year: TahunAjaran) => {
     setFormData({
-      tahun: year.tahun,
-      semester: year.semester,
-      tanggalMulai: year.tanggalMulai,
-      tanggalSelesai: year.tanggalSelesai,
+      tahun: year.nama,
     });
     setEditingId(year.id);
     setShowForm(true);
@@ -95,10 +77,10 @@ export default function AcademicYearsPage() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
+    <div className="p-4 sm:p-8 space-y-8 bg-gray-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
             Manajemen Tahun Ajaran
           </h1>
           <p className="text-gray-500 mt-2">
@@ -109,14 +91,9 @@ export default function AcademicYearsPage() {
           onClick={() => {
             setShowForm(!showForm);
             setEditingId(null);
-            setFormData({
-              tahun: "",
-              semester: "Ganjil",
-              tanggalMulai: "",
-              tanggalSelesai: "",
-            });
+            setFormData({ tahun: "" });
           }}
-          className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
         >
           {showForm ? (
             "Batal"

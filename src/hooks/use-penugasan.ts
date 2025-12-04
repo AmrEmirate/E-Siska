@@ -25,8 +25,9 @@ export interface Penugasan {
   };
   tahunAjaran?: {
     id: string;
-    tahun: string;
-    semester: string;
+    nama: string;
+    isAktif?: boolean;
+    isActive?: boolean;
   };
   createdAt?: string;
   updatedAt?: string;

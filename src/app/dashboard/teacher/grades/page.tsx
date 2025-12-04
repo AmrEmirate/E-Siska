@@ -213,12 +213,12 @@ export default function GradesPage() {
   const isEkskul = selectedSubjectCategory === "EKSTRAKURIKULER";
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           Input Nilai Siswa
         </h1>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600">
           {isEkskul
             ? "Input nilai deskripsi untuk Ekstrakurikuler."
             : "Input nilai angka dan capaian kompetensi."}

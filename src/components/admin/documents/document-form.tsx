@@ -115,6 +115,7 @@ export const DocumentForm = ({
                   id="file-upload"
                   type="file"
                   className="hidden"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp"
                   onChange={handleFileChange}
                 />
               </label>

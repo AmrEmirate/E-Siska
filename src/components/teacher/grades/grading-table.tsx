@@ -52,9 +52,9 @@ export function GradingTable({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
+      <div className="p-4 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
             Lembar Penilaian
           </h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -66,14 +66,15 @@ export function GradingTable({
         <button
           onClick={onSave}
           disabled={saving || (!skema && !isEkskul)}
-          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {saving ? (
             <Loader2 className="animate-spin" size={18} />
           ) : (
             <Save size={18} />
           )}
-          Simpan Perubahan
+          <span className="hidden sm:inline">Simpan Perubahan</span>
+          <span className="sm:hidden">Simpan</span>
         </button>
       </div>
 

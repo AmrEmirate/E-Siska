@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage, getErrorTitle } from "@/lib/error-utils";
 export interface Guru {
   id: string;
   nip: string;
@@ -53,7 +54,10 @@ export function useGuru() {
         if (search) params.append("search", search);
         const response = await apiClient.get(`/guru?${params.toString()}`);
         setData(response.data.data || []);
-        setMeta(response.data.meta || { page, limit, total: 0, totalPages: 0 });
+        setMeta(
+          response.data.pagination ||
+            response.data.meta || { page, limit, total: 0, totalPages: 0 }
+        );
       } catch (error) {
         toast({
           title: "Gagal memuat data",
@@ -88,11 +92,11 @@ export function useGuru() {
       });
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       setData(previousData);
       toast({
-        title: "Gagal",
-        description: "Gagal menambahkan data guru.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal menambahkan data guru."),
         variant: "destructive",
       });
       return false;
@@ -111,11 +115,11 @@ export function useGuru() {
       });
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       setData(previousData);
       toast({
-        title: "Gagal",
-        description: "Gagal memperbarui data guru.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal memperbarui data guru."),
         variant: "destructive",
       });
       return false;
@@ -132,11 +136,11 @@ export function useGuru() {
       });
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       setData(previousData);
       toast({
-        title: "Gagal",
-        description: "Gagal menghapus data guru.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(error, "Gagal menghapus data guru."),
         variant: "destructive",
       });
       return false;

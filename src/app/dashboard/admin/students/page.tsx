@@ -149,13 +149,13 @@ export default function StudentsManagementPage() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-gray-50/50 min-h-screen">
+    <div className="p-4 sm:p-8 space-y-6 sm:space-y-8 bg-gray-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
             Manajemen Siswa
           </h1>
-          <p className="text-gray-500 mt-2">
+          <p className="text-sm sm:text-base text-gray-500 mt-2">
             Kelola data, status, dan informasi siswa.
           </p>
         </div>

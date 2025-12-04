@@ -124,7 +124,7 @@ export const ScheduleForm = ({
               <option value="">Pilih Tahun Ajaran</option>
               {academicYears.map((y) => (
                 <option key={y.id} value={y.id}>
-                  {y.tahun} - {y.semester} {y.isActive ? "(Aktif)" : ""}
+                  {y.nama} {y.isActive || y.isAktif ? "(Aktif)" : ""}
                 </option>
               ))}
             </select>

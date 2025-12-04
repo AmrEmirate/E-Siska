@@ -58,10 +58,12 @@ export default function AttendancePage() {
     fetchSessions(selectedClass);
   };
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-8 space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Absensi Kelas</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          Absensi Kelas
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
           Kelola kehadiran siswa untuk kelas yang Anda ajar.
         </p>
       </div>

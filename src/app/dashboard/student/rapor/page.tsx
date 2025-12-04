@@ -21,7 +21,6 @@ interface RaporItem {
   tahunAjaran: {
     id: string;
     nama: string;
-    semester: string;
   };
   kelas: {
     namaKelas: string;
@@ -121,7 +120,7 @@ export default function StudentRaporPage() {
               </div>
 
               <h3 className="text-lg font-bold text-gray-900 mb-1">
-                {rapor.tahunAjaran.nama} - {rapor.tahunAjaran.semester}
+                {rapor.tahunAjaran.nama}
               </h3>
 
               <div className="space-y-2 mt-4 text-sm text-gray-600">

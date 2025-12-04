@@ -20,8 +20,8 @@ export function FilterSection({
   onSubjectChange,
 }: FilterSectionProps) {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">
             Pilih Kelas

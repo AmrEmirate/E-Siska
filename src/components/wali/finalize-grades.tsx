@@ -39,7 +39,7 @@ export default function FinalizeGradesPage() {
     fetchPenempatan();
   }, [fetchTahunAjaran, fetchPenempatan]);
   useEffect(() => {
-    const active = tahunAjaran.find((t) => t.status === "Aktif");
+    const active = tahunAjaran.find((t) => t.isAktif || t.isActive);
     if (active) {
       setActiveYearId(active.id);
     }

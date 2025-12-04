@@ -45,7 +45,7 @@ export const OverrideSelector = ({
             <SelectContent>
               {years.map((year) => (
                 <SelectItem key={year.id} value={year.id}>
-                  {year.tahun} - {year.semester}
+                  {year.nama}
                 </SelectItem>
               ))}
             </SelectContent>

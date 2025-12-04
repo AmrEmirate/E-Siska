@@ -7,11 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 export interface TahunAjaran {
   id: string;
   nama: string;
-  tahun: string;
-  semester: "Ganjil" | "Genap";
-  tanggalMulai: string;
-  tanggalSelesai: string;
-  status: "Aktif" | "Nonaktif";
+  isAktif?: boolean;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -88,10 +84,12 @@ export function useTahunAjaran() {
       });
       fetchTahunAjaran();
       return true;
-    } catch (error) {
+    } catch (error: any) {
+      const message =
+        error.response?.data?.message || "Gagal menghapus data tahun ajaran.";
       toast({
         title: "Gagal",
-        description: "Gagal menghapus data tahun ajaran.",
+        description: message,
         variant: "destructive",
       });
       return false;

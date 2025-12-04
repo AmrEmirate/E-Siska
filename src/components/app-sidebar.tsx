@@ -115,6 +115,11 @@ export function AppSidebar() {
           label: "Pengumuman",
           icon: "📢",
         },
+        {
+          href: "/dashboard/teacher/documents",
+          label: "Dokumen",
+          icon: "📄",
+        },
       ],
       wali_kelas: [
         ...commonItems,
@@ -155,6 +160,11 @@ export function AppSidebar() {
           label: "Cetak Rapor",
           icon: "🖨️",
         },
+        {
+          href: "/dashboard/teacher/documents",
+          label: "Dokumen",
+          icon: "📄",
+        },
       ],
       siswa: [
         ...commonItems,
@@ -173,6 +183,11 @@ export function AppSidebar() {
           href: "/dashboard/student/announcements",
           label: "Pengumuman",
           icon: "📢",
+        },
+        {
+          href: "/dashboard/student/documents",
+          label: "Dokumen",
+          icon: "📄",
         },
       ],
     };

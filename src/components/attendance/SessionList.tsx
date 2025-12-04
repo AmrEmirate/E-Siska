@@ -46,9 +46,11 @@ export function SessionList({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sessions.map((session) => (
-            <SessionCard key={session.id} session={session} />
-          ))}
+          {[...sessions]
+            .sort((a, b) => a.pertemuanKe - b.pertemuanKe)
+            .map((session) => (
+              <SessionCard key={session.id} session={session} />
+            ))}
         </div>
       )}
     </div>

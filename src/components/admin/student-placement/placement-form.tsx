@@ -1,4 +1,4 @@
- import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -117,7 +117,7 @@ export const PlacementForm = ({
               <SelectContent>
                 {academicYears.map((ta) => (
                   <SelectItem key={ta.id} value={ta.id}>
-                    {ta.tahun} - {ta.semester} {ta.isActive ? "(Aktif)" : ""}
+                    {ta.nama} {ta.isActive || ta.isAktif ? "(Aktif)" : ""}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -41,7 +41,8 @@ export function useDashboardStats() {
 
         const taRes = await apiClient.get("/tahun-ajaran");
         const activeTa =
-          taRes.data.data?.find((ta: any) => ta.aktif) || taRes.data.data?.[0];
+          taRes.data.data?.find((ta: any) => ta.isAktif || ta.isActive) ||
+          taRes.data.data?.[0];
         const tahunAjaran = activeTa ? activeTa.nama : "-";
 
         let totalKelas = 0;

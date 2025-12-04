@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage, getErrorTitle } from "@/lib/error-utils";
 
 export interface Penempatan {
   id: string;
@@ -21,8 +22,9 @@ export interface Penempatan {
   };
   tahunAjaran?: {
     id: string;
-    tahun: string;
-    semester: string;
+    nama: string;
+    isAktif?: boolean;
+    isActive?: boolean;
   };
   createdAt?: string;
   updatedAt?: string;
@@ -68,10 +70,13 @@ export function usePenempatan() {
       });
       fetchPenempatan();
       return true;
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "Gagal",
-        description: "Gagal menambahkan data penempatan siswa.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(
+          error,
+          "Gagal menambahkan data penempatan siswa."
+        ),
         variant: "destructive",
       });
       return false;
@@ -90,10 +95,13 @@ export function usePenempatan() {
       });
       fetchPenempatan();
       return true;
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "Gagal",
-        description: "Gagal memperbarui data penempatan siswa.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(
+          error,
+          "Gagal memperbarui data penempatan siswa."
+        ),
         variant: "destructive",
       });
       return false;
@@ -109,10 +117,13 @@ export function usePenempatan() {
       });
       fetchPenempatan();
       return true;
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "Gagal",
-        description: "Gagal menghapus data penempatan siswa.",
+        title: getErrorTitle(error),
+        description: getErrorMessage(
+          error,
+          "Gagal menghapus data penempatan siswa."
+        ),
         variant: "destructive",
       });
       return false;

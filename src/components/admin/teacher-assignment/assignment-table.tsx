@@ -119,9 +119,7 @@ export const AssignmentTable = ({
                 </TableCell>
                 <TableCell>
                   <span className="text-sm text-gray-500">
-                    {assignment.tahunAjaran
-                      ? `${assignment.tahunAjaran.tahun} - ${assignment.tahunAjaran.semester}`
-                      : "-"}
+                    {assignment.tahunAjaran?.nama || "-"}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">

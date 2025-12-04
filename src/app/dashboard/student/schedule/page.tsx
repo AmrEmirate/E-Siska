@@ -55,7 +55,7 @@ export default function StudentSchedulePage() {
             <div className="p-4 space-y-2">
               {schedules
                 .filter((s) => s.hari === day)
-                .sort((a, b) => a.jamMulai.localeCompare(b.jamMulai))
+                .sort((a, b) => a.waktuMulai.localeCompare(b.waktuMulai))
                 .map((item) => (
                   <div
                     key={item.id}
@@ -64,7 +64,7 @@ export default function StudentSchedulePage() {
                     )}`}
                   >
                     <p className="text-xs font-semibold">
-                      {item.jamMulai} - {item.jamSelesai}
+                      {item.waktuMulai} - {item.waktuSelesai}
                     </p>
                     <p className="text-sm font-bold">{item.mapel?.namaMapel}</p>
                     {item.ruangan?.namaRuangan && (
@@ -124,7 +124,7 @@ export default function StudentSchedulePage() {
                       dayOrder[a.hari as keyof typeof dayOrder] -
                       dayOrder[b.hari as keyof typeof dayOrder];
                     if (dayDiff !== 0) return dayDiff;
-                    return a.jamMulai.localeCompare(b.jamMulai);
+                    return a.waktuMulai.localeCompare(b.waktuMulai);
                   })
                   .map((item) => (
                     <tr key={item.id} className="hover:bg-gray-50">
@@ -132,7 +132,7 @@ export default function StudentSchedulePage() {
                         {item.hari}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {item.jamMulai} - {item.jamSelesai}
+                        {item.waktuMulai} - {item.waktuSelesai}
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-gray-900">
                         {item.mapel?.namaMapel}

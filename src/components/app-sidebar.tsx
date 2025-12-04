@@ -49,6 +49,11 @@ export function AppSidebar() {
           label: "Mata Pelajaran",
           icon: "📚",
         },
+        {
+          href: "/dashboard/admin/extracurriculars",
+          label: "Ekstrakurikuler",
+          icon: "⚽",
+        },
         { href: "/dashboard/admin/schedule", label: "Jadwal", icon: "📅" },
         {
           href: "/dashboard/admin/grades/override",
@@ -149,6 +154,11 @@ export function AppSidebar() {
           href: "/dashboard/wali/attendance",
           label: "Rekap Absensi",
           icon: "✓",
+        },
+        {
+          href: "/dashboard/wali/ekskul-grades",
+          label: "Nilai Ekskul",
+          icon: "⚽",
         },
         {
           href: "/dashboard/wali/finalize-grades",

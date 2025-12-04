@@ -25,7 +25,7 @@ export default function WaliStudentListPage() {
     fetchPenempatan();
   }, [fetchTahunAjaran, fetchPenempatan]);
 
-  const activeYear = tahunAjaran.find((t) => t.status === "Aktif");
+  const activeYear = tahunAjaran.find((t) => t.isAktif || t.isActive);
 
   const filteredStudents = penempatanData.filter(
     (p) =>
@@ -42,7 +42,7 @@ export default function WaliStudentListPage() {
           </h1>
           <p className="text-gray-500 mt-2">
             Daftar siswa di kelas Anda untuk Tahun Ajaran{" "}
-            {activeYear?.tahun || "-"}.
+            {activeYear?.nama || "-"}.
           </p>
         </div>
       </div>

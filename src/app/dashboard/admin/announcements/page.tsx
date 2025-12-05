@@ -204,9 +204,10 @@ export default function AnnouncementsManagementPage() {
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <p className="text-xs text-gray-500">
-                    {announcement.createdAt
-                      ? new Date(announcement.createdAt).toLocaleDateString(
-                          "id-ID"
+                    {announcement.tanggalPublikasi
+                      ? new Date(announcement.tanggalPublikasi).toLocaleDateString(
+                          "id-ID",
+                          { day: "numeric", month: "long", year: "numeric" }
                         )
                       : "-"}
                   </p>

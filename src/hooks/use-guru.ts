@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 import { useState, useCallback } from "react";
 import { apiClient } from "@/lib/api-client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { getErrorMessage, getErrorTitle } from "@/lib/error-utils";
 export interface Guru {
   id: string;
@@ -18,7 +18,7 @@ export interface Guru {
   agama?: string;
   nik?: string;
   nuptk?: string;
-  waliKelas?: {
+  KelasBimbingan?: {
     id: string;
     namaKelas: string;
   };

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { apiClient } from "@/lib/api-client";
 import { Loader2, ArrowLeft, BookOpen } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import {
   Accordion,

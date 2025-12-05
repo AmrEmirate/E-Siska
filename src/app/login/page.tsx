@@ -1,10 +1,10 @@
-﻿"use client";
+"use client";
 import type React from "react";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -110,7 +110,7 @@ export default function LoginPage() {
           </form>
         </div>
         <p className="text-center text-gray-400 text-xs mt-6">
-          Â© 2025 SDN Ciater 02 Serpong. All rights reserved.
+          © 2025 SDN Ciater 02 Serpong. All rights reserved.
         </p>
       </div>
     </div>

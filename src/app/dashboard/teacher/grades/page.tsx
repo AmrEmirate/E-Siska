@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { apiClient } from "@/lib/api-client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/auth-context";
 import { useKelas } from "@/hooks/use-kelas";
 import { useCapaian } from "@/hooks/use-capaian";

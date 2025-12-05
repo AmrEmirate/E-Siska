@@ -1,13 +1,13 @@
-﻿"use client";
+"use client";
 import { useState, useCallback, ReactNode } from "react";
 import { apiClient } from "@/lib/api-client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 export interface Pengumuman {
   id: string;
   judul: string;
   konten: string;
   target: "SEMUA" | "SISWA" | "GURU";
-  tanggalPublish: string;
+  tanggalPublikasi?: string;
   author?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -45,7 +45,7 @@ export function usePengumuman() {
       judul: pengumumanData.judul || "",
       konten: pengumumanData.konten || "",
       target: pengumumanData.target || "SEMUA",
-      tanggalPublish: new Date().toISOString(),
+      tanggalPublikasi: new Date().toISOString(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       ...pengumumanData,

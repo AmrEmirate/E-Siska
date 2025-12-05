@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { useRapor } from "@/hooks/use-rapor";
 import { useSiswa } from "@/hooks/use-siswa";

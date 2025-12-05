@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { useNilai } from "@/hooks/use-nilai";
 import { usePenempatan } from "@/hooks/use-penempatan";

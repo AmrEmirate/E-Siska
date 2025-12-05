@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { usePengumuman, type Pengumuman } from "@/hooks/use-pengumuman";
 import { Loader2 } from "lucide-react";

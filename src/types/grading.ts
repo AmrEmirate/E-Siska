@@ -1,4 +1,4 @@
-﻿export interface StudentGrade {
+export interface StudentGrade {
   siswaId: string;
   nisn: string;
   nama: string;

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { useKelas } from "@/hooks/use-kelas";
 import { useAbsensi } from "@/hooks/use-absensi";

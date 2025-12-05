@@ -22,5 +22,5 @@ export { useWaliKelas } from "./use-wali-kelas";
 export { useSekolah } from "./use-sekolah";
 export { useBackup } from "./use-backup";
 export { useDashboardStats } from "./use-dashboard";
-export { useToast } from "@/components/ui/use-toast";
+export { useToast } from "@/hooks/use-toast";
 export { useIsMobile } from "./use-mobile";

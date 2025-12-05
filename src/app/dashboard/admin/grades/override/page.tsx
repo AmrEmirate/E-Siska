@@ -1,11 +1,11 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { useKelas } from "@/hooks/use-kelas";
 import { usePenempatan } from "@/hooks/use-penempatan";
 import { useTahunAjaran } from "@/hooks/use-tahun-ajaran";
 import { useRapor } from "@/hooks/use-rapor";
 import { useMapel } from "@/hooks/use-mapel";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { OverrideSelector } from "@/components/admin/grades/override-selector";
 import { OverrideTable } from "@/components/admin/grades/override-table";
 export default function AdminGradeOverridePage() {

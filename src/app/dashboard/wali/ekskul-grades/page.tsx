@@ -5,7 +5,7 @@ import { usePenempatan } from "@/hooks/use-penempatan";
 import { useMapel } from "@/hooks/use-mapel";
 import { useTahunAjaran } from "@/hooks/use-tahun-ajaran";
 import { apiClient } from "@/lib/api-client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

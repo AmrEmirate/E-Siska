@@ -25,10 +25,6 @@ export const StudentForm = ({ formData, setFormData }: StudentFormProps) => {
     formData.nisn && formData.nisn.length !== 10
       ? "NISN harus tepat 10 digit"
       : "";
-  const nikError =
-    formData.nik && formData.nik.length !== 16
-      ? "NIK harus tepat 16 digit"
-      : "";
 
   return (
     <div className="grid gap-6 py-4">
@@ -42,18 +38,6 @@ export const StudentForm = ({ formData, setFormData }: StudentFormProps) => {
           maxLength={10}
         />
         {nisnError && <p className="text-xs text-red-500">{nisnError}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="nik">NIK (16 digit)</Label>
-        <Input
-          id="nik"
-          value={formData.nik || ""}
-          onChange={(e) => handleNumberInput("nik", e.target.value, 16)}
-          placeholder="Masukkan 16 digit NIK"
-          maxLength={16}
-        />
-        {nikError && <p className="text-xs text-red-500">{nikError}</p>}
       </div>
 
       <div className="space-y-2">

@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 import { useState, useCallback, ReactNode, useRef } from "react";
 import { apiClient } from "@/lib/api-client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 export interface Jadwal {
   id: string;
   kelasId: string;

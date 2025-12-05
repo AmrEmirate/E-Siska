@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTahunAjaran, type TahunAjaran } from "@/hooks/use-tahun-ajaran";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { AcademicYearForm } from "@/components/admin/academic-years/academic-year-form";

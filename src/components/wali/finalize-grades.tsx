@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useCallback } from "react";
 import { usePenempatan } from "@/hooks/use-penempatan";
 import { useRapor } from "@/hooks/use-rapor";
 import { useTahunAjaran } from "@/hooks/use-tahun-ajaran";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { apiClient } from "@/lib/api-client";
 import { Loader2 } from "lucide-react";
 import { StudentTable, StudentStatus } from "./finalize-grades/student-table";

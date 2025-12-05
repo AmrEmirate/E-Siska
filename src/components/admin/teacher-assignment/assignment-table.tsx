@@ -43,7 +43,6 @@ export const AssignmentTable = ({
             <TableHead>Guru</TableHead>
             <TableHead>Mata Pelajaran</TableHead>
             <TableHead>Kelas</TableHead>
-            <TableHead>Tahun Ajaran</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>
         </TableHeader>
@@ -61,9 +60,6 @@ export const AssignmentTable = ({
                   <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
                 </TableCell>
                 <TableCell>
-                  <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
-                </TableCell>
-                <TableCell>
                   <div className="h-8 w-8 bg-gray-200 rounded animate-pulse ml-auto" />
                 </TableCell>
               </TableRow>
@@ -71,7 +67,7 @@ export const AssignmentTable = ({
           ) : assignments.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={5}
+                colSpan={4}
                 className="text-center py-12 text-gray-500"
               >
                 <div className="flex flex-col items-center justify-center gap-2">
@@ -116,11 +112,6 @@ export const AssignmentTable = ({
                   >
                     {assignment.kelas?.namaKelas}
                   </Badge>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm text-gray-500">
-                    {assignment.tahunAjaran?.nama || "-"}
-                  </span>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">

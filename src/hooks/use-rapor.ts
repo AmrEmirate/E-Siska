@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 import { useState, useCallback } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { raporService } from "@/services/rapor-service";
 import { Rapor } from "@/types/rapor";
 export function useRapor() {

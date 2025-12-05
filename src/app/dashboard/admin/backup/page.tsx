@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useBackup } from "@/hooks/use-backup";
 import { Button } from "@/components/ui/button";

@@ -165,6 +165,17 @@ export default function StudentsManagementPage() {
             endpoint="/siswa/import"
             onSuccess={() => fetchSiswa(1, 10, search)}
             triggerLabel="Import Excel"
+            formatInfo={{
+              columns: [
+                { name: "NISN", required: true, description: "Nomor Induk Siswa Nasional (harus tepat 10 digit)" },
+                { name: "Nama", required: true, description: "Nama lengkap siswa" },
+                { name: "Jenis Kelamin", required: false, description: "L (Laki-laki) atau P (Perempuan)" },
+                { name: "Agama", required: false, description: "Islam, Kristen, Katolik, Hindu, Buddha, Konghucu" },
+                { name: "Tempat Lahir", required: false, description: "Kota kelahiran" },
+                { name: "Tanggal Lahir", required: false, description: "Format: YYYY-MM-DD atau DD/MM/YYYY" },
+                { name: "Alamat", required: false, description: "Alamat lengkap siswa" },
+              ]
+            }}
           />
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
@@ -224,6 +235,32 @@ export default function StudentsManagementPage() {
           onEdit={openEdit}
           onDelete={deleteSiswa}
         />
+
+        {meta.totalPages > 1 && (
+          <div className="p-4 border-t border-gray-200 flex items-center justify-between bg-gray-50/30">
+            <div className="text-sm text-gray-500">
+              Halaman {meta.page} dari {meta.totalPages}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fetchSiswa(meta.page - 1, meta.limit, search)}
+                disabled={meta.page <= 1 || loading}
+              >
+                Sebelumnya
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fetchSiswa(meta.page + 1, meta.limit, search)}
+                disabled={meta.page >= meta.totalPages || loading}
+              >
+                Selanjutnya
+              </Button>
+            </div>
+          </div>
+        )}
 
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">

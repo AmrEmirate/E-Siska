@@ -94,6 +94,7 @@ export function useSiswa() {
       toast({
         title: "Berhasil",
         description: "Data siswa berhasil ditambahkan.",
+        variant: "success",
       });
       fetchSiswa(meta.page, meta.limit, "", false);
       return true;
@@ -117,6 +118,7 @@ export function useSiswa() {
       toast({
         title: "Berhasil",
         description: "Data siswa berhasil diperbarui.",
+        variant: "success",
       });
       fetchSiswa(meta.page, meta.limit, "", false);
       return true;

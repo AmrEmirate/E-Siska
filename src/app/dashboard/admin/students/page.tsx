@@ -36,6 +36,7 @@ export default function StudentsManagementPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<Partial<Siswa>>({
+    nik: "",
     nisn: "",
     nama: "",
     jenisKelamin: "L",
@@ -65,6 +66,7 @@ export default function StudentsManagementPage() {
 
   const resetForm = () => {
     setFormData({
+      nik: "",
       nisn: "",
       nama: "",
       jenisKelamin: "L",
@@ -88,12 +90,15 @@ export default function StudentsManagementPage() {
 
   const validateForm = () => {
     if (
+      !formData.nik ||
       !formData.nisn ||
       !formData.nama ||
       !formData.jenisKelamin ||
       !formData.agama
     ) {
-      alert("Mohon lengkapi data wajib (NISN, Nama, Jenis Kelamin, Agama)");
+      alert(
+        "Mohon lengkapi data wajib (NIK, NISN, Nama, Jenis Kelamin, Agama)"
+      );
       return false;
     }
     return true;
@@ -125,6 +130,7 @@ export default function StudentsManagementPage() {
   const openEdit = (student: Siswa) => {
     setSelectedStudent(student);
     setFormData({
+      nik: student.nik,
       nisn: student.nisn,
       nama: student.nama,
       jenisKelamin: student.jenisKelamin,
@@ -167,14 +173,50 @@ export default function StudentsManagementPage() {
             triggerLabel="Import Excel"
             formatInfo={{
               columns: [
-                { name: "NISN", required: true, description: "Nomor Induk Siswa Nasional (harus tepat 10 digit)" },
-                { name: "Nama", required: true, description: "Nama lengkap siswa" },
-                { name: "Jenis Kelamin", required: false, description: "L (Laki-laki) atau P (Perempuan)" },
-                { name: "Agama", required: false, description: "Islam, Kristen, Katolik, Hindu, Buddha, Konghucu" },
-                { name: "Tempat Lahir", required: false, description: "Kota kelahiran" },
-                { name: "Tanggal Lahir", required: false, description: "Format: YYYY-MM-DD atau DD/MM/YYYY" },
-                { name: "Alamat", required: false, description: "Alamat lengkap siswa" },
-              ]
+                {
+                  name: "NIK",
+                  required: true,
+                  description:
+                    "Nomor Induk Kependudukan (harus tepat 16 digit)",
+                },
+                {
+                  name: "NISN",
+                  required: true,
+                  description:
+                    "Nomor Induk Siswa Nasional (harus tepat 10 digit)",
+                },
+                {
+                  name: "Nama",
+                  required: true,
+                  description: "Nama lengkap siswa",
+                },
+                {
+                  name: "Jenis Kelamin",
+                  required: false,
+                  description: "L (Laki-laki) atau P (Perempuan)",
+                },
+                {
+                  name: "Agama",
+                  required: false,
+                  description:
+                    "Islam, Kristen, Katolik, Hindu, Buddha, Konghucu",
+                },
+                {
+                  name: "Tempat Lahir",
+                  required: false,
+                  description: "Kota kelahiran",
+                },
+                {
+                  name: "Tanggal Lahir",
+                  required: false,
+                  description: "Format: YYYY-MM-DD atau DD/MM/YYYY",
+                },
+                {
+                  name: "Alamat",
+                  required: false,
+                  description: "Alamat lengkap siswa",
+                },
+              ],
             }}
           />
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>

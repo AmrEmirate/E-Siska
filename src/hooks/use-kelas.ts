@@ -64,6 +64,7 @@ export function useKelas() {
       toast({
         title: "Berhasil",
         description: "Data kelas berhasil ditambahkan.",
+        variant: "success",
       });
       fetchKelas("", false);
       return true;
@@ -87,6 +88,7 @@ export function useKelas() {
       toast({
         title: "Berhasil",
         description: "Data kelas berhasil diperbarui.",
+        variant: "success",
       });
       fetchKelas("", false);
       return true;
@@ -108,6 +110,7 @@ export function useKelas() {
       toast({
         title: "Berhasil",
         description: "Data kelas berhasil dihapus.",
+        variant: "success",
       });
       fetchKelas("", false);
       return true;

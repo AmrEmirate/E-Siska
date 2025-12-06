@@ -80,12 +80,13 @@ export default function TeachersManagementPage() {
 
   const validateForm = () => {
     if (
+      !formData.nik ||
       !formData.nip ||
       !formData.nama ||
       !formData.jenisKelamin ||
       !formData.agama
     ) {
-      alert("Mohon lengkapi data wajib (NIP, Nama, Jenis Kelamin, Agama)");
+      alert("Mohon lengkapi data wajib (NIK, NIP, Nama, Jenis Kelamin, Agama)");
       return false;
     }
     return true;
@@ -155,14 +156,39 @@ export default function TeachersManagementPage() {
             triggerLabel="Import Excel"
             formatInfo={{
               columns: [
-                { name: "NIP", required: true, description: "Nomor Induk Pegawai (wajib)" },
-                { name: "Nama", required: true, description: "Nama lengkap guru" },
+                {
+                  name: "NIP",
+                  required: true,
+                  description: "Nomor Induk Pegawai (wajib)",
+                },
+                {
+                  name: "Nama",
+                  required: true,
+                  description: "Nama lengkap guru",
+                },
                 { name: "Email", required: false, description: "Alamat email" },
-                { name: "Jenis Kelamin", required: false, description: "L (Laki-laki) atau P (Perempuan)" },
-                { name: "Agama", required: false, description: "Islam, Kristen, Katolik, Hindu, Buddha, Konghucu" },
-                { name: "No Telp", required: false, description: "Nomor telepon" },
-                { name: "Status Kepegawaian", required: false, description: "PNS, Honorer, dll" },
-              ]
+                {
+                  name: "Jenis Kelamin",
+                  required: false,
+                  description: "L (Laki-laki) atau P (Perempuan)",
+                },
+                {
+                  name: "Agama",
+                  required: false,
+                  description:
+                    "Islam, Kristen, Katolik, Hindu, Buddha, Konghucu",
+                },
+                {
+                  name: "No Telp",
+                  required: false,
+                  description: "Nomor telepon",
+                },
+                {
+                  name: "Status Kepegawaian",
+                  required: false,
+                  description: "PNS, Honorer, dll",
+                },
+              ],
             }}
           />
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>

@@ -89,6 +89,7 @@ export function useGuru() {
       toast({
         title: "Berhasil",
         description: "Data guru berhasil ditambahkan.",
+        variant: "success",
       });
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
@@ -112,6 +113,7 @@ export function useGuru() {
       toast({
         title: "Berhasil",
         description: "Data guru berhasil diperbarui.",
+        variant: "success",
       });
       fetchGuru(meta.page, meta.limit, "", false);
       return true;
@@ -133,6 +135,7 @@ export function useGuru() {
       toast({
         title: "Berhasil",
         description: "Data guru berhasil dihapus.",
+        variant: "success",
       });
       fetchGuru(meta.page, meta.limit, "", false);
       return true;

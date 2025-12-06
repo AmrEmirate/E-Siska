@@ -39,7 +39,7 @@ export default function ClassesManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     fetchKelas(searchTerm);
-    fetchGuru(1, 100); 
+    fetchGuru(1, 100);
     fetchTingkatan();
   }, [fetchKelas, fetchGuru, fetchTingkatan, searchTerm]);
   const resetForm = () => {

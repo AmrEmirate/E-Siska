@@ -80,13 +80,16 @@ export default function TeachersManagementPage() {
 
   const validateForm = () => {
     if (
+      !formData.nuptk ||
       !formData.nik ||
       !formData.nip ||
       !formData.nama ||
       !formData.jenisKelamin ||
       !formData.agama
     ) {
-      alert("Mohon lengkapi data wajib (NIK, NIP, Nama, Jenis Kelamin, Agama)");
+      alert(
+        "Mohon lengkapi data wajib (NIK, NUPTK, NIP, Nama, Jenis Kelamin, Agama)"
+      );
       return false;
     }
     return true;

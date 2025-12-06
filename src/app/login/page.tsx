@@ -22,6 +22,7 @@ export default function LoginPage() {
       toast({
         title: "Login Berhasil",
         description: "Selamat datang kembali!",
+        variant: "success",
       });
       router.push("/dashboard");
     } catch (err) {

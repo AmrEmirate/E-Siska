@@ -140,6 +140,7 @@ export function useSiswa() {
       toast({
         title: "Berhasil",
         description: "Data siswa berhasil dihapus.",
+        variant: "success",
       });
       fetchSiswa(meta.page, meta.limit, "", false);
       return true;

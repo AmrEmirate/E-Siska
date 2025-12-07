@@ -25,24 +25,25 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4 sticky top-0 z-10">
-      <SidebarTrigger className="-ml-2" />
-      <div className="flex flex-1 items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">
+    <header className="bg-white border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 sticky top-0 z-10">
+      <SidebarTrigger className="-ml-1 sm:-ml-2 touch-target" />
+      <div className="flex flex-1 items-center justify-between min-w-0">
+        <div className="min-w-0">
+          <h1 className="text-base sm:text-xl font-bold text-gray-900 truncate">
             {user?.name || "User"}
           </h1>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 hidden sm:block">
             {getRoleLabel(user?.role || "")}
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition"
+            className="px-3 py-2 sm:px-4 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition touch-target flex items-center justify-center"
           >
-            Keluar
+            <span className="hidden sm:inline">Keluar</span>
+            <span className="sm:hidden">🚪</span>
           </button>
         </div>
       </div>

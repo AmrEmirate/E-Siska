@@ -148,4 +148,46 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Mobile-first responsive containers */
+  .page-container {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  .section-container {
+    @apply p-4 sm:p-6;
+  }
+
+  /* Responsive typography */
+  .page-title {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight;
+  }
+
+  .page-subtitle {
+    @apply text-sm sm:text-base text-gray-500 mt-1 sm:mt-2;
+  }
+
+  /* Touch-friendly minimum tap targets (44px recommended by Apple/Google) */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Responsive table wrapper with edge-to-edge on mobile */
+  .table-responsive {
+    @apply overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0;
+  }
+
+  /* Mobile-friendly spacing */
+  .gap-responsive {
+    @apply gap-3 sm:gap-4 lg:gap-6;
+  }
+
+  /* Responsive card grid */
+  .card-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6;
+  }
+
+  .card-grid-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+  }
 }

@@ -157,7 +157,7 @@ export default function GradesPage() {
         }));
 
         await apiClient.post("/nilai", {
-          guruId: user?.id,
+          guruId: user?.guruId,
           mapelId: selectedSubject,
           komponenId: comp.id,
           data: dataToSave,
@@ -174,7 +174,7 @@ export default function GradesPage() {
             }));
 
             await apiClient.post("/nilai", {
-              guruId: user?.id,
+              guruId: user?.guruId,
               mapelId: selectedSubject,
               komponenId: comp.id,
               data: dataToSave,
@@ -190,7 +190,11 @@ export default function GradesPage() {
         );
 
         if (capaianPayload.length > 0) {
-          await saveCapaian(user?.id || "", selectedSubject, capaianPayload);
+          await saveCapaian(
+            user?.guruId || "",
+            selectedSubject,
+            capaianPayload
+          );
         }
       }
 

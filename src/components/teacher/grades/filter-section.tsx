@@ -29,7 +29,7 @@ export function FilterSection({
           <select
             value={selectedClass}
             onChange={(e) => onClassChange(e.target.value)}
-            className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+            className="form-select"
           >
             <option value="">-- Pilih Kelas --</option>
             {classes.map((cls) => (
@@ -46,7 +46,7 @@ export function FilterSection({
           <select
             value={selectedSubject}
             onChange={(e) => onSubjectChange(e.target.value)}
-            className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+            className="form-select"
           >
             <option value="">-- Pilih Mapel --</option>
             {subjects.map((subj) => (

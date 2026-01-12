@@ -7,6 +7,9 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
+  verification: {
+    google: "XqpszNG-2nPGX6gudppMqSWRSWYGijInnKsb_z4YBwk",
+  },
   title: "E-Siska - Sistem Informasi Akademik SDN CIATER 02",
   description: "Platform manajemen akademik dan administrasi sekolah",
 };

@@ -4,8 +4,15 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    // unoptimized: true, // Commented out to enable Image Optimization
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com",
+      },
+    ],
   },
-}
+  poweredByHeader: false, // Security: Hide Next.js branding
+};
 
-export default nextConfig
+export default nextConfig;
